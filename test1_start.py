@@ -8,7 +8,7 @@ width,height=1280,720
 
 # pygame setup
 pygame.init()
-screen = pygame.display.set_mode((width,height))
+#screen = pygame.display.set_mode((width,height))
 clock = pygame.time.Clock()
 running = True
 window = pygame.display.set_mode((width, height))
