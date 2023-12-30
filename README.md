@@ -6,7 +6,7 @@
 
 ####  :tada::dizzy: _This project is a game developed by the `"RuYou"` team using the `pygame` library with the `python` language. It is a simple game that combines various game elements and game art design.Hope you can have fun in our Game!_ :kissing_heart::kissing_heart::kissing_heart:
 
-# Our Team Members
+## Our Team Members
 Here are the contributors :clap::arrow_down:
 
 <a href="https://github.com/wangzh12023/RuYou_Game/graphs/contributors">
@@ -26,5 +26,9 @@ Here are the contributors :clap::arrow_down:
 > &nbsp;&nbsp;&nbsp;&nbsp; :email: kuangph2023@shanghaitech.edu.cn
 
 
-## 如有小组的final project
+## Poject introduction
+
+
+
+
 
