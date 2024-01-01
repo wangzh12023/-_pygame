@@ -9,9 +9,7 @@
 ## Our Team Members
 Here are the contributors :clap::arrow_down:
 
-<a href="https://github.com/wangzh12023/RuYou_Game/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=wangzh12023/RuYou_Game" />
-</a><br><br>
+
 
 > ![Static Badge](https://img.shields.io/badge/1-blue) :bust_in_silhouette: **王子涵**
 > 
