@@ -25,7 +25,6 @@ class GameManager:
 
         self.player=Player(WindowSettings.width//2,WindowSettings.height//2)  
 
-        self.portals=pygame.sprite.Group()
         ##### Your Code Here ↑ #####
 
     def game_reset(self):
@@ -50,18 +49,12 @@ class GameManager:
         ##### Your Code Here ↓ #####
         if GOTO==SceneType.CITY:
             self.scene=CityScene(self.window)
-            for portal in self.scene.portals.sprites():
-                self.portals.add(portal)
             self.player.reset_pos()
         if GOTO==SceneType.WILD:
             self.scene=WildScene(self.window)
-            for portal in self.scene.portals.sprites():
-                self.portals.add(portal)
             self.player.reset_pos()
         if GOTO==SceneType.BOSS:
             self.scene=BossScene(self.window)
-            for portal in self.scene.portals.sprites():
-                self.portals.add(portal)
             self.player.reset_pos()
         ##### Your Code Here ↑ #####
 
@@ -104,11 +97,14 @@ class GameManager:
         ##### Your Code Here ↓ #####
         self.player.try_move()
         self.update_collide()
-        if self.collide.collidingWith["portal"]:
-            if self.collide.collidingObject["portal"].GOTO==SceneType.WILD:
-                self.state=GameState.GAME_PLAY_WILD
-                self.flush_scene(SceneType.WILD)
-                self.collide.collidingObject["portal"].kill()
+        if self.collide.is_colliding():
+            if self.collide.collidingWith["portal"]:
+                if self.collide.collidingObject["portal"].GOTO==SceneType.WILD:
+                    self.state=GameState.GAME_PLAY_WILD
+                    self.flush_scene(SceneType.WILD)
+                    self.collide.collidingObject["portal"].kill()
+            if self.collide.collidingWith["obstacle"]:
+                self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
         self.scene.update_camera(self.player)
         ##### Your Code Here ↑ #####
 
@@ -125,15 +121,18 @@ class GameManager:
         ##### Your Code Here ↓ #####
         self.player.try_move()
         self.update_collide()
-        if self.collide.collidingWith["portal"]:
-            if self.collide.collidingObject["portal"].GOTO==SceneType.CITY:
-                self.state=GameState.GAME_PLAY_CITY
-                self.flush_scene(SceneType.CITY)
-                self.collide.collidingObject["portal"].kill()
-            if self.collide.collidingObject["portal"].GOTO==SceneType.BOSS:
-                self.state=GameState.GAME_PLAY_BOSS
-                self.flush_scene(SceneType.BOSS)
-                self.collide.collidingObject["portal"].kill()
+        if self.collide.is_colliding():
+            if self.collide.collidingWith["portal"]:
+                if self.collide.collidingObject["portal"].GOTO==SceneType.CITY:
+                    self.state=GameState.GAME_PLAY_CITY
+                    self.flush_scene(SceneType.CITY)
+                    self.collide.collidingObject["portal"].kill()
+                if self.collide.collidingObject["portal"].GOTO==SceneType.BOSS:
+                    self.state=GameState.GAME_PLAY_BOSS
+                    self.flush_scene(SceneType.BOSS)
+                    self.collide.collidingObject["portal"].kill()
+            if self.collide.collidingWith["obstacle"]:
+                self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
         self.scene.update_camera(self.player)
         ##### Your Code Here ↑ #####
 
@@ -150,11 +149,14 @@ class GameManager:
         ##### Your Code Here ↓ #####
         self.player.try_move()
         self.update_collide()
-        if self.collide.collidingWith["portal"]:
-            if self.collide.collidingObject["portal"].GOTO==SceneType.WILD:
-                self.state=GameState.GAME_PLAY_WILD
-                self.flush_scene(SceneType.WILD)
-                self.collide.collidingObject["portal"].kill()
+        if self.collide.is_colliding():
+            if self.collide.collidingWith["portal"]:
+                if self.collide.collidingObject["portal"].GOTO==SceneType.WILD:
+                    self.state=GameState.GAME_PLAY_WILD
+                    self.flush_scene(SceneType.WILD)
+                    self.collide.collidingObject["portal"].kill()
+            if self.collide.collidingWith["obstacle"]:
+                self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
         self.scene.update_camera(self.player)
         ##### Your Code Here ↑ #####
 
@@ -162,7 +164,14 @@ class GameManager:
     def update_collide(self):
         # Player -> Obstacles
         ##### Your Code Here ↓ #####
-        pass
+        if pygame.sprite.spritecollide(self.player,self.scene.obstacles,False,pygame.sprite.collide_mask):
+            self.collide.collidingWith["obstacle"]=True
+            for obstacle in self.scene.obstacles.sprites():
+                if pygame.sprite.collide_rect(self.player,obstacle):
+                    self.collide.collidingObject["obstacle"].append(obstacle)
+        else:
+            self.collide.collidingWith["obstacle"]=False
+            self.collide.collidingObject["obstacle"]=[]
         ##### Your Code Here ↑ #####
 
         # Player -> NPCs; if multiple NPCs collided, only first is accepted and dealt with.
@@ -177,9 +186,9 @@ class GameManager:
         
         # Player -> Portals
         ##### Your Code Here ↓ #####
-        if pygame.sprite.spritecollide(self.player,self.portals,False,pygame.sprite.collide_mask):
+        if pygame.sprite.spritecollide(self.player,self.scene.portals,False,pygame.sprite.collide_mask):
             self.collide.collidingWith["portal"]=True
-            for portal in self.portals.sprites():
+            for portal in self.scene.portals.sprites():
                 if pygame.sprite.collide_rect(self.player,portal):
                     self.collide.collidingObject["portal"]=portal
         else:
@@ -219,7 +228,6 @@ class GameManager:
     def render_city(self):
         ##### Your Code Here ↓ #####
         self.scene.render(self.player)
-        self.scene.gen_CITY()
         ##### Your Code Here ↑ #####
 
     def render_wild(self):

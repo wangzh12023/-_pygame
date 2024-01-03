@@ -22,6 +22,9 @@ class Player(pygame.sprite.Sprite, Collidable):
         self.rect.topleft=(x,y)
 
         self.speed=PlayerSettings.playerSpeed
+
+        self.dx=0
+        self.dy=0
         ##### Your Code Here ↑ #####
     def attr_update(self, addCoins = 0, addHP = 0, addAttack = 0, addDefence = 0):
         ##### Your Code Here ↓ #####
@@ -36,24 +39,24 @@ class Player(pygame.sprite.Sprite, Collidable):
     def try_move(self):
         ##### Your Code Here ↓ #####
         keys=pygame.key.get_pressed()
-        dx=0
-        dy=0
+        self.dx=0
+        self.dy=0
         if keys[pygame.K_w] and self.rect.top > 0 :
-            dy -= self.speed
+            self.dy -= self.speed
         if keys[pygame.K_s] and self.rect.bottom< WindowSettings.height:
-            dy += self.speed
+            self.dy += self.speed
         if keys[pygame.K_a] and self.rect.left> 0:
-            dx -= self.speed
+            self.dx -= self.speed
             if self.dir==1:
                 self.images=[pygame.transform.flip(img,True,False) for img in self.images]
                 self.dir=-1
         if keys[pygame.K_d] and self.rect.right< WindowSettings.width:
-            dx += self.speed
+            self.dx += self.speed
             if self.dir==-1:
                 self.images=[pygame.transform.flip(img,True,False) for img in self.images]
                 self.dir=1
-        self.rect=self.rect.move(dx,dy)
-        if dx!=0 or dy!=0:
+        self.rect=self.rect.move(self.dx,self.dy)
+        if self.dx!=0 or self.dy!=0:
             self.index=(self.index+1)%len(self.images)
             self.image=self.images[self.index]
         ##### Your Code Here ↑ #####

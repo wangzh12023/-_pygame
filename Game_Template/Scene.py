@@ -19,6 +19,7 @@ class Scene():
         self.cameraY=0
         self.dx=0
         self.dy=0
+        self.portals=pygame.sprite.Group()
         ##### Your Code Here ↑ #####
 
         
@@ -90,6 +91,8 @@ class Scene():
         player.draw(self.window,self.dx,self.dy)
         for portal in self.portals.sprites():
             portal.draw(self.window,self.dx,self.dy)
+        for obstacle in self.obstacles.sprites():
+            obstacle.draw(self.window,self.dx,self.dy)
         ##### Your Code Here ↑ #####
 
 
@@ -116,30 +119,31 @@ class CityScene(Scene):
     def __init__(self, window):
         super().__init__(window=window)
         ##### Your Code Here ↓ #####
-        self.map=Maps.gen_city_map()
-        self.portals=pygame.sprite.Group()
-        self.portals.add(Portal(PortalSettings.coordX,PortalSettings.coordY,SceneType.WILD))
+        self.gen_CITY()
         
         ##### Your Code Here ↑ #####
 
     def gen_CITY(self):
         ##### Your Code Here ↓ #####
-        pass
+        self.map=Maps.gen_city_map()
+        self.portals.add(Portal(PortalSettings.coordX,PortalSettings.coordY,SceneType.WILD))
+        self.obstacles =Maps.gen_city_obstacle()
         ##### Your Code Here ↑ #####
 
 class WildScene(Scene):
     def __init__(self, window):
         super().__init__(window=window)
         ##### Your Code Here ↓ #####
-        self.map=Maps.gen_wild_map()
-        self.portals=pygame.sprite.Group()
-        self.portals.add(Portal(PortalSettings.coordX,PortalSettings.coordY,SceneType.BOSS))
-        self.portals.add(Portal(PortalSettings.coordX2,PortalSettings.coordY2,SceneType.CITY))
+        self.gen_WILD()
+        
         ##### Your Code Here ↑ #####
 
     def gen_WILD(self):
         ##### Your Code Here ↓ #####
-        pass
+        self.map=Maps.gen_wild_map()
+        self.obstacles=Maps.gen_wild_obstacle()
+        self.portals.add(Portal(PortalSettings.coordX,PortalSettings.coordY,SceneType.BOSS))
+        self.portals.add(Portal(PortalSettings.coordX2,PortalSettings.coordY2,SceneType.CITY))
         ##### Your Code Here ↑ #####
 
     def gen_monsters(self, num = 10):
@@ -151,9 +155,7 @@ class BossScene(Scene):
     def __init__(self, window):
         super().__init__(window=window)
         ##### Your Code Here ↓ #####
-        self.map=Maps.gen_boss_map()
-        self.portals=pygame.sprite.Group()
-        self.portals.add(Portal(PortalSettings.coordX2,PortalSettings.coordY2,SceneType.WILD))
+        self.gen_BOSS()
         ##### Your Code Here ↑ #####
 
     # Overwrite Scene's function
@@ -164,5 +166,7 @@ class BossScene(Scene):
 
     def gen_BOSS(self):
         ##### Your Code Here ↓ #####
-        pass
+        self.map=Maps.gen_boss_map()
+        self.portals.add(Portal(PortalSettings.coordX2,PortalSettings.coordY2,SceneType.WILD))
+        self.obstacles=Maps.gen_boss_obstacle()
         ##### Your Code Here ↑ #####

@@ -13,6 +13,7 @@ class SceneSettings:
     tileXnum = 48 # 64
     tileYnum = 27 # 36
     tileWidth = tileHeight = 40
+    obstacleDensity=0.1
 
 class PlayerSettings:
     # Initial Player Settings
