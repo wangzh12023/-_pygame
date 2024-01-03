@@ -31,11 +31,12 @@ Here are the contributors :clap::arrow_down:
 
 ## Poject introduction
 
-### 一、Game Name :dart:：`Marked Odyssey`
-### 二、Game Type：回合制战斗冒险游戏
+### 一、Game Name :dart:
+- `Marked Odyssey`
+### 二、Game Type：
+- 回合制战斗冒险游戏
 ### 三、Main Process：
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;因为某种原因，主人公需要收集散落在世界各地的三枚元素印记（草水火），三种印记在三个迷宫的最终 :imp: 手中，伴随着对印记的收集，主人公会逐渐变强，但敌人同时也会不断变强。收集完三个印记后，主人公将面对最终 :imp: ，胜利后游戏结束。
+- 因为某种原因，主人公需要收集散落在世界各地的三枚元素印记（草水火），三种印记在三个迷宫的最终 :imp: 手中，伴随着对印记的收集，主人公会逐渐变强，但敌人同时也会不断变强。收集完三个印记后，主人公将面对最终 :imp: ，胜利后游戏结束。
 ### 四、Map Settings 🗺️：
 - 分为一个主地图和三个迷宫地图，游戏开始时玩家出生在主地图。
 #### 1. Main Map
