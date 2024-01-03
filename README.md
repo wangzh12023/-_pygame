@@ -19,13 +19,14 @@ Here are the contributors :clap::arrow_down:
 > 
 > &nbsp;&nbsp;&nbsp;&nbsp; :email: wangzh12023@shanghaitech.edu.cn
 >
-> ![Static Badge](https://img.shields.io/badge/2-blue) :bust_in_silhouette: **陈亦乐**
->
-> &nbsp;&nbsp;&nbsp;&nbsp; :email: chenyl2023@shanghaitech.edu.cn
-> 
-> ![Static Badge](https://img.shields.io/badge/3-blue) :bust_in_silhouette: **匡鹏昊**
+> ![Static Badge](https://img.shields.io/badge/2-blue) :bust_in_silhouette: **匡鹏昊**
 > 
 > &nbsp;&nbsp;&nbsp;&nbsp; :email: kuangph2023@shanghaitech.edu.cn
+> 
+> ![Static Badge](https://img.shields.io/badge/3-blue) :bust_in_silhouette: **陈亦乐**
+>
+> &nbsp;&nbsp;&nbsp;&nbsp; :email: chenyl2023@shanghaitech.edu.cn
+
 
 
 ## Poject introduction
