@@ -1,4 +1,5 @@
-# Team RuYou's Game   
+# Team RuYou's Game  
+(Game_Template is a temporory version, project_file is the final version,but it has not been finished)
 ![Static Badge](https://img.shields.io/badge/RuYou-purple)
 ![GitHub commit activity (branch)](https://img.shields.io/github/commit-activity/t/wangzh12023/RuYou_Game)
 ![GitHub contributors](https://img.shields.io/github/contributors-anon/wangzh12023/RuYou_Game)
@@ -29,7 +30,7 @@ Here are the contributors :clap::arrow_down:
 
 
 
-## Poject introduction
+## Poject introduction 
 
 ### 一、Game Name :dart:
 - `Marked Odyssey`
