@@ -1,5 +1,6 @@
 # Team RuYou's Game  
-(Game_Template is a temporory version, project_file is the final version,but it has not been finished)
+:heavy_exclamation_mark::heavy_exclamation_mark::heavy_exclamation_mark:Game_Template is a temporory version, project_file is the final version,but it has not been finished. You can just pull Game_Template tempororily
+
 ![Static Badge](https://img.shields.io/badge/RuYou-purple)
 ![GitHub commit activity (branch)](https://img.shields.io/github/commit-activity/t/wangzh12023/RuYou_Game)
 ![GitHub contributors](https://img.shields.io/github/contributors-anon/wangzh12023/RuYou_Game)
