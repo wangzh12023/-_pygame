@@ -82,7 +82,6 @@ class Player(pygame.sprite.Sprite, Collidable):
         self.change_attack_speed()
         # 玩家攻击
         player_pos = [self.rect.x,self.rect.y]
-        
         keys=pygame.key.get_pressed()
         if keys[pygame.K_j]:
             current_time = pygame.time.get_ticks() / 1000

@@ -243,12 +243,8 @@ class GameManager:
         ##### Your Code Here ↑ #####
 
     def render_attack(self):
-        # 处理玩家的攻击波
-        
         attack_image = [pygame.transform.scale(pygame.image.load(img),(PlayerSettings.playerAttackRange,PlayerSettings.playerAttackRange)) for img in GamePath.attack]
-
-        # 玩家攻击
-
+        # 处理玩家攻击
         for attack in self.player.player_attack_wave:
             if attack[2]==1:
                 attack[0] -= self.player.attack_speed
