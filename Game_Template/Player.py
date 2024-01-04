@@ -23,7 +23,7 @@ class Player(pygame.sprite.Sprite, Collidable):
         self.dy=0
         self.attack_cooldown=PlayerSettings.playerAttackCooldown
         self.attack_speed = PlayerSettings.playerAttackSpeed
-        self.player_attack_wave = []
+        self.player_attack_wave=pygame.sprite.Group()#self.player_attack_wave = []
         self.player_attack_range = PlayerSettings.playerAttackRange
         self.player_last_attack_time = 0
         
@@ -86,25 +86,25 @@ class Player(pygame.sprite.Sprite, Collidable):
         if keys[pygame.K_j]:
             current_time = pygame.time.get_ticks() / 1000
             if current_time - self.player_last_attack_time > self.attack_cooldown:
-                self.player_attack_wave.append([player_pos[0], player_pos[1]+self.rect.height / 2,1])
+                self.player_attack_wave.add(Attack(player_pos[0], player_pos[1]+self.rect.height / 2,0,self.attack_speed))
                 self.player_last_attack_time = current_time
 
         if keys[pygame.K_k]:
             current_time = pygame.time.get_ticks() / 1000
             if current_time - self.player_last_attack_time > self.attack_cooldown:
-                self.player_attack_wave.append([player_pos[0]+self.rect.width , player_pos[1]+self.rect.height / 2,2])
+                self.player_attack_wave.add(Attack(player_pos[0]+self.rect.width , player_pos[1]+self.rect.height / 2,1,self.attack_speed))
                 self.player_last_attack_time = current_time
 
         if keys[pygame.K_i]:
             current_time = pygame.time.get_ticks() / 1000.0
             if current_time - self.player_last_attack_time > self.attack_cooldown:
-                self.player_attack_wave.append([player_pos[0]+self.rect.width / 2, player_pos[1],3])
+                self.player_attack_wave.add(Attack(player_pos[0]+self.rect.width / 2, player_pos[1],2,self.attack_speed))
                 self.player_last_attack_time = current_time
 
         if keys[pygame.K_m]:
             current_time = pygame.time.get_ticks() / 1000.0
             if current_time - self.player_last_attack_time > self.attack_cooldown:
-                self.player_attack_wave.append([player_pos[0]+self.rect.width / 2, player_pos[1]+self.rect.height,4])
+                self.player_attack_wave.add(Attack(player_pos[0]+self.rect.width / 2, player_pos[1]+self.rect.height,3,self.attack_speed))
                 self.player_last_attack_time = current_time
 
 
@@ -118,3 +118,36 @@ class Player(pygame.sprite.Sprite, Collidable):
         #     ):
         #         boss_health -= player_attack
         #         player_attack_wave.remove(attack)
+class Attack(pygame.sprite.Sprite):
+    def __init__(self,x,y,index,speed):
+        super().__init__()
+        ##### Your Code Here ↓ #####
+        self.images=[pygame.transform.scale(pygame.image.load(img),(PlayerSettings.playerAttackRange,PlayerSettings.playerAttackRange)) for img in GamePath.attack]
+        self.index=index
+        self.image=self.images[index]
+        self.rect=self.image.get_rect()
+        self.rect.topleft=(x,y)
+        self.attack_speed=speed
+        ##### Your Code Here ↑ #####
+    def update(self):
+        dx=dy=0
+        if self.index==0:
+            dx -= self.attack_speed
+        if self.index==1:
+            dx += self.attack_speed
+        if self.index==2:
+            dy -= self.attack_speed
+        if self.index==3: 
+            dy += self.attack_speed
+        self.rect=self.rect.move(dx,dy)
+    def over_range(self,cameraX,cameraY):
+        real_X=self.rect.x+cameraX
+        real_Y=self.rect.y+cameraY
+        if real_X<0 or real_Y<0 or real_X>WindowSettings.width * WindowSettings.outdoorScale or real_Y>WindowSettings.height * WindowSettings.outdoorScale:
+            return True
+        return False
+    def draw(self, window, dx=0, dy=0):
+        ##### Your Code Here ↓ #####
+        self.rect=self.rect.move(dx,dy)
+        window.blit(self.image,self.rect)
+        ##### Your Code Here ↑ #####

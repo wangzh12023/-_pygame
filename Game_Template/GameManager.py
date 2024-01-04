@@ -69,6 +69,8 @@ class GameManager:
             self.update_wild(pygame.event.get())
         if self.state==GameState.GAME_PLAY_BOSS:
             self.update_boss(pygame.event.get())
+        self.player.attack()
+        self.update_attack()
         ##### Your Code Here ↑ #####
 
     def update_main_menu(self, events):
@@ -159,7 +161,11 @@ class GameManager:
                 self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
         self.scene.update_camera(self.player)
         ##### Your Code Here ↑ #####
-
+    def update_attack(self):
+        for attack in self.player.player_attack_wave:
+            attack.update()
+            if attack.over_range(self.scene.cameraX,self.scene.cameraY):
+                attack.kill()
     # Collision-relate update funtions here ↓
     def update_collide(self):
         # Player -> Obstacles
@@ -218,8 +224,6 @@ class GameManager:
             self.render_wild()
         if self.state==GameState.GAME_PLAY_BOSS:
             self.render_boss()
-        self.player.attack()
-        self.render_attack()
         ##### Your Code Here ↑ #####
     
     def render_main_menu(self):
@@ -242,20 +246,4 @@ class GameManager:
         self.scene.render(self.player)
         ##### Your Code Here ↑ #####
 
-    def render_attack(self):
-        attack_image = [pygame.transform.scale(pygame.image.load(img),(PlayerSettings.playerAttackRange,PlayerSettings.playerAttackRange)) for img in GamePath.attack]
-        # 处理玩家攻击
-        for attack in self.player.player_attack_wave:
-            if attack[2]==1:
-                attack[0] -= self.player.attack_speed
-                self.window.blit(attack_image[0], (attack[0], attack[1]))
-            if attack[2]==2:
-                attack[0] += self.player.attack_speed
-                self.window.blit(attack_image[1], (attack[0], attack[1]))
-            if attack[2]==3:
-                attack[1] -= self.player.attack_speed
-                self.window.blit(attack_image[2], (attack[0], attack[1]))
-            if attack[2]==4: 
-                attack[1] += self.player.attack_speed
-                self.window.blit(attack_image[3], (attack[0], attack[1]))
 
