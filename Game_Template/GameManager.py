@@ -56,6 +56,7 @@ class GameManager:
         if GOTO==SceneType.BOSS:
             self.scene=BossScene(self.window)
             self.player.reset_pos()
+        self.player.player_attack_wave.empty()
         ##### Your Code Here ↑ #####
 
     def update(self):
