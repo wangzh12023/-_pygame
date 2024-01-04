@@ -15,16 +15,18 @@ class Player(pygame.sprite.Sprite, Collidable):
         self.images=[pygame.transform.scale(pygame.image.load(img),(PlayerSettings.playerWidth,PlayerSettings.playerHeight)) for img in GamePath.player]
         self.index=0
         self.image=self.images[self.index]
-        
         self.dir=1
-
         self.rect=self.image.get_rect()
         self.rect.topleft=(x,y)
-
         self.speed=PlayerSettings.playerSpeed
-
         self.dx=0
         self.dy=0
+        self.attack_cooldown=PlayerSettings.playerAttackCooldown
+        self.attack_speed = PlayerSettings.playerAttackSpeed
+        self.player_attack_wave = []
+        self.player_attack_range = PlayerSettings.playerAttackRange
+        self.player_last_attack_time = 0
+        
         ##### Your Code Here ↑ #####
     def attr_update(self, addCoins = 0, addHP = 0, addAttack = 0, addDefence = 0):
         ##### Your Code Here ↓ #####
@@ -70,3 +72,50 @@ class Player(pygame.sprite.Sprite, Collidable):
         self.rect=self.rect.move(dx,dy)
         window.blit(self.image,self.rect)
         ##### Your Code Here ↑ #####
+    def change_attack_speed(self):
+        keys=pygame.key.get_pressed()
+        if keys[pygame.K_o]:
+            self.attack_speed+=5
+        if keys[pygame.K_p] and self.attack_speed > 5 :
+            self.attack_speed-=5
+    def attack(self):
+        self.change_attack_speed()
+        # 玩家攻击
+        player_pos = [self.rect.x,self.rect.y]
+        
+        keys=pygame.key.get_pressed()
+        if keys[pygame.K_j]:
+            current_time = pygame.time.get_ticks() / 1000
+            if current_time - self.player_last_attack_time > self.attack_cooldown:
+                self.player_attack_wave.append([player_pos[0], player_pos[1]+self.rect.height / 2,1])
+                self.player_last_attack_time = current_time
+
+        if keys[pygame.K_k]:
+            current_time = pygame.time.get_ticks() / 1000
+            if current_time - self.player_last_attack_time > self.attack_cooldown:
+                self.player_attack_wave.append([player_pos[0]+self.rect.width , player_pos[1]+self.rect.height / 2,2])
+                self.player_last_attack_time = current_time
+
+        if keys[pygame.K_i]:
+            current_time = pygame.time.get_ticks() / 1000.0
+            if current_time - self.player_last_attack_time > self.attack_cooldown:
+                self.player_attack_wave.append([player_pos[0]+self.rect.width / 2, player_pos[1],3])
+                self.player_last_attack_time = current_time
+
+        if keys[pygame.K_m]:
+            current_time = pygame.time.get_ticks() / 1000.0
+            if current_time - self.player_last_attack_time > self.attack_cooldown:
+                self.player_attack_wave.append([player_pos[0]+self.rect.width / 2, player_pos[1]+self.rect.height,4])
+                self.player_last_attack_time = current_time
+
+
+
+
+
+        #     # 检查是否击中BOSS
+        #     if (
+        #         boss_pos[0] < attack[0] < boss_pos[0] + boss_size
+        #         and boss_pos[1] < attack[1] < boss_pos[1] + boss_size
+        #     ):
+        #         boss_health -= player_attack
+        #         player_attack_wave.remove(attack)

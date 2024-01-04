@@ -24,7 +24,9 @@ class PlayerSettings:
     playerAttack = 5
     playerDefence = 1
     playerMoney = 100
-
+    playerAttackCooldown = 0.3
+    playerAttackSpeed = 15
+    playerAttackRange = 30
 class NPCSettings:
     npcSpeed = 1
     npcWidth = 60
@@ -157,7 +159,11 @@ class GamePath:
     bgm = [r".\assets\bgm\city.mp3",
            r".\assets\bgm\wild.mp3",
            r".\assets\bgm\boss.mp3"]
-
+    attack = [r"assets\attack\left.png",
+              r"assets\attack\right.png",
+              r"assets\attack\up.png",
+              r"assets\attack\down.png"
+              ]
 class PortalSettings:
     width = 320
     height = 320

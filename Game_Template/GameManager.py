@@ -218,6 +218,8 @@ class GameManager:
             self.render_wild()
         if self.state==GameState.GAME_PLAY_BOSS:
             self.render_boss()
+        self.player.attack()
+        self.render_attack()
         ##### Your Code Here ↑ #####
     
     def render_main_menu(self):
@@ -239,4 +241,25 @@ class GameManager:
         ##### Your Code Here ↓ #####
         self.scene.render(self.player)
         ##### Your Code Here ↑ #####
+
+    def render_attack(self):
+        # 处理玩家的攻击波
+        
+        attack_image = [pygame.transform.scale(pygame.image.load(img),(PlayerSettings.playerAttackRange,PlayerSettings.playerAttackRange)) for img in GamePath.attack]
+
+        # 玩家攻击
+
+        for attack in self.player.player_attack_wave:
+            if attack[2]==1:
+                attack[0] -= self.player.attack_speed
+                self.window.blit(attack_image[0], (attack[0], attack[1]))
+            if attack[2]==2:
+                attack[0] += self.player.attack_speed
+                self.window.blit(attack_image[1], (attack[0], attack[1]))
+            if attack[2]==3:
+                attack[1] -= self.player.attack_speed
+                self.window.blit(attack_image[2], (attack[0], attack[1]))
+            if attack[2]==4: 
+                attack[1] += self.player.attack_speed
+                self.window.blit(attack_image[3], (attack[0], attack[1]))
 
