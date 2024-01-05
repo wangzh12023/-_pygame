@@ -21,6 +21,7 @@ class Scene():
         self.dy=0
         self.portals=pygame.sprite.Group()
         self.npcs=pygame.sprite.Group()
+        self.monsters=pygame.sprite.Group()
         ##### Your Code Here ↑ #####
 
         
@@ -98,6 +99,8 @@ class Scene():
             obstacle.draw(self.window,self.dx,self.dy)
         for npc in self.npcs.sprites():
             npc.draw(self.window,self.dx,self.dy)
+        for monster in self.monsters.sprites():
+            monster.draw(self.window,self.dx,self.dy)
         ##### Your Code Here ↑ #####
 
 
@@ -142,7 +145,7 @@ class WildScene(Scene):
         super().__init__(window=window)
         ##### Your Code Here ↓ #####
         self.gen_WILD()
-        
+        self.gen_monsters()
         ##### Your Code Here ↑ #####
 
     def gen_WILD(self):
@@ -155,7 +158,10 @@ class WildScene(Scene):
 
     def gen_monsters(self, num = 10):
         ##### Your Code Here ↓ #####
-        pass
+        for i in range(num):
+            x=randint(0,SceneSettings.tileXnum-1)
+            y=randint(0,SceneSettings.tileYnum-1)
+            self.monsters.add(Monster(SceneSettings.tileWidth * x, SceneSettings.tileHeight * y))
         ##### Your Code Here ↑ #####
 
 class BossScene(Scene):

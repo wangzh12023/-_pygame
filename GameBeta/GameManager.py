@@ -20,7 +20,7 @@ class GameManager:
         pygame.display.set_caption(WindowSettings.name)
         self.clock=pygame.time.Clock()
         #设置碰撞检测器
-        self.collide=Collidable()
+        #self.collide=Collidable()
 
         self.scene=StartMenu(self.window) 
 
@@ -109,15 +109,21 @@ class GameManager:
         # Then deal with regular updates
         ##### Your Code Here ↓ #####
         self.player.try_move()
-        self.update_collide()
-        if self.collide.is_colliding():
-            if self.collide.collidingWith["portal"]:
-                if self.collide.collidingObject["portal"].GOTO==SceneType.WILD:
+        self.update_collide(self.player)
+        if self.player.collide.is_colliding():
+            if self.player.collide.collidingWith["portal"]:
+                if self.player.collide.collidingObject["portal"].GOTO==SceneType.WILD:
                     pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_WILD))
-            if self.collide.collidingWith["obstacle"]:
+            if self.player.collide.collidingWith["obstacle"]:
                 self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
-            if self.collide.collidingWith["npc"]:
-                pass
+            if self.player.collide.collidingWith["npc"]:
+                self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
+            if self.player.collide.collidingWith["monster"]:
+                self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
+        for attack in self.player.player_attack_wave:
+            self.update_collide(attack)
+            if attack.collide.is_colliding():
+                attack.kill()
         self.scene.update_camera(self.player)
         ##### Your Code Here ↑ #####
 
@@ -129,15 +135,24 @@ class GameManager:
         # Then deal with regular updates
         ##### Your Code Here ↓ #####
         self.player.try_move()
-        self.update_collide()
-        if self.collide.is_colliding():
-            if self.collide.collidingWith["portal"]:
-                if self.collide.collidingObject["portal"].GOTO==SceneType.CITY:
+        self.update_collide(self.player)
+        if self.player.collide.is_colliding():
+            if self.player.collide.collidingWith["portal"]:
+                if self.player.collide.collidingObject["portal"].GOTO==SceneType.CITY:
                     pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_CITY))
-                if self.collide.collidingObject["portal"].GOTO==SceneType.BOSS:
+                if self.player.collide.collidingObject["portal"].GOTO==SceneType.BOSS:
                     pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_BOSS))
-            if self.collide.collidingWith["obstacle"]:
+            if self.player.collide.collidingWith["obstacle"]:
                 self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
+            if self.player.collide.collidingWith["npc"]:
+                self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
+            if self.player.collide.collidingWith["monster"]:
+                self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
+        #检测子弹碰撞
+        for attack in self.player.player_attack_wave:
+            self.update_collide(attack)
+            if attack.collide.is_colliding():
+                attack.kill()
         self.scene.update_camera(self.player)
         ##### Your Code Here ↑ #####
 
@@ -149,15 +164,21 @@ class GameManager:
         # Then deal with regular updates
         ##### Your Code Here ↓ #####
         self.player.try_move()
-        self.update_collide()
-        if self.collide.is_colliding():
-            if self.collide.collidingWith["portal"]:
-                if self.collide.collidingObject["portal"].GOTO==SceneType.WILD:
-                    self.state=GameState.GAME_PLAY_WILD
-                    self.flush_scene(SceneType.WILD)
-                    self.collide.collidingObject["portal"].kill()
-            if self.collide.collidingWith["obstacle"]:
+        self.update_collide(self.player)
+        if self.player.collide.is_colliding():
+            if self.player.collide.collidingWith["portal"]:
+                if self.player.collide.collidingObject["portal"].GOTO==SceneType.WILD:
+                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_WILD))
+            if self.player.collide.collidingWith["obstacle"]:
                 self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
+            if self.player.collide.collidingWith["npc"]:
+                self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
+            if self.player.collide.collidingWith["monster"]:
+                self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
+        for attack in self.player.player_attack_wave:
+            self.update_collide(attack)
+            if attack.collide.is_colliding():
+                attack.kill()
         self.scene.update_camera(self.player)
         ##### Your Code Here ↑ #####
     def update_attack(self):
@@ -166,50 +187,57 @@ class GameManager:
             if attack.over_range(self.scene.cameraX,self.scene.cameraY):
                 attack.kill()
     # Collision-relate update funtions here ↓
-    def update_collide(self):
-        # Player -> Obstacles
+    def update_collide(self,object):
+        # object -> Obstacles
         ##### Your Code Here ↓ #####
-        if pygame.sprite.spritecollide(self.player,self.scene.obstacles,False,pygame.sprite.collide_mask):
-            self.collide.collidingWith["obstacle"]=True
+        if pygame.sprite.spritecollide(object,self.scene.obstacles,False,pygame.sprite.collide_mask):
+            object.collide.collidingWith["obstacle"]=True
             for obstacle in self.scene.obstacles.sprites():
-                if pygame.sprite.collide_rect(self.player,obstacle):
-                    self.collide.collidingObject["obstacle"].append(obstacle)
+                if pygame.sprite.collide_rect(object,obstacle):
+                    object.collide.collidingObject["obstacle"].append(obstacle)
         else:
-            self.collide.collidingWith["obstacle"]=False
-            self.collide.collidingObject["obstacle"]=[]
+            object.collide.collidingWith["obstacle"]=False
+            object.collide.collidingObject["obstacle"]=[]
         ##### Your Code Here ↑ #####
 
-        # Player -> NPCs; if multiple NPCs collided, only first is accepted and dealt with.
+        # object -> NPCs; if multiple NPCs collided, only first is accepted and dealt with.
         ##### Your Code Here ↓ #####
-        if pygame.sprite.spritecollide(self.player,self.scene.npcs,False,pygame.sprite.collide_mask):
-            self.collide.collidingWith["npc"]=True
+        if pygame.sprite.spritecollide(object,self.scene.npcs,False,pygame.sprite.collide_mask):
+            object.collide.collidingWith["npc"]=True
             for npc in self.scene.npcs.sprites():
-                if pygame.sprite.collide_rect(self.player,npc):
-                    self.collide.collidingObject["npc"]=npc
+                if pygame.sprite.collide_rect(object,npc):
+                    object.collide.collidingObject["npc"]=npc
                     break
         else:
-            self.collide.collidingWith["npc"]=False
-            self.collide.collidingObject["npc"]=None
+            object.collide.collidingWith["npc"]=False
+            object.collide.collidingObject["npc"]=None
         ##### Your Code Here ↑ #####
 
-        # Player -> Monsters
+        # object -> Monsters
         ##### Your Code Here ↓ #####
-        pass
-        ##### Your Code Here ↑ #####
-        
-        # Player -> Portals
-        ##### Your Code Here ↓ #####
-        if pygame.sprite.spritecollide(self.player,self.scene.portals,False,pygame.sprite.collide_mask):
-            self.collide.collidingWith["portal"]=True
-            for portal in self.scene.portals.sprites():
-                if pygame.sprite.collide_rect(self.player,portal):
-                    self.collide.collidingObject["portal"]=portal
+        if pygame.sprite.spritecollide(object,self.scene.monsters,False,pygame.sprite.collide_mask):
+            object.collide.collidingWith["monster"]=True
+            for monster in self.scene.monsters.sprites():
+                if pygame.sprite.collide_rect(object,monster):
+                    object.collide.collidingObject["monster"]=monster
         else:
-            self.collide.collidingWith["portal"]=False
-            self.collide.collidingObject["portal"]=None
+            object.collide.collidingWith["monster"]=False
+            object.collide.collidingObject["monster"]=None
         ##### Your Code Here ↑ #####
         
-        # Player -> Boss
+        # object -> Portals
+        ##### Your Code Here ↓ #####
+        if pygame.sprite.spritecollide(object,self.scene.portals,False,pygame.sprite.collide_mask):
+            object.collide.collidingWith["portal"]=True
+            for portal in self.scene.portals.sprites():
+                if pygame.sprite.collide_rect(object,portal):
+                    object.collide.collidingObject["portal"]=portal
+        else:
+            object.collide.collidingWith["portal"]=False
+            object.collide.collidingObject["portal"]=None
+        ##### Your Code Here ↑ #####
+        
+        # object -> Boss
         ##### Your Code Here ↓ #####
         pass
         ##### Your Code Here ↑ #####

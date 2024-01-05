@@ -34,7 +34,7 @@ class DialogNPC(NPC):
         ##### Your Code Here ↓ #####
         super().__init__(x, y, name)
         self.image=pygame.image.load(GamePath.npc)
-        self.imgae=pygame.transform.scale(self.image,(NPCSettings.npcWidth,NPCSettings.npcHeight))
+        self.image=pygame.transform.scale(self.image,(NPCSettings.npcWidth,NPCSettings.npcHeight))
         self.dir=1
         self.rect=self.image.get_rect()
         self.rect.topleft=(x,y)
@@ -65,12 +65,16 @@ class Monster(pygame.sprite.Sprite):
         super().__init__()
         
         ##### Your Code Here ↓ #####
-        pass
+        self.image=pygame.image.load(GamePath.monster)
+        self.image=pygame.transform.scale(self.image,(NPCSettings.npcWidth,NPCSettings.npcHeight))
+        self.rect=self.image.get_rect()
+        self.rect.topleft=(x,y)
         ##### Your Code Here ↑ #####
 
     def draw(self, window, dx=0, dy=0):
         ##### Your Code Here ↓ #####
-        pass
+        self.rect=self.rect.move(dx,dy)
+        window.blit(self.image,self.rect)
         ##### Your Code Here ↑ #####
 
 class Boss(pygame.sprite.Sprite):

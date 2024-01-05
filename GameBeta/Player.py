@@ -26,7 +26,7 @@ class Player(pygame.sprite.Sprite, Collidable):
         self.player_attack_wave=pygame.sprite.Group()#self.player_attack_wave = []
         self.player_attack_range = PlayerSettings.playerAttackRange
         self.player_last_attack_time = 0
-        
+        self.collide=Collidable()
         ##### Your Code Here ↑ #####
     def attr_update(self, addCoins = 0, addHP = 0, addAttack = 0, addDefence = 0):
         ##### Your Code Here ↓ #####
@@ -128,6 +128,7 @@ class Attack(pygame.sprite.Sprite):
         self.rect=self.image.get_rect()
         self.rect.topleft=(x,y)
         self.attack_speed=speed
+        self.collide=Collidable()
         ##### Your Code Here ↑ #####
     def update(self):
         dx=dy=0
