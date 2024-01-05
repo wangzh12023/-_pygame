@@ -10,7 +10,6 @@ class NPC(pygame.sprite.Sprite, Collidable):
         # Initialize father classes
         pygame.sprite.Sprite.__init__(self)
         Collidable.__init__(self)
-
         ##### Your Code Here ↓ #####
         pass
         ##### Your Code Here ↑ #####
@@ -25,14 +24,21 @@ class NPC(pygame.sprite.Sprite, Collidable):
 
     def draw(self, window, dx=0, dy=0):
         ##### Your Code Here ↓ #####
-        pass
+        self.rect=self.rect.move(dx,dy)
+        window.blit(self.image,self.rect)
         ##### Your Code Here ↑ #####
 
 
 class DialogNPC(NPC):
     def __init__(self, x, y, name, dialog):
         ##### Your Code Here ↓ #####
-        pass
+        super().__init__(x, y, name)
+        self.image=pygame.image.load(GamePath.npc)
+        self.imgae=pygame.transform.scale(self.image,(NPCSettings.npcWidth,NPCSettings.npcHeight))
+        self.dir=1
+        self.rect=self.image.get_rect()
+        self.rect.topleft=(x,y)
+        self.speed=NPCSettings.npcSpeed
         ##### Your Code Here ↑ #####
     
     def update(self, ticks):

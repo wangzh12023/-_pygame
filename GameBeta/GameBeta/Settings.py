@@ -194,3 +194,6 @@ class GameEvent:
     EVENT_SWITCH = pygame.USEREVENT + 3
     EVENT_RESTART = pygame.USEREVENT + 4
     EVENT_SHOP = pygame.USEREVENT + 5
+    EVENT_SWITCH_CITY = pygame.USEREVENT + 6
+    EVENT_SWITCH_WILD= pygame.USEREVENT + 7
+    EVENT_SWITCH_BOSS = pygame.USEREVENT + 8

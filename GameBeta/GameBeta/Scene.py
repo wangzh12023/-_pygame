@@ -20,6 +20,7 @@ class Scene():
         self.dx=0
         self.dy=0
         self.portals=pygame.sprite.Group()
+        self.npcs=pygame.sprite.Group()
         ##### Your Code Here ↑ #####
 
         
@@ -95,6 +96,8 @@ class Scene():
             portal.draw(self.window,self.dx,self.dy)
         for obstacle in self.obstacles.sprites():
             obstacle.draw(self.window,self.dx,self.dy)
+        for npc in self.npcs.sprites():
+            npc.draw(self.window,self.dx,self.dy)
         ##### Your Code Here ↑ #####
 
 
@@ -130,6 +133,8 @@ class CityScene(Scene):
         self.map=Maps.gen_city_map()
         self.portals.add(Portal(PortalSettings.coordX,PortalSettings.coordY,SceneType.WILD))
         self.obstacles =Maps.gen_city_obstacle()
+        self.npcs.add(DialogNPC(100,100,"John",1))
+        #self.ShopNpcs.add()
         ##### Your Code Here ↑ #####
 
 class WildScene(Scene):

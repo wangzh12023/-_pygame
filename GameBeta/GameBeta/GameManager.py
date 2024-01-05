@@ -65,39 +65,44 @@ class GameManager:
     def update(self):
         ##### Your Code Here ↓ #####
         self.tick(30)
+        for event in pygame.event.get():
+            if event.type==pygame.QUIT:
+                pygame.QUIT()
+                sys.exit()
+            if event.type==GameEvent.EVENT_SWITCH_CITY:
+                self.state=GameState.GAME_PLAY_CITY
+                self.flush_scene(SceneType.CITY) 
+            if event.type==GameEvent.EVENT_SWITCH_WILD:
+                self.state=GameState.GAME_PLAY_WILD
+                self.flush_scene(SceneType.WILD) 
+            if event.type==GameEvent.EVENT_SWITCH_BOSS:
+                self.state=GameState.GAME_PLAY_BOSS
+                self.flush_scene(SceneType.BOSS) 
         if self.state==GameState.MAIN_MENU:
-            self.update_main_menu(pygame.event.get())
+            self.update_main_menu()
         else:
             if self.state==GameState.GAME_PLAY_CITY:
-                self.update_city(pygame.event.get())
+                self.update_city()
             if self.state==GameState.GAME_PLAY_WILD:
-                self.update_wild(pygame.event.get())
+                self.update_wild()
             if self.state==GameState.GAME_PLAY_BOSS:
-                self.update_boss(pygame.event.get())
+                self.update_boss()
             self.player.attack()
             self.update_attack()
             self.guideboard.update()
         ##### Your Code Here ↑ #####
 
-    def update_main_menu(self, events):
+    def update_main_menu(self):
         ##### Your Code Here ↓ #####
-        for event in events:
-            if event.type==pygame.QUIT:
-                pygame.QUIT()
-                sys.exit()
         keys=pygame.key.get_pressed()
         if any(keys):
-            self.state=GameState.GAME_PLAY_CITY
-            self.flush_scene(SceneType.CITY)
+            pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_CITY))
         ##### Your Code Here ↑ #####
 
-    def update_city(self, events):
+    def update_city(self):
         # Deal with EventQueue First
         ##### Your Code Here ↓ #####
-        for event in events:
-            if event.type==pygame.QUIT:
-                pygame.QUIT()
-                sys.exit()
+            
         
         ##### Your Code Here ↑ #####
 
@@ -108,21 +113,17 @@ class GameManager:
         if self.collide.is_colliding():
             if self.collide.collidingWith["portal"]:
                 if self.collide.collidingObject["portal"].GOTO==SceneType.WILD:
-                    self.state=GameState.GAME_PLAY_WILD
-                    self.flush_scene(SceneType.WILD)
-                    self.collide.collidingObject["portal"].kill()
+                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_WILD))
             if self.collide.collidingWith["obstacle"]:
                 self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
+            if self.collide.collidingWith["npc"]:
+                pass
         self.scene.update_camera(self.player)
         ##### Your Code Here ↑ #####
 
-    def update_wild(self, events):
+    def update_wild(self):
         # Deal with EventQueue First
         ##### Your Code Here ↓ #####
-        for event in events:
-            if event.type==pygame.QUIT:
-                pygame.QUIT()
-                sys.exit()
         ##### Your Code Here ↑ #####
         
         # Then deal with regular updates
@@ -132,25 +133,17 @@ class GameManager:
         if self.collide.is_colliding():
             if self.collide.collidingWith["portal"]:
                 if self.collide.collidingObject["portal"].GOTO==SceneType.CITY:
-                    self.state=GameState.GAME_PLAY_CITY
-                    self.flush_scene(SceneType.CITY)
-                    self.collide.collidingObject["portal"].kill()
+                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_CITY))
                 if self.collide.collidingObject["portal"].GOTO==SceneType.BOSS:
-                    self.state=GameState.GAME_PLAY_BOSS
-                    self.flush_scene(SceneType.BOSS)
-                    self.collide.collidingObject["portal"].kill()
+                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_BOSS))
             if self.collide.collidingWith["obstacle"]:
                 self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
         self.scene.update_camera(self.player)
         ##### Your Code Here ↑ #####
 
-    def update_boss(self, events):
+    def update_boss(self):
         # Deal with EventQueue First
         ##### Your Code Here ↓ #####
-        for event in events:
-            if event.type==pygame.QUIT:
-                pygame.QUIT()
-                sys.exit()
         ##### Your Code Here ↑ #####
         
         # Then deal with regular updates
@@ -188,7 +181,15 @@ class GameManager:
 
         # Player -> NPCs; if multiple NPCs collided, only first is accepted and dealt with.
         ##### Your Code Here ↓ #####
-        pass
+        if pygame.sprite.spritecollide(self.player,self.scene.npcs,False,pygame.sprite.collide_mask):
+            self.collide.collidingWith["npc"]=True
+            for npc in self.scene.npcs.sprites():
+                if pygame.sprite.collide_rect(self.player,npc):
+                    self.collide.collidingObject["npc"]=npc
+                    break
+        else:
+            self.collide.collidingWith["npc"]=False
+            self.collide.collidingObject["npc"]=None
         ##### Your Code Here ↑ #####
 
         # Player -> Monsters
