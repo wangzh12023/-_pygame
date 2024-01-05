@@ -97,11 +97,16 @@ class ShopSettings:
     textSize = 56 # Default font size
     textStartX = boxStartX + 10         # Coordinate X of the first line of dialog
     textStartY = boxStartY + 25    # Coordinate Y of the first line of dialog
-
+class GuideboardSettings:
+    guideWidth=250
+    guideHeight=125
+    change_CD=0.15
 class GamePath:
     # Window related path
     menu = r".\assets\background\menu.png"
     menutext = r".\assets\background\menutext.png"
+    guide =[ r".\assets\background\GuideClose.png",
+            r".\assets\background\GuideOpen.png"]
     wild = r".\assets\background\wild.png"
     mapBlock = r".\assets\background\map.png"
 

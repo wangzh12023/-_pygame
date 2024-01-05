@@ -89,6 +89,8 @@ class Scene():
             for j in range(SceneSettings.tileYnum):
                 self.window.blit(self.map[i][j],(SceneSettings.tileWidth*i-self.cameraX,SceneSettings.tileHeight*j-self.cameraY))
         player.draw(self.window,self.dx,self.dy)
+        for attack in player.player_attack_wave:
+            attack.draw(self.window,self.dx,self.dy)
         for portal in self.portals.sprites():
             portal.draw(self.window,self.dx,self.dy)
         for obstacle in self.obstacles.sprites():
