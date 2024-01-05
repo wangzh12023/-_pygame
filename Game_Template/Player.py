@@ -30,6 +30,7 @@ class Player(pygame.sprite.Sprite, Collidable):
         self.gun_rect = self.image.get_rect()
         self.gun_rect.x=self.rect.x + self.width*0.25
         self.gun_rect.y=self.rect.y + self.height*0.33
+        
 
     def attr_update(self, addCoins = 0, addHP = 0, addAttack = 0, addDefence = 0):
         ##### Your Code Here ↓ #####
