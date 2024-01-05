@@ -103,6 +103,29 @@ class Scene():
             monster.draw(self.window,self.dx,self.dy)
         ##### Your Code Here ↑ #####
 
+class StartCG():
+    def __init__(self, window):
+        ##### Your Code Here ↓ #####
+        self.window=window
+        
+        #导入背景图
+        self.bg=pygame.image.load(GamePath.white_bg)
+        self.bg=pygame.transform.scale(self.bg,(WindowSettings.width,WindowSettings.height))
+        self.cg=pygame.image.load(GamePath.cg)
+        self.cg=pygame.transform.scale(self.cg,(WindowSettings.width,WindowSettings.height))
+        ##### Your Code Here ↑ #####
+
+    def render(self, time):
+        ##### Your Code Here ↓ #####
+        self.window.blit(self.bg,(0,0))
+        if 14000<time<=19000:
+            self.cg.set_alpha(int(150*(time-14000)/1000))
+            self.window.blit(self.cg,(0,0))
+        if 19000<time:
+            self.cg.set_alpha(int(150*(20000-time)/1000))
+            self.window.blit(self.cg,(0,0))
+
+        ##### Your Code Here ↑ #####
 
 class StartMenu():
     def __init__(self, window):

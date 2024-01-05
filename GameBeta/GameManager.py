@@ -8,21 +8,23 @@ from Scene import *
 from Settings import *
 from PopUpBox import *
 from Guide import *
-
+from BgmPlayer import BgmPlayer
 class GameManager:
     def __init__(self):
         
         ##### Your Code Here ↓ #####
+        pygame.mixer.init()
+        self.bgmplayer=BgmPlayer()
+        self.bgmplayer.play("start_bgm")
         #初始游戏状态
-        self.state=GameState.MAIN_MENU
+        self.state=GameState.YUANSHENQIDONG
         #设置窗口和时钟
         self.window=pygame.display.set_mode((WindowSettings.width,WindowSettings.height))
         pygame.display.set_caption(WindowSettings.name)
         self.clock=pygame.time.Clock()
         #设置碰撞检测器
         #self.collide=Collidable()
-
-        self.scene=StartMenu(self.window) 
+        self.scene=StartCG(self.window) 
 
         self.player=Player(WindowSettings.width//2,WindowSettings.height//2)  
 
@@ -50,6 +52,8 @@ class GameManager:
     # Scene-related update functions here ↓
     def flush_scene(self, GOTO:SceneType):
         ##### Your Code Here ↓ #####
+        if GOTO==SceneType.MENU:
+            self.scene=StartMenu(self.window)
         if GOTO==SceneType.CITY:
             self.scene=CityScene(self.window)
             self.player.reset_pos()
@@ -69,6 +73,9 @@ class GameManager:
             if event.type==pygame.QUIT:
                 pygame.QUIT()
                 sys.exit()
+            if event.type==GameEvent.EVENT_SWITCH_START_MENU:
+                self.state=GameState.MAIN_MENU
+                self.flush_scene(SceneType.MENU) 
             if event.type==GameEvent.EVENT_SWITCH_CITY:
                 self.state=GameState.GAME_PLAY_CITY
                 self.flush_scene(SceneType.CITY) 
@@ -78,20 +85,27 @@ class GameManager:
             if event.type==GameEvent.EVENT_SWITCH_BOSS:
                 self.state=GameState.GAME_PLAY_BOSS
                 self.flush_scene(SceneType.BOSS) 
-        if self.state==GameState.MAIN_MENU:
-            self.update_main_menu()
+        self.update_bgmplayer()
+        if self.state==GameState.YUANSHENQIDONG:
+            if self.get_time()/1000>24:
+                pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_START_MENU))
         else:
-            if self.state==GameState.GAME_PLAY_CITY:
-                self.update_city()
-            if self.state==GameState.GAME_PLAY_WILD:
-                self.update_wild()
-            if self.state==GameState.GAME_PLAY_BOSS:
-                self.update_boss()
-            self.player.attack()
-            self.update_attack()
-            self.guideboard.update()
+            if self.state==GameState.MAIN_MENU:
+                self.update_main_menu()
+            else:
+                if self.state==GameState.GAME_PLAY_CITY:
+                    self.update_city()
+                if self.state==GameState.GAME_PLAY_WILD:
+                    self.update_wild()
+                if self.state==GameState.GAME_PLAY_BOSS:
+                    self.update_boss()
+                self.player.attack()
+                self.update_attack()
+                self.guideboard.update()
         ##### Your Code Here ↑ #####
-
+    def update_bgmplayer(self):
+        if self.state!=GameState.YUANSHENQIDONG:
+            self.bgmplayer.stop()
     def update_main_menu(self):
         ##### Your Code Here ↓ #####
         keys=pygame.key.get_pressed()
@@ -251,18 +265,22 @@ class GameManager:
     # Render-relate update functions here ↓
     def render(self):
         ##### Your Code Here ↓ #####
-        if self.state==GameState.MAIN_MENU:
-            self.render_main_menu()
+        if self.state==GameState.YUANSHENQIDONG:
+            self.render_start()
         else:
-            if self.state==GameState.GAME_PLAY_CITY:
-                self.render_city()
-            if self.state==GameState.GAME_PLAY_WILD:
-                self.render_wild()
-            if self.state==GameState.GAME_PLAY_BOSS:
-                self.render_boss()
-            self.guideboard.draw()
+            if self.state==GameState.MAIN_MENU:
+                self.render_main_menu()
+            else:
+                if self.state==GameState.GAME_PLAY_CITY:
+                    self.render_city()
+                if self.state==GameState.GAME_PLAY_WILD:
+                    self.render_wild()
+                if self.state==GameState.GAME_PLAY_BOSS:
+                    self.render_boss()
+                self.guideboard.draw()
         ##### Your Code Here ↑ #####
-    
+    def render_start(self):
+        self.scene.render(self.get_time())
     def render_main_menu(self):
         ##### Your Code Here ↓ #####
         self.scene.render(self.get_time())

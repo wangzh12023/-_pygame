@@ -4,7 +4,7 @@ from enum import Enum
 import pygame
 
 class WindowSettings:
-    name = "Thgink Luos"
+    name = "冤申"
     width = 1280
     height = 720
     outdoorScale = 1.5 # A necessary scale to allow camera movement in outdoor scenes
@@ -47,6 +47,7 @@ class SceneType(Enum):
     CITY = 1
     WILD = 2
     BOSS = 3
+    MENU = 4 
 
 class DialogSettings:
     boxWidth = 800
@@ -103,6 +104,8 @@ class GuideboardSettings:
     change_CD=0.15
 class GamePath:
     # Window related path
+    white_bg=r".\assets\background\white.png"
+    cg=r".\assets\background\cg.png"
     menu = r".\assets\background\menu.png"
     menutext = r".\assets\background\menutext.png"
     guide =[ r".\assets\background\GuideClose.png",
@@ -160,10 +163,13 @@ class GamePath:
     portal = r".\assets\background\portal.png"
 
     tree = r".\assets\tiles\tree.png"
+    
 
-    bgm = [r".\assets\bgm\city.mp3",
+    bgm = [r".\assets\bgm\start_bgm.mp3",
+           r".\assets\bgm\city.mp3",
            r".\assets\bgm\wild.mp3",
-           r".\assets\bgm\boss.mp3"]
+           r".\assets\bgm\boss.mp3",
+           ]
     attack = [r"assets\attack\left.png",
               r"assets\attack\right.png",
               r"assets\attack\up.png",
@@ -179,6 +185,7 @@ class PortalSettings:
     coordY2 =height / 2
 
 class GameState(Enum):
+    YUANSHENQIDONG=9
     MAIN_MENU = 1
     GAME_TRANSITION = 2
     GAME_OVER = 3
@@ -191,9 +198,9 @@ class GameState(Enum):
 class GameEvent:
     EVENT_BATTLE = pygame.USEREVENT + 1
     EVENT_DIALOG = pygame.USEREVENT + 2
-    EVENT_SWITCH = pygame.USEREVENT + 3
+    EVENT_SWITCH_START_MENU = pygame.USEREVENT + 3
     EVENT_RESTART = pygame.USEREVENT + 4
     EVENT_SHOP = pygame.USEREVENT + 5
-    EVENT_SWITCH_CITY = pygame.USEREVENT + 6
+    EVENT_SWITCH_CITY= pygame.USEREVENT + 6
     EVENT_SWITCH_WILD= pygame.USEREVENT + 7
-    EVENT_SWITCH_BOSS = pygame.USEREVENT + 8
+    EVENT_SWITCH_BOSS= pygame.USEREVENT + 8
