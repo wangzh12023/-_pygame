@@ -21,11 +21,8 @@ class GameManager:
         self.clock=pygame.time.Clock()
         #设置碰撞检测器
         self.collide=Collidable()
-
         self.scene=StartMenu(self.window) 
-
         self.player=Player(WindowSettings.width//2,WindowSettings.height//2)  
-
         self.guideboard=Guideboard(self.window)
 
         ##### Your Code Here ↑ #####
@@ -98,11 +95,6 @@ class GameManager:
             if event.type==pygame.QUIT:
                 pygame.QUIT()
                 sys.exit()
-        
-        ##### Your Code Here ↑ #####
-
-        # Then deal with regular updates
-        ##### Your Code Here ↓ #####
         self.player.try_move()
         self.update_collide()
         if self.collide.is_colliding():
@@ -117,16 +109,10 @@ class GameManager:
         ##### Your Code Here ↑ #####
 
     def update_wild(self, events):
-        # Deal with EventQueue First
-        ##### Your Code Here ↓ #####
         for event in events:
             if event.type==pygame.QUIT:
                 pygame.QUIT()
                 sys.exit()
-        ##### Your Code Here ↑ #####
-        
-        # Then deal with regular updates
-        ##### Your Code Here ↓ #####
         self.player.try_move()
         self.update_collide()
         if self.collide.is_colliding():
@@ -142,19 +128,12 @@ class GameManager:
             if self.collide.collidingWith["obstacle"]:
                 self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
         self.scene.update_camera(self.player)
-        ##### Your Code Here ↑ #####
 
     def update_boss(self, events):
-        # Deal with EventQueue First
-        ##### Your Code Here ↓ #####
         for event in events:
             if event.type==pygame.QUIT:
                 pygame.QUIT()
                 sys.exit()
-        ##### Your Code Here ↑ #####
-        
-        # Then deal with regular updates
-        ##### Your Code Here ↓ #####
         self.player.try_move()
         self.update_collide()
         if self.collide.is_colliding():
@@ -221,7 +200,6 @@ class GameManager:
 
     # Render-relate update functions here ↓
     def render(self):
-        ##### Your Code Here ↓ #####
         if self.state==GameState.MAIN_MENU:
             self.render_main_menu()
         else:

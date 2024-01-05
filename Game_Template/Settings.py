@@ -17,7 +17,7 @@ class SceneSettings:
 
 class PlayerSettings:
     # Initial Player Settings
-    playerSpeed = 7
+    playerSpeed = 2
     playerWidth = 60
     playerHeight = 55
     playerHP = 20
@@ -27,6 +27,8 @@ class PlayerSettings:
     playerAttackCooldown = 0.3
     playerAttackSpeed = 15
     playerAttackRange = 30
+    playerGunWidth = 60
+    playerGunHeight = 30
 class NPCSettings:
     npcSpeed = 1
     npcWidth = 60
@@ -113,15 +115,22 @@ class GamePath:
     # player/npc related path
     npc = r".\assets\npc\npc.png"
     player = [
-        r".\assets\player\1.png", 
-        r".\assets\player\1.png",
-        r".\assets\player\2.png", 
-        r".\assets\player\2.png", 
-        r".\assets\player\3.png", 
-        r".\assets\player\3.png", 
-        r".\assets\player\4.png", 
-        r".\assets\player\4.png", 
-        # 8 frames for a single loop of animation looks much better.
+        [r".\assets\player\1.png", r".\assets\player\1.png",
+        r".\assets\player\2.png", r".\assets\player\2.png", 
+        r".\assets\player\3.png", r".\assets\player\3.png", 
+        r".\assets\player\4.png", r".\assets\player\4.png"], 
+        [r".\assets\player\5.png", r".\assets\player\5.png",
+        r".\assets\player\6.png", r".\assets\player\6.png", 
+        r".\assets\player\7.png", r".\assets\player\7.png", 
+        r".\assets\player\8.png", r".\assets\player\8.png"],
+        [r".\assets\player\9.png", r".\assets\player\9.png", 
+        r".\assets\player\10.png", r".\assets\player\10.png", 
+        r".\assets\player\11.png", r".\assets\player\11.png", 
+        r".\assets\player\12.png", r".\assets\player\12.png"],
+        [r".\assets\player\13.png", r".\assets\player\13.png", 
+        r".\assets\player\14.png", r".\assets\player\14.png", 
+        r".\assets\player\15.png", r".\assets\player\15.png", 
+        r".\assets\player\16.png", r".\assets\player\16.png"]
     ]
     monster = r".\assets\npc\monster\1.png"
     boss = r".\assets\npc\boss.png"
@@ -169,6 +178,7 @@ class GamePath:
               r"assets\attack\up.png",
               r"assets\attack\down.png"
               ]
+    gun = [ r"assets\gun\1.png",r"assets\gun\2.png",r"assets\gun\3.png",r"assets\gun\4.png"]
 class PortalSettings:
     width = 320
     height = 320

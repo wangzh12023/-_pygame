@@ -21,9 +21,6 @@ class Scene():
         self.dy=0
         self.portals=pygame.sprite.Group()
         ##### Your Code Here ↑ #####
-
-        
-
     def trigger_dialog(self, npc):
         ##### Your Code Here ↓ #####
         pass
