@@ -39,6 +39,7 @@ class NPCSettings:
     npcWidth = 60
     npcHeight = 60
     talkCD = 30
+    SelectCD = 5
 
 class NPCType(Enum):
     DIALOG = 1
@@ -114,6 +115,7 @@ class GamePath:
 
     # player/npc related path
     npc = r".\assets\npc\npc.png"
+    trader = r".\assets\npc\trader.png"
     player = [
         r".\assets\player\1.png", 
         r".\assets\player\1.png",
@@ -200,3 +202,4 @@ class GameEvent:
     EVENT_DIALOG = pygame.USEREVENT + 5
     EVENT_END_DIALOG = pygame.USEREVENT + 6
     EVENT_SHOP = pygame.USEREVENT + 7
+    EVENT_END_SHOP = pygame.USEREVENT + 8

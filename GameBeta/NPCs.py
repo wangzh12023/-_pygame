@@ -6,7 +6,7 @@ from Settings import *
 from Attributes import *
 
 class NPC(pygame.sprite.Sprite, Collidable):
-    def __init__(self, x, y, name):
+    def __init__(self, x, y, name,dialog):
         # Initialize father classes
         pygame.sprite.Sprite.__init__(self)
         Collidable.__init__(self)
@@ -18,14 +18,17 @@ class NPC(pygame.sprite.Sprite, Collidable):
         self.direction=DirectionType.RIGHT
         #设置速度
         self.speed=NPCSettings.npcSpeed
+        #设置对话
+        self.dialog=dialog
         #设置对话cd
-        
-        self.talking=False
         self.talkcd=0
     #重置对话冷却时间
-    def reset_talkCD(self):
+    def reset_talkCD(self,cdtype):
         ##### Your Code Here ↓ #####
-        self.talkcd = NPCSettings.talkCD 
+        if cdtype=="Talk":
+            self.talkcd = NPCSettings.talkCD 
+        if cdtype=="Select":
+            self.talkcd = NPCSettings.SelectCD
         ##### Your Code Here ↑ #####
     #检测能否对话
     def can_talk(self):
@@ -42,15 +45,14 @@ class NPC(pygame.sprite.Sprite, Collidable):
 
 class DialogNPC(NPC):
     def __init__(self, x, y, name,dialog):
-        super().__init__(x, y, name)
+        super().__init__(x, y, name,dialog)
         self.image=pygame.transform.scale(pygame.image.load(GamePath.npc),
                                           (NPCSettings.npcWidth,NPCSettings.npcHeight))
         #设置坐标
         self.rect=self.image.get_rect()
         self.rect.topleft=(x,y)
-        #设置对话
-        self.dialog=dialog
-    def update(self,cameraX,cameraY,dialogbox):
+        self.talking=False
+    def update(self,cameraX,cameraY):
         ##### Your Code Here ↓ #####
         if not self.talking:
             if self.direction==DirectionType.RIGHT:
@@ -70,16 +72,34 @@ class DialogNPC(NPC):
         if not self.can_talk():
             self.talkcd -= 1
 class ShopNPC(NPC):
-    def __init__(self, x, y, name, items, dialog):
-        super().__init__(x, y, name)
-
-        ##### Your Code Here ↓ #####
-        pass
-        ##### Your Code Here ↑ #####
+    def __init__(self, x, y, name, dialog,items):
+        super().__init__(x, y, name,dialog)
+        self.image=pygame.transform.scale(pygame.image.load(GamePath.trader),
+                                          (NPCSettings.npcWidth,NPCSettings.npcHeight))
+        self.rect=self.image.get_rect()
+        self.rect.topleft=(x,y)
+        self.items=items
+        self.shopping=False
     
-    def update(self, ticks):
+    def update(self, cameraX,cameraY):
         ##### Your Code Here ↓ #####
-        pass
+        if not self.shopping:
+            if self.direction==DirectionType.RIGHT:
+                self.rect.x += self.speed 
+            else:
+                self.rect.x -= self.speed
+            #如果超出移动范围，转向
+            if abs(cameraX + self.rect.x -self.initialPosition) > 50:
+                #翻转图片
+                self.image = pygame.transform.flip(self.image, True, False)
+                # 反转方向
+                if self.direction ==  DirectionType.RIGHT:
+                    self.direction=DirectionType.LEFT
+                else:
+                    self.direction=DirectionType.RIGHT
+        #更新冷却
+        if not self.can_talk():
+            self.talkcd -= 1
         ##### Your Code Here ↑ #####
     
 

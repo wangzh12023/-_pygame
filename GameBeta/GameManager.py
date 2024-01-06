@@ -27,6 +27,8 @@ class GameManager:
         self.guideboard=Guideboard(self.window)
         #创建对话栏
         self.dialogbox=DialogBox(self.window)
+        #创建购物栏
+        self.shopbox=ShoppingBox(self.window)
         #初始游戏状态
         self.state=GameState.START_CG
     #设置帧率
@@ -79,6 +81,13 @@ class GameManager:
             if event.type==GameEvent.EVENT_END_DIALOG:#结束对话
                 self.player.talking=False
                 self.dialogbox.npc.talking=False
+            if event.type==GameEvent.EVENT_SHOP:#开始购物
+                self.player.shopping=True
+                self.shopbox.set_npc(self.player.collide.collidingObject["npc"],self.player)
+                self.shopbox.npc.shopping=True
+            if event.type==GameEvent.EVENT_END_SHOP:#结束购物
+                self.player.shopping=False
+                self.shopbox.npc.shopping=False
         #更新背景音乐
         self.update_bgmplayer()
         
@@ -117,6 +126,8 @@ class GameManager:
         self.scene.update_camera(self.player)
         #更新对话栏
         self.update_dialogbox()
+        #更新对话栏
+        self.update_shopbox()
     #更新野外
     def update_wild(self):
         self.update_player()#更新主人公状态
@@ -148,13 +159,16 @@ class GameManager:
     #更新NPC
     def update_NPCs(self):
         for npc in self.scene.npcs.sprites():
-            npc.update(self.scene.cameraX,self.scene.cameraY,self.dialogbox)
+            npc.update(self.scene.cameraX,self.scene.cameraY)
     #更新提示板
     def update_guide(self):
         self.guideboard.update(self.get_time())
     def update_dialogbox(self):
         if self.dialogbox.open:
             self.dialogbox.update()
+    def update_shopbox(self):
+        if self.shopbox.state!="Close":
+            self.shopbox.update()
     #更新给定对象（包括主人公和子弹）的碰撞
     def update_collide(self,object):
         # object -> Obstacles
@@ -213,9 +227,11 @@ class GameManager:
                 self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
 
             if self.player.collide.collidingWith["npc"]:#与NPC碰撞
-                if self.player.collide.collidingObject["npc"].can_talk():
-                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_DIALOG))
-                self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
+                if self.player.collide.collidingObject["npc"].can_talk() and not (self.player.talking or self.player.shopping):
+                    if isinstance(self.player.collide.collidingObject["npc"],DialogNPC):
+                        pygame.event.post(pygame.event.Event(GameEvent.EVENT_DIALOG))
+                    if isinstance(self.player.collide.collidingObject["npc"],ShopNPC):
+                        pygame.event.post(pygame.event.Event(GameEvent.EVENT_SHOP))
 
             if self.player.collide.collidingWith["monster"]:#与怪物碰撞
                 self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
@@ -252,6 +268,8 @@ class GameManager:
         #如果正在对话,渲染对话栏
         if self.player.talking:
             self.render_dialogbox()
+        if self.player.shopping:
+            self.render_shopbox()
     #渲染野外
     def render_wild(self):
         self.scene.render(self.player)#渲染场景
@@ -266,3 +284,5 @@ class GameManager:
     #渲染对话栏
     def render_dialogbox(self):
         self.dialogbox.draw()
+    def render_shopbox(self):
+        self.shopbox.draw()

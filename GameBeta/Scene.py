@@ -122,9 +122,13 @@ class CityScene(Scene):
         self.map=Maps.gen_city_map()
         
         self.portals.add(Portal(PortalSettings.coordX1,PortalSettings.coordY1,SceneType.WILD))
+        
         self.obstacles =Maps.gen_city_obstacle()
+        
         self.npcs.add(DialogNPC(100,100,"John",[["Hello","2024"],["I'm fine","Tkx"]]))
 
+        self.npcs.add(ShopNPC(100,500,"Jack",[["Have a look"]],{"Attack +1": "Coin -15", "Defence +1": "Coin -15",
+             "HP +1": "Coin -15", "???": "HP -5", "Exit": ""}))
 class WildScene(Scene):
     def __init__(self, window):
         super().__init__(window=window)

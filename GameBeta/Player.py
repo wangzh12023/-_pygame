@@ -26,8 +26,14 @@ class Player(pygame.sprite.Sprite, Collidable):
         #设置移动量
         self.dx=0
         self.dy=0
+        #设置设置
+        self.money=PlayerSettings.playerMoney
+        self.HP=PlayerSettings.playerHP
+        self.attack=PlayerSettings.playerAttack
+        self.defence=PlayerSettings.playerDefence
         #设置对话状态
         self.talking=False
+        self.shopping=False
         #创建枪
         self.gun=Gun()
         #设置子弹冷却时间和移动速度
@@ -42,13 +48,16 @@ class Player(pygame.sprite.Sprite, Collidable):
         self.collide=Collidable()
     #更新状态
     def attr_update(self, addCoins = 0, addHP = 0, addAttack = 0, addDefence = 0):
-        pass
+        self.money+=addCoins
+        self.HP+=addHP
+        self.attack+=addAttack
+        self.defence+=addDefence
     #回到画面中心
     def reset_pos(self, x=WindowSettings.width // 2, y=WindowSettings.height // 2):
         self.rect.topleft=(x,y)
     def update(self,time):
         #如果正在对话则则不尝试更新
-        if not self.talking:
+        if not self.talking and not self.shopping:
             #尝试移动
             self.try_move()
             #尝试攻击
