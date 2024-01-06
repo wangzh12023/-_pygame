@@ -9,6 +9,10 @@ class WindowSettings:
     height = 720
     outdoorScale = 1.5 # A necessary scale to allow camera movement in outdoor scenes
 
+class BGMSettings:
+    StartBGM_length=22
+    Test=1
+
 class SceneSettings:
     tileXnum = 48 # 64
     tileYnum = 27 # 36
@@ -29,20 +33,24 @@ class PlayerSettings:
     playerAttackRange = 30
     playerGunWidth = 60
     playerGunHeight = 60
+
 class NPCSettings:
     npcSpeed = 1
     npcWidth = 60
     npcHeight = 60
     talkCD = 30
+
 class NPCType(Enum):
     DIALOG = 1
     MONSTER = 2
     SHOP = 3
+
 class DirectionType(Enum):
     UP = 0 
     DOWN = 1
     LEFT = 2
     RIGHT = 3
+
 class BossSettings:
     width = 300
     height = 300
@@ -71,30 +79,6 @@ class DialogSettings:
     npcCoordX = 0
     npcCoordY = WindowSettings.height * 2 // 3 - 20
 
-class BattleSettings:
-    boxWidth = WindowSettings.width * 3 // 4 
-    boxHeight = WindowSettings.height * 3 // 4 
-    boxStartX = WindowSettings.width // 8           # Coordinate X of the box
-    boxStartY = WindowSettings.height // 8
-    textSize = 48 # Default font size
-    textStartX = WindowSettings.width // 4 
-    textPlayerStartX = WindowSettings.width // 4          # Coordinate X of the first line of dialog
-    textMonsterStartX = WindowSettings.width // 2 + 100   
-    textStartY = WindowSettings.height // 3         # Coordinate Y of the first line of dialog
-    textVerticalDist = textSize // 4 * 3            # Vertical distance of two lines
-
-    playerWidth = WindowSettings.width // 6
-    playerHeight = WindowSettings.height // 3
-    playerCoordX = WindowSettings.width // 8
-    playerCoordY = WindowSettings.height // 2 
-
-    monsterWidth = WindowSettings.width // 6
-    monsterHeight = WindowSettings.height // 3
-    monsterCoordX = WindowSettings.width * 5 // 8
-    monsterCoordY = WindowSettings.height // 2 
-
-    stepSize = 20
-
 class ShopSettings:
     boxWidth = 800
     boxHeight = 200
@@ -108,14 +92,23 @@ class GuideboardSettings:
     guideWidth=250
     guideHeight=125
     change_CD=0.15
+
 class GamePath:
+    bgm = [r".\assets\bgm\start_bgm.mp3",
+           r".\assets\bgm\city.mp3",
+           r".\assets\bgm\wild.mp3",
+           r".\assets\bgm\boss.mp3",
+           ]
     # Window related path
     white_bg=r".\assets\background\white.png"
     cg=r".\assets\background\cg.png"
+
     menu = r".\assets\background\menu.png"
     menutext = r".\assets\background\menutext.png"
+
     guide =[ r".\assets\background\GuideClose.png",
             r".\assets\background\GuideOpen.png"]
+    
     wild = r".\assets\background\wild.png"
     mapBlock = r".\assets\background\map.png"
 
@@ -171,47 +164,39 @@ class GamePath:
     tree = r".\assets\tiles\tree.png"
     
 
-    bgm = [r".\assets\bgm\start_bgm.mp3",
-           r".\assets\bgm\city.mp3",
-           r".\assets\bgm\wild.mp3",
-           r".\assets\bgm\boss.mp3",
-           ]
-    attack = [r"assets\attack\left.png",
-              r"assets\attack\right.png",
-              r"assets\attack\up.png",
-              r"assets\attack\down.png"
+    
+    attack = [r"assets\attack\up.png",
+              r"assets\attack\down.png",
+              r"assets\attack\left.png",
+              r"assets\attack\right.png"
               ]
     gun = [ r"assets\gun\up.png",
            r"assets\gun\down.png",
            r"assets\gun\left.png",
-           r"assets\gun\right.png"]
+           r"assets\gun\right.png"
+           ]
+    
 class PortalSettings:
     width = 320
     height = 320
-    coordX = (SceneSettings.tileXnum - 10) * SceneSettings.tileWidth - width / 2
-    coordY = (SceneSettings.tileYnum / 2) * SceneSettings.tileHeight - height / 2
+    coordX1 = (SceneSettings.tileXnum - 10) * SceneSettings.tileWidth - width / 2
+    coordY1 = (SceneSettings.tileYnum / 2) * SceneSettings.tileHeight - height / 2
 
-    coordX2 =width / 2
-    coordY2 =height / 2
+    coordX2 = width / 2
+    coordY2 = height / 2
 
 class GameState(Enum):
-    YUANSHENQIDONG=9
-    MAIN_MENU = 1
-    GAME_TRANSITION = 2
-    GAME_OVER = 3
-    GAME_WIN = 4
-    GAME_PAUSE = 5
-    GAME_PLAY_WILD = 6
-    GAME_PLAY_CITY = 7
-    GAME_PLAY_BOSS = 8
+    START_CG = 1
+    MAIN_MENU = 2
+    GAME_PLAY_WILD = 3
+    GAME_PLAY_CITY = 4
+    GAME_PLAY_BOSS = 5
 
 class GameEvent:
-    EVENT_BATTLE = pygame.USEREVENT + 1
-    EVENT_DIALOG = pygame.USEREVENT + 2
-    EVENT_SWITCH_START_MENU = pygame.USEREVENT + 3
-    EVENT_RESTART = pygame.USEREVENT + 4
-    EVENT_SHOP = pygame.USEREVENT + 5
-    EVENT_SWITCH_CITY= pygame.USEREVENT + 6
-    EVENT_SWITCH_WILD= pygame.USEREVENT + 7
-    EVENT_SWITCH_BOSS= pygame.USEREVENT + 8
-    EVENT_END_DIALOG = pygame.USEREVENT + 9
+    EVENT_SWITCH_START_MENU = pygame.USEREVENT + 1
+    EVENT_SWITCH_CITY= pygame.USEREVENT + 2
+    EVENT_SWITCH_WILD= pygame.USEREVENT + 3
+    EVENT_SWITCH_BOSS= pygame.USEREVENT + 4
+    EVENT_DIALOG = pygame.USEREVENT + 5
+    EVENT_END_DIALOG = pygame.USEREVENT + 6
+    EVENT_SHOP = pygame.USEREVENT + 7

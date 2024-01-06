@@ -10,82 +10,65 @@ class NPC(pygame.sprite.Sprite, Collidable):
         # Initialize father classes
         pygame.sprite.Sprite.__init__(self)
         Collidable.__init__(self)
-        ##### Your Code Here ↓ #####
+        #设置名字
         self.name=name
-        ##### Your Code Here ↑ #####
-
-
+        #记录初始位置
+        self.initialPosition=x
+        #设置方向
+        self.direction=DirectionType.RIGHT
+        #设置速度
+        self.speed=NPCSettings.npcSpeed
+        #设置对话cd
+        
+        self.talking=False
+        self.talkcd=0
+    #重置对话冷却时间
     def reset_talkCD(self):
         ##### Your Code Here ↓ #####
         self.talkcd = NPCSettings.talkCD 
         ##### Your Code Here ↑ #####
+    #检测能否对话
+    def can_talk(self):
+        return self.talkcd <= 0
+    #渲染
     def draw(self, window, dx=0, dy=0):
-        ##### Your Code Here ↓ #####
         self.rect=self.rect.move(dx,dy)
         window.blit(self.image,self.rect)
-        ##### Your Code Here ↑ #####
-
+    def talk_image(self):
+        if self.direction==DirectionType.RIGHT:
+            return self.image
+        else:
+            return pygame.transform.flip(self.image, True, False)   
 
 class DialogNPC(NPC):
     def __init__(self, x, y, name,dialog):
-        ##### Your Code Here ↓ #####
         super().__init__(x, y, name)
-        self.image=pygame.image.load(GamePath.npc)
-        self.image=pygame.transform.scale(self.image,(NPCSettings.npcWidth,NPCSettings.npcHeight))
-        
-        self.direction=1
-
-        self.initialPosition=x
-
+        self.image=pygame.transform.scale(pygame.image.load(GamePath.npc),
+                                          (NPCSettings.npcWidth,NPCSettings.npcHeight))
+        #设置坐标
         self.rect=self.image.get_rect()
         self.rect.topleft=(x,y)
-        self.speed=NPCSettings.npcSpeed
+        #设置对话
         self.dialog=dialog
-        self.talking=False
-        self.talkcd=0
-
-        self.dialog_index=0
-        ##### Your Code Here ↑ #####
-    def can_talk(self):
-        return self.talkcd <= 0
-    def reset_talk(self,dialogbox):
-        self.reset_talkCD()
-        self.dialog_index=0
-        dialogbox.update(self.talk_image(),self.dialog[self.dialog_index])
-        self.dialog_index+=1
-    #对话时的图像
-    def talk_image(self):
-        if self.direction==1:
-            return self.image
-        else:
-            return pygame.transform.flip(self.image, True, False)
     def update(self,cameraX,cameraY,dialogbox):
         ##### Your Code Here ↓ #####
-        if self.talking:
-            if not self.can_talk():
-                self.talkcd -= 1 
+        if not self.talking:
+            if self.direction==DirectionType.RIGHT:
+                self.rect.x += self.speed 
             else:
-                keys=pygame.key.get_pressed()
-                if any(keys):
-                    if self.dialog_index<len(self.dialog):
-                        dialogbox.update(self.talk_image(),self.dialog[self.dialog_index])
-                        self.dialog_index+=1
-                    else:
-                        pygame.event.post(pygame.event.Event(GameEvent.EVENT_END_DIALOG))
-                        self.talking=False
-                    self.reset_talkCD()
-        else:
-            self.rect.x += self.speed * self.direction
+                self.rect.x -= self.speed
+            #如果超出移动范围，转向
             if abs(cameraX + self.rect.x -self.initialPosition) > 50:
-                self.direction *= -1  # 反转方向
+                #翻转图片
                 self.image = pygame.transform.flip(self.image, True, False)
-            if not self.can_talk():
-                self.talkcd -= 1
-        
-        
-            
-        ##### Your Code Here ↑ #####
-
+                # 反转方向
+                if self.direction ==  DirectionType.RIGHT:
+                    self.direction=DirectionType.LEFT
+                else:
+                    self.direction=DirectionType.RIGHT
+        #更新冷却
+        if not self.can_talk():
+            self.talkcd -= 1
 class ShopNPC(NPC):
     def __init__(self, x, y, name, items, dialog):
         super().__init__(x, y, name)

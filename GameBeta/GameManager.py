@@ -11,202 +11,153 @@ from Guide import *
 from BgmPlayer import BgmPlayer
 class GameManager:
     def __init__(self):
-        ##### Your Code Here ↓ #####
-        pygame.mixer.init()
+        #设置背景音乐播放器并播放初始背景音乐
         self.bgmplayer=BgmPlayer()
         self.bgmplayer.play("start_bgm")
-        #初始游戏状态
-        self.state=GameState.YUANSHENQIDONG
-        #设置窗口和时钟
+        #创建窗口
         self.window=pygame.display.set_mode((WindowSettings.width,WindowSettings.height))
         pygame.display.set_caption(WindowSettings.name)
+        #创建时钟
         self.clock=pygame.time.Clock()
-        #设置碰撞检测器
-        #self.collide=Collidable()
+        #设置初始场景
         self.scene=StartCG(self.window) 
-
+        #创建主人公
         self.player=Player(WindowSettings.width//2,WindowSettings.height//2)  
-
+        #创建提示板
         self.guideboard=Guideboard(self.window)
-
+        #创建对话栏
         self.dialogbox=DialogBox(self.window)
-        ##### Your Code Here ↑ #####
-
-    def game_reset(self):
-
-        ##### Your Code Here ↓ #####
-        pass
-        ##### Your Code Here ↑ #####
-
-    # Necessary game components here ↓
+        #初始游戏状态
+        self.state=GameState.START_CG
+    #设置帧率
     def tick(self, fps):
-        ##### Your Code Here ↓ #####
         self.clock.tick(fps)
-        ##### Your Code Here ↑ #####
-
+    #返回当前游戏进行时间(s)
     def get_time(self):
-        ##### Your Code Here ↓ #####
-        return pygame.time.get_ticks()
-        ##### Your Code Here ↑ #####
-
-    # Scene-related update functions here ↓
+        return pygame.time.get_ticks()/1000
+    #场景切换
     def flush_scene(self, GOTO:SceneType):
-        ##### Your Code Here ↓ #####
+        #根据场景切换信息更换场景
         if GOTO==SceneType.MENU:
             self.scene=StartMenu(self.window)
         if GOTO==SceneType.CITY:
             self.scene=CityScene(self.window)
-            self.player.reset_pos()
         if GOTO==SceneType.WILD:
             self.scene=WildScene(self.window)
-            self.player.reset_pos()
         if GOTO==SceneType.BOSS:
             self.scene=BossScene(self.window)
-            self.player.reset_pos()
-        self.player.player_attack_wave.empty()
-        ##### Your Code Here ↑ #####
-
+        #将场景重置
+        self.scene_reset()
+    #重置场景的函数
+    def scene_reset(self):
+        self.player.reset_pos()#主人公回到屏幕中央
+        self.player.attacks.empty()#请空子弹
+    #总更新函数
     def update(self):
-        ##### Your Code Here ↓ #####
         self.tick(30)
+        #处理事件
         for event in pygame.event.get():
-            if event.type==pygame.QUIT:
+            if event.type==pygame.QUIT:#退出
                 pygame.QUIT()
                 sys.exit()
-            if event.type==GameEvent.EVENT_SWITCH_START_MENU:
+            if event.type==GameEvent.EVENT_SWITCH_START_MENU:#进入主菜单
                 self.state=GameState.MAIN_MENU
                 self.flush_scene(SceneType.MENU) 
-            if event.type==GameEvent.EVENT_SWITCH_CITY:
+            if event.type==GameEvent.EVENT_SWITCH_CITY:#进入城市
                 self.state=GameState.GAME_PLAY_CITY
                 self.flush_scene(SceneType.CITY) 
-            if event.type==GameEvent.EVENT_SWITCH_WILD:
+            if event.type==GameEvent.EVENT_SWITCH_WILD:#进入野外
                 self.state=GameState.GAME_PLAY_WILD
                 self.flush_scene(SceneType.WILD) 
-            if event.type==GameEvent.EVENT_SWITCH_BOSS:
+            if event.type==GameEvent.EVENT_SWITCH_BOSS:#进入BOSS房
                 self.state=GameState.GAME_PLAY_BOSS
                 self.flush_scene(SceneType.BOSS) 
-            if event.type==GameEvent.EVENT_DIALOG:
-                self.player.collide.collidingObject["npc"].talking=True
-                self.player.collide.collidingObject["npc"].reset_talk(self.dialogbox)
+            if event.type==GameEvent.EVENT_DIALOG:#开始对话
                 self.player.talking=True
-            if event.type==GameEvent.EVENT_END_DIALOG:
+                self.dialogbox.set_npc(self.player.collide.collidingObject["npc"])
+                self.dialogbox.npc.talking=True
+            if event.type==GameEvent.EVENT_END_DIALOG:#结束对话
                 self.player.talking=False
-
+                self.dialogbox.npc.talking=False
+        #更新背景音乐
         self.update_bgmplayer()
         
-        if self.state==GameState.YUANSHENQIDONG:
-            if self.get_time()/1000>1:#22
-                pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_START_MENU))
-        else:
-            if self.state==GameState.MAIN_MENU:
+        if self.state==GameState.START_CG:
+            self.update_start_cg()
+        if self.state==GameState.MAIN_MENU:
                 self.update_main_menu()
-            else:
-                self.player.try_move()
-                self.update_collide(self.player)
-                self.player.attack()
-                self.update_attack()
-                self.update_NPCs()
-                if self.state==GameState.GAME_PLAY_CITY:
-                    self.update_city()
-                if self.state==GameState.GAME_PLAY_WILD:
-                    self.update_wild()
-                if self.state==GameState.GAME_PLAY_BOSS:
-                    self.update_boss()
-                self.guideboard.update()
-        ##### Your Code Here ↑ #####
+        if self.state==GameState.GAME_PLAY_CITY:
+            self.update_city()
+        if self.state==GameState.GAME_PLAY_WILD:
+            self.update_wild()
+        if self.state==GameState.GAME_PLAY_BOSS:
+            self.update_boss()
+    #更新CG
+    def update_start_cg(self):
+        if self.get_time()>BGMSettings.Test:#StartBGM_length=22
+                pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_START_MENU))
+    #更新背景音乐
     def update_bgmplayer(self):
-        if self.state!=GameState.YUANSHENQIDONG:
+        if self.state!=GameState.START_CG:
             self.bgmplayer.stop()
+    #更新主菜单
     def update_main_menu(self):
-        ##### Your Code Here ↓ #####
         keys=pygame.key.get_pressed()
-        if any(keys):
+        if any(keys):#按下任意键进入游戏
             pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_CITY))
-        ##### Your Code Here ↑ #####
-
+    #更新城市
     def update_city(self):
-        # Deal with EventQueue First
-        ##### Your Code Here ↓ #####
-            
-        
-        ##### Your Code Here ↑ #####
-
-        # Then deal with regular updates
-        ##### Your Code Here ↓ #####
-        if self.player.collide.is_colliding():
-            if self.player.collide.collidingWith["portal"]:
-                if self.player.collide.collidingObject["portal"].GOTO==SceneType.WILD:
-                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_WILD))
-            if self.player.collide.collidingWith["obstacle"]:
-                self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
-            if self.player.collide.collidingWith["npc"]:
-                if self.player.collide.collidingObject["npc"].can_talk():
-                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_DIALOG))
-                self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
-            if self.player.collide.collidingWith["monster"]:
-                self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
-        for attack in self.player.player_attack_wave:
-            self.update_collide(attack)
-            if attack.collide.is_colliding():
-                attack.kill()
+        self.update_player()#更新主人公状态
+        self.update_attack()#更新子弹状态
+        self.update_NPCs()#更新NPC状态
+        self.update_guide()#更新提示板状态
+        #处理碰撞
+        self.manage_collide()
+        #更新镜头
         self.scene.update_camera(self.player)
-        ##### Your Code Here ↑ #####
-
+        #更新对话栏
+        self.update_dialogbox()
+    #更新野外
     def update_wild(self):
-        # Deal with EventQueue First
-        ##### Your Code Here ↓ #####
-        ##### Your Code Here ↑ #####
-        
-        # Then deal with regular updates
-        ##### Your Code Here ↓ #####
-        if self.player.collide.is_colliding():
-            if self.player.collide.collidingWith["portal"]:
-                if self.player.collide.collidingObject["portal"].GOTO==SceneType.CITY:
-                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_CITY))
-                if self.player.collide.collidingObject["portal"].GOTO==SceneType.BOSS:
-                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_BOSS))
-            if self.player.collide.collidingWith["obstacle"]:
-                self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
-            if self.player.collide.collidingWith["monster"]:
-                self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
-        #检测子弹碰撞
-        for attack in self.player.player_attack_wave:
-            self.update_collide(attack)
-            if attack.collide.is_colliding():
-                attack.kill()
+        self.update_player()#更新主人公状态
+        self.update_attack()#更新子弹状态
+        self.update_NPCs()#更新NPC状态
+        self.update_guide()#更新提示板状态
+        #处理碰撞
+        self.manage_collide()
+        #更新镜头
         self.scene.update_camera(self.player)
-        ##### Your Code Here ↑ #####
-
+    #更新BOSS房
     def update_boss(self):
-        # Deal with EventQueue First
-        ##### Your Code Here ↓ #####
-        ##### Your Code Here ↑ #####
-        
-        # Then deal with regular updates
-        ##### Your Code Here ↓ #####
-        if self.player.collide.is_colliding():
-            if self.player.collide.collidingWith["portal"]:
-                if self.player.collide.collidingObject["portal"].GOTO==SceneType.WILD:
-                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_WILD))
-            if self.player.collide.collidingWith["obstacle"]:
-                self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
-            if self.player.collide.collidingWith["monster"]:
-                self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
-        for attack in self.player.player_attack_wave:
-            self.update_collide(attack)
-            if attack.collide.is_colliding():
-                attack.kill()
+        self.update_player()#更新主人公状态
+        self.update_attack()#更新子弹状态
+        self.update_NPCs()#更新NPC状态
+        self.update_guide()#更新提示板状态
+        #处理碰撞
+        self.manage_collide()
+        #更新镜头
         self.scene.update_camera(self.player)
-        ##### Your Code Here ↑ #####
+    #更新主人公状态
+    def update_player(self):
+        self.player.update(self.get_time())
+    #更新子弹状态
     def update_attack(self):
-        for attack in self.player.player_attack_wave:
+        for attack in self.player.attacks:
             attack.update()
-            if attack.over_range(self.scene.cameraX,self.scene.cameraY):
-                attack.kill()
-    # Collision-relate update funtions here ↓
+            self.update_collide(attack)
+    #更新NPC
+    def update_NPCs(self):
+        for npc in self.scene.npcs.sprites():
+            npc.update(self.scene.cameraX,self.scene.cameraY,self.dialogbox)
+    #更新提示板
+    def update_guide(self):
+        self.guideboard.update(self.get_time())
+    def update_dialogbox(self):
+        if self.dialogbox.open:
+            self.dialogbox.update()
+    #更新给定对象（包括主人公和子弹）的碰撞
     def update_collide(self,object):
         # object -> Obstacles
-        ##### Your Code Here ↓ #####
         if pygame.sprite.spritecollide(object,self.scene.obstacles,False,pygame.sprite.collide_mask):
             object.collide.collidingWith["obstacle"]=True
             for obstacle in self.scene.obstacles.sprites():
@@ -215,10 +166,7 @@ class GameManager:
         else:
             object.collide.collidingWith["obstacle"]=False
             object.collide.collidingObject["obstacle"]=[]
-        ##### Your Code Here ↑ #####
-
         # object -> NPCs; if multiple NPCs collided, only first is accepted and dealt with.
-        ##### Your Code Here ↓ #####
         if pygame.sprite.spritecollide(object,self.scene.npcs,False,pygame.sprite.collide_mask):
             object.collide.collidingWith["npc"]=True
             for npc in self.scene.npcs.sprites():
@@ -228,10 +176,7 @@ class GameManager:
         else:
             object.collide.collidingWith["npc"]=False
             object.collide.collidingObject["npc"]=None
-        ##### Your Code Here ↑ #####
-
         # object -> Monsters
-        ##### Your Code Here ↓ #####
         if pygame.sprite.spritecollide(object,self.scene.monsters,False,pygame.sprite.collide_mask):
             object.collide.collidingWith["monster"]=True
             for monster in self.scene.monsters.sprites():
@@ -240,10 +185,7 @@ class GameManager:
         else:
             object.collide.collidingWith["monster"]=False
             object.collide.collidingObject["monster"]=None
-        ##### Your Code Here ↑ #####
-        
         # object -> Portals
-        ##### Your Code Here ↓ #####
         if pygame.sprite.spritecollide(object,self.scene.portals,False,pygame.sprite.collide_mask):
             object.collide.collidingWith["portal"]=True
             for portal in self.scene.portals.sprites():
@@ -252,59 +194,75 @@ class GameManager:
         else:
             object.collide.collidingWith["portal"]=False
             object.collide.collidingObject["portal"]=None
-        ##### Your Code Here ↑ #####
-        
         # object -> Boss
-        ##### Your Code Here ↓ #####
         pass
-        ##### Your Code Here ↑ #####
+    #处理碰撞
+    def manage_collide(self):
+        self.update_collide(self.player)#更新主人公碰撞
+        #处理主人公碰撞
+        if self.player.collide.is_colliding():
+            if self.player.collide.collidingWith["portal"]:#与传送门碰撞
+                if self.player.collide.collidingObject["portal"].GOTO==SceneType.WILD:
+                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_WILD))
+                if self.player.collide.collidingObject["portal"].GOTO==SceneType.CITY:
+                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_CITY))
+                if self.player.collide.collidingObject["portal"].GOTO==SceneType.BOSS:
+                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_BOSS))
 
-    def update_NPCs(self):
-        # This is not necessary. If you want to re-use your code you can realize this.
-        ##### Your Code Here ↓ #####
-        for npc in self.scene.npcs.sprites():
-            npc.update(self.scene.cameraX,self.scene.cameraY,self.dialogbox)
-        ##### Your Code Here ↑ #####
+            if self.player.collide.collidingWith["obstacle"]:#与障碍物碰撞
+                self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
 
-    # Render-relate update functions here ↓
+            if self.player.collide.collidingWith["npc"]:#与NPC碰撞
+                if self.player.collide.collidingObject["npc"].can_talk():
+                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_DIALOG))
+                self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
+
+            if self.player.collide.collidingWith["monster"]:#与怪物碰撞
+                self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
+        #更新子弹碰撞
+        for attack in self.player.attacks:
+            self.update_collide(attack)
+        #处理子弹碰撞
+        for attack in self.player.attacks:
+            #如果越过边界或发生碰撞就删除子弹
+            if attack.over_range(self.scene.cameraX,self.scene.cameraY) or attack.collide.is_colliding():
+                attack.kill()
+    #总渲染函数
     def render(self):
-        ##### Your Code Here ↓ #####
-        if self.state==GameState.YUANSHENQIDONG:
+        if self.state==GameState.START_CG:
             self.render_start()
-        else:
-            if self.state==GameState.MAIN_MENU:
-                self.render_main_menu()
-            else:
-                if self.state==GameState.GAME_PLAY_CITY:
-                    self.render_city()
-                if self.state==GameState.GAME_PLAY_WILD:
-                    self.render_wild()
-                if self.state==GameState.GAME_PLAY_BOSS:
-                    self.render_boss()
-                self.guideboard.draw()
-                if self.player.talking:
-                    self.dialogbox.draw()
-        ##### Your Code Here ↑ #####
+        if self.state==GameState.MAIN_MENU:
+            self.render_main_menu()
+        if self.state==GameState.GAME_PLAY_CITY:
+            self.render_city()
+        if self.state==GameState.GAME_PLAY_WILD:
+            self.render_wild()
+        if self.state==GameState.GAME_PLAY_BOSS:
+            self.render_boss()
+    #渲染开场CG
     def render_start(self):
         self.scene.render(self.get_time())
+    #渲染主菜单
     def render_main_menu(self):
-        ##### Your Code Here ↓ #####
         self.scene.render(self.get_time())
-        ##### Your Code Here ↑ #####
-    
+    #渲染城市
     def render_city(self):
-        ##### Your Code Here ↓ #####
-        self.scene.render(self.player)
-        ##### Your Code Here ↑ #####
-
+        self.scene.render(self.player)#渲染场景
+        self.render_guide()
+        #如果正在对话,渲染对话栏
+        if self.player.talking:
+            self.render_dialogbox()
+    #渲染野外
     def render_wild(self):
-        ##### Your Code Here ↓ #####
-        self.scene.render(self.player)
-        ##### Your Code Here ↑ #####
-
+        self.scene.render(self.player)#渲染场景
+        self.render_guide()#渲染提示
+    #渲染BOSS房
     def render_boss(self):
-        ##### Your Code Here ↓ #####
-        self.scene.render(self.player)
-        ##### Your Code Here ↑ #####
-
-
+        self.scene.render(self.player)#渲染场景
+        self.render_guide()#渲染提示
+    #渲染提示   
+    def render_guide(self):
+        self.guideboard.draw()
+    #渲染对话栏
+    def render_dialogbox(self):
+        self.dialogbox.draw()
