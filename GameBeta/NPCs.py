@@ -59,7 +59,7 @@ class DialogNPC(NPC):
             return self.image
         else:
             return pygame.transform.flip(self.image, True, False)
-    def update(self,ticks,dialogbox):
+    def update(self,cameraX,cameraY,dialogbox):
         ##### Your Code Here ↓ #####
         if self.talking:
             if not self.can_talk():
@@ -76,7 +76,7 @@ class DialogNPC(NPC):
                     self.reset_talkCD()
         else:
             self.rect.x += self.speed * self.direction
-            if abs(self.rect.x - self.initialPosition) > 50:
+            if abs(cameraX + self.rect.x -self.initialPosition) > 50:
                 self.direction *= -1  # 反转方向
                 self.image = pygame.transform.flip(self.image, True, False)
             if not self.can_talk():

@@ -28,7 +28,7 @@ class PlayerSettings:
     playerAttackSpeed = 15
     playerAttackRange = 30
     playerGunWidth = 60
-    playerGunHeight = 30
+    playerGunHeight = 60
 class NPCSettings:
     npcSpeed = 1
     npcWidth = 60
@@ -38,7 +38,11 @@ class NPCType(Enum):
     DIALOG = 1
     MONSTER = 2
     SHOP = 3
-    
+class DirectionType(Enum):
+    UP = 0 
+    DOWN = 1
+    LEFT = 2
+    RIGHT = 3
 class BossSettings:
     width = 300
     height = 300
@@ -177,7 +181,10 @@ class GamePath:
               r"assets\attack\up.png",
               r"assets\attack\down.png"
               ]
-    gun = [ r"assets\gun\1.png",r"assets\gun\2.png",r"assets\gun\3.png",r"assets\gun\4.png"]
+    gun = [ r"assets\gun\up.png",
+           r"assets\gun\down.png",
+           r"assets\gun\left.png",
+           r"assets\gun\right.png"]
 class PortalSettings:
     width = 320
     height = 320

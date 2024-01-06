@@ -30,6 +30,7 @@ class Player(pygame.sprite.Sprite, Collidable):
         self.player_attack_range = PlayerSettings.playerAttackRange
         self.player_last_attack_time = 0
         self.collide=Collidable()
+        self.gun=Gun()
         ##### Your Code Here ↑ #####
     def attr_update(self, addCoins = 0, addHP = 0, addAttack = 0, addDefence = 0):
         ##### Your Code Here ↓ #####
@@ -77,6 +78,7 @@ class Player(pygame.sprite.Sprite, Collidable):
         ##### Your Code Here ↓ #####
         self.rect=self.rect.move(dx,dy)
         window.blit(self.image,self.rect)
+        self.gun.draw(window,self.rect)
         ##### Your Code Here ↑ #####
     def change_attack_speed(self):
         keys=pygame.key.get_pressed()
@@ -96,36 +98,38 @@ class Player(pygame.sprite.Sprite, Collidable):
             if current_time - self.player_last_attack_time > self.attack_cooldown:
                 self.player_attack_wave.add(Attack(player_pos[0], player_pos[1]+self.rect.height / 2,0,self.attack_speed))
                 self.player_last_attack_time = current_time
+                self.gun.update(DirectionType.LEFT)
 
         if keys[pygame.K_k]:
             current_time = pygame.time.get_ticks() / 1000
             if current_time - self.player_last_attack_time > self.attack_cooldown:
                 self.player_attack_wave.add(Attack(player_pos[0]+self.rect.width , player_pos[1]+self.rect.height / 2,1,self.attack_speed))
                 self.player_last_attack_time = current_time
+                self.gun.update(DirectionType.RIGHT)
 
         if keys[pygame.K_i]:
             current_time = pygame.time.get_ticks() / 1000.0
             if current_time - self.player_last_attack_time > self.attack_cooldown:
                 self.player_attack_wave.add(Attack(player_pos[0]+self.rect.width / 2, player_pos[1],2,self.attack_speed))
                 self.player_last_attack_time = current_time
+                self.gun.update(DirectionType.UP)
 
         if keys[pygame.K_m]:
             current_time = pygame.time.get_ticks() / 1000.0
             if current_time - self.player_last_attack_time > self.attack_cooldown:
                 self.player_attack_wave.add(Attack(player_pos[0]+self.rect.width / 2, player_pos[1]+self.rect.height,3,self.attack_speed))
                 self.player_last_attack_time = current_time
+                self.gun.update(DirectionType.DOWN)
 
+class Gun:
+    def __init__(self):
+        self.images=[pygame.transform.scale(pygame.image.load(img),(PlayerSettings.playerGunWidth,PlayerSettings.playerGunHeight)) for img in GamePath.gun]    
+        self.direction=DirectionType.RIGHT#0123为上下左右
+    def update(self,direction):
+        self.direction=direction
+    def draw(self,window,rect):
+        window.blit(self.images[self.direction.value],rect)
 
-
-
-
-        #     # 检查是否击中BOSS
-        #     if (
-        #         boss_pos[0] < attack[0] < boss_pos[0] + boss_size
-        #         and boss_pos[1] < attack[1] < boss_pos[1] + boss_size
-        #     ):
-        #         boss_health -= player_attack
-        #         player_attack_wave.remove(attack)
 class Attack(pygame.sprite.Sprite):
     def __init__(self,x,y,index,speed):
         super().__init__()

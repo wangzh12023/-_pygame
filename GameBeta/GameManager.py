@@ -95,7 +95,7 @@ class GameManager:
         self.update_bgmplayer()
         
         if self.state==GameState.YUANSHENQIDONG:
-            if self.get_time()/1000>1:
+            if self.get_time()/1000>1:#22
                 pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_START_MENU))
         else:
             if self.state==GameState.MAIN_MENU:
@@ -263,7 +263,7 @@ class GameManager:
         # This is not necessary. If you want to re-use your code you can realize this.
         ##### Your Code Here ↓ #####
         for npc in self.scene.npcs.sprites():
-            npc.update(self.get_time(),self.dialogbox)
+            npc.update(self.scene.cameraX,self.scene.cameraY,self.dialogbox)
         ##### Your Code Here ↑ #####
 
     # Render-relate update functions here ↓
