@@ -21,6 +21,9 @@ class Player(pygame.sprite.Sprite, Collidable):
         self.speed=PlayerSettings.playerSpeed
         self.dx=0
         self.dy=0
+
+        self.talking=False
+
         self.attack_cooldown=PlayerSettings.playerAttackCooldown
         self.attack_speed = PlayerSettings.playerAttackSpeed
         self.player_attack_wave=pygame.sprite.Group()#self.player_attack_wave = []
@@ -40,6 +43,9 @@ class Player(pygame.sprite.Sprite, Collidable):
 
     def try_move(self):
         ##### Your Code Here ↓ #####
+        #如果正在对话则则不检测移动
+        if self.talking:
+            return
         keys=pygame.key.get_pressed()
         self.dx=0
         self.dy=0
@@ -79,6 +85,8 @@ class Player(pygame.sprite.Sprite, Collidable):
         if keys[pygame.K_p] and self.attack_speed > 5 :
             self.attack_speed-=5
     def attack(self):
+        if self.talking:
+            return
         self.change_attack_speed()
         # 玩家攻击
         player_pos = [self.rect.x,self.rect.y]

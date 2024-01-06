@@ -27,16 +27,18 @@ class PlayerSettings:
     playerAttackCooldown = 0.3
     playerAttackSpeed = 15
     playerAttackRange = 30
+    playerGunWidth = 60
+    playerGunHeight = 30
 class NPCSettings:
     npcSpeed = 1
     npcWidth = 60
     npcHeight = 60
-
+    talkCD = 30
 class NPCType(Enum):
     DIALOG = 1
     MONSTER = 2
     SHOP = 3
-
+    
 class BossSettings:
     width = 300
     height = 300
@@ -175,6 +177,7 @@ class GamePath:
               r"assets\attack\up.png",
               r"assets\attack\down.png"
               ]
+    gun = [ r"assets\gun\1.png",r"assets\gun\2.png",r"assets\gun\3.png",r"assets\gun\4.png"]
 class PortalSettings:
     width = 320
     height = 320
@@ -204,3 +207,4 @@ class GameEvent:
     EVENT_SWITCH_CITY= pygame.USEREVENT + 6
     EVENT_SWITCH_WILD= pygame.USEREVENT + 7
     EVENT_SWITCH_BOSS= pygame.USEREVENT + 8
+    EVENT_END_DIALOG = pygame.USEREVENT + 9

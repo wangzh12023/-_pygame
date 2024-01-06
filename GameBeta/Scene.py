@@ -159,7 +159,7 @@ class CityScene(Scene):
         self.map=Maps.gen_city_map()
         self.portals.add(Portal(PortalSettings.coordX,PortalSettings.coordY,SceneType.WILD))
         self.obstacles =Maps.gen_city_obstacle()
-        self.npcs.add(DialogNPC(100,100,"John",1))
+        self.npcs.add(DialogNPC(100,100,"John",[["Hello","2024"],["I'm fine","Tkx"]]))
         #self.ShopNpcs.add()
         ##### Your Code Here ↑ #####
 

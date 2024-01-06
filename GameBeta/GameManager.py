@@ -11,7 +11,6 @@ from Guide import *
 from BgmPlayer import BgmPlayer
 class GameManager:
     def __init__(self):
-        
         ##### Your Code Here ↓ #####
         pygame.mixer.init()
         self.bgmplayer=BgmPlayer()
@@ -30,6 +29,7 @@ class GameManager:
 
         self.guideboard=Guideboard(self.window)
 
+        self.dialogbox=DialogBox(self.window)
         ##### Your Code Here ↑ #####
 
     def game_reset(self):
@@ -85,22 +85,33 @@ class GameManager:
             if event.type==GameEvent.EVENT_SWITCH_BOSS:
                 self.state=GameState.GAME_PLAY_BOSS
                 self.flush_scene(SceneType.BOSS) 
+            if event.type==GameEvent.EVENT_DIALOG:
+                self.player.collide.collidingObject["npc"].talking=True
+                self.player.collide.collidingObject["npc"].reset_talk(self.dialogbox)
+                self.player.talking=True
+            if event.type==GameEvent.EVENT_END_DIALOG:
+                self.player.talking=False
+
         self.update_bgmplayer()
+        
         if self.state==GameState.YUANSHENQIDONG:
-            if self.get_time()/1000>24:
+            if self.get_time()/1000>1:
                 pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_START_MENU))
         else:
             if self.state==GameState.MAIN_MENU:
                 self.update_main_menu()
             else:
+                self.player.try_move()
+                self.update_collide(self.player)
+                self.player.attack()
+                self.update_attack()
+                self.update_NPCs()
                 if self.state==GameState.GAME_PLAY_CITY:
                     self.update_city()
                 if self.state==GameState.GAME_PLAY_WILD:
                     self.update_wild()
                 if self.state==GameState.GAME_PLAY_BOSS:
                     self.update_boss()
-                self.player.attack()
-                self.update_attack()
                 self.guideboard.update()
         ##### Your Code Here ↑ #####
     def update_bgmplayer(self):
@@ -122,8 +133,6 @@ class GameManager:
 
         # Then deal with regular updates
         ##### Your Code Here ↓ #####
-        self.player.try_move()
-        self.update_collide(self.player)
         if self.player.collide.is_colliding():
             if self.player.collide.collidingWith["portal"]:
                 if self.player.collide.collidingObject["portal"].GOTO==SceneType.WILD:
@@ -131,6 +140,8 @@ class GameManager:
             if self.player.collide.collidingWith["obstacle"]:
                 self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
             if self.player.collide.collidingWith["npc"]:
+                if self.player.collide.collidingObject["npc"].can_talk():
+                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_DIALOG))
                 self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
             if self.player.collide.collidingWith["monster"]:
                 self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
@@ -148,8 +159,6 @@ class GameManager:
         
         # Then deal with regular updates
         ##### Your Code Here ↓ #####
-        self.player.try_move()
-        self.update_collide(self.player)
         if self.player.collide.is_colliding():
             if self.player.collide.collidingWith["portal"]:
                 if self.player.collide.collidingObject["portal"].GOTO==SceneType.CITY:
@@ -157,8 +166,6 @@ class GameManager:
                 if self.player.collide.collidingObject["portal"].GOTO==SceneType.BOSS:
                     pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_BOSS))
             if self.player.collide.collidingWith["obstacle"]:
-                self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
-            if self.player.collide.collidingWith["npc"]:
                 self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
             if self.player.collide.collidingWith["monster"]:
                 self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
@@ -177,15 +184,11 @@ class GameManager:
         
         # Then deal with regular updates
         ##### Your Code Here ↓ #####
-        self.player.try_move()
-        self.update_collide(self.player)
         if self.player.collide.is_colliding():
             if self.player.collide.collidingWith["portal"]:
                 if self.player.collide.collidingObject["portal"].GOTO==SceneType.WILD:
                     pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_WILD))
             if self.player.collide.collidingWith["obstacle"]:
-                self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
-            if self.player.collide.collidingWith["npc"]:
                 self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
             if self.player.collide.collidingWith["monster"]:
                 self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
@@ -259,7 +262,8 @@ class GameManager:
     def update_NPCs(self):
         # This is not necessary. If you want to re-use your code you can realize this.
         ##### Your Code Here ↓ #####
-        pass
+        for npc in self.scene.npcs.sprites():
+            npc.update(self.get_time(),self.dialogbox)
         ##### Your Code Here ↑ #####
 
     # Render-relate update functions here ↓
@@ -278,6 +282,8 @@ class GameManager:
                 if self.state==GameState.GAME_PLAY_BOSS:
                     self.render_boss()
                 self.guideboard.draw()
+                if self.player.talking:
+                    self.dialogbox.draw()
         ##### Your Code Here ↑ #####
     def render_start(self):
         self.scene.render(self.get_time())
