@@ -18,26 +18,31 @@ class SceneSettings:
     tileYnum = 27 # 36
     tileWidth = tileHeight = 40
     obstacleDensity=0.1
-
+    
 class PlayerSettings:
     # Initial Player Settings
     playerSpeed = 7
-    playerWidth = 60
-    playerHeight = 55
+    playerWidth = 33
+    playerHeight = 33
     playerHP = 20
     playerAttack = 5
     playerDefence = 1
     playerMoney = 100
     playerAttackCooldown = 0.3
     playerAttackSpeed = 15
-    playerAttackRange = 30
-    playerGunWidth = 60
-    playerGunHeight = 60
-
+    playerAttackRange = 20
+    playerGunWidth = 35
+    playerGunHeight = 35
+    maze_start_x=44
+    maze_start_y=23
+    Wildcoodx=1120
+    Wildcoody=560
+    Citycoodx=640
+    Citycoody=360
 class NPCSettings:
     npcSpeed = 1
-    npcWidth = 60
-    npcHeight = 60
+    npcWidth = 40
+    npcHeight = 40
     talkCD = 30
     SelectCD = 5
 
@@ -73,7 +78,7 @@ class DialogSettings:
     textSize = 48 # Default font size
     textStartX = WindowSettings.width // 4 + 10         # Coordinate X of the first line of dialog
     textStartY = WindowSettings.height // 3 * 2 + 30    # Coordinate Y of the first line of dialog
-    textVerticalDist = textSize // 4 * 3                # Vertical distance of two lines
+    textVerticalDist = textSize               # Vertical distance of two lines
 
     npcWidth = WindowSettings.width // 5
     npcHeight = WindowSettings.height // 3
@@ -100,6 +105,7 @@ class GamePath:
            r".\assets\bgm\wild.mp3",
            r".\assets\bgm\boss.mp3",
            ]
+    font = r".\assets\font\simhei.ttf"
     # Window related path
     white_bg=r".\assets\background\white.png"
     cg=r".\assets\background\cg.png"
@@ -115,6 +121,8 @@ class GamePath:
 
     # player/npc related path
     npc = r".\assets\npc\npc.png"
+    Caroline = r".\assets\npc\Caroline.png"
+    Justine = r".\assets\npc\Justine.png"
     trader = r".\assets\npc\trader.png"
     player = [
         r".\assets\player\1.png", 
@@ -138,17 +146,14 @@ class GamePath:
         r".\assets\tiles\ground5.png", 
         r".\assets\tiles\ground6.png", 
     ]
+    city_bg = r".\assets\background\city_bg.png"
+    cityWall = r".\assets\background\city_wall.png"
 
-    cityTiles = [
-        r".\assets\tiles\city1.png", 
-        r".\assets\tiles\city2.png", 
-        r".\assets\tiles\city3.png", 
-        r".\assets\tiles\city4.png", 
-        r".\assets\tiles\city5.png", 
-        r".\assets\tiles\city6.png", 
-    ]
+    wild_bg= r".\assets\background\wild.png"
+    tree = r".\assets\tiles\tree.png"
+    bossdoor = r".\assets\tiles\bossdoor.png"   
 
-    cityWall = r".\assets\tiles\cityWall.png"
+    boss_bg= r".\assets\background\boss_bg.png"
 
     bossTiles = [
         r".\assets\tiles\boss1.png", 
@@ -162,8 +167,11 @@ class GamePath:
     bossWall = r".\assets\tiles\bossWall.png"
 
     portal = r".\assets\background\portal.png"
+    portal_water = r".\assets\background\portal_water.png"
+    portal_grass = r".\assets\background\portal_grass.png"
+    portal_fire = r".\assets\background\portal_fire.png"
 
-    tree = r".\assets\tiles\tree.png"
+    
     
 
     
@@ -179,8 +187,8 @@ class GamePath:
            ]
     
 class PortalSettings:
-    width = 320
-    height = 320
+    width = 300
+    height = 360
     coordX1 = (SceneSettings.tileXnum - 10) * SceneSettings.tileWidth - width / 2
     coordY1 = (SceneSettings.tileYnum / 2) * SceneSettings.tileHeight - height / 2
 

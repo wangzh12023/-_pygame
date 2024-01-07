@@ -14,7 +14,8 @@ class DialogBox:
         #设置字体参数
         self.fontSize = fontSize
         self.fontColor = fontColor
-        self.font = pygame.font.Font(None, self.fontSize)
+        self.font_path=GamePath.font
+        self.font = pygame.font.Font(self.font_path, self.fontSize)
         #设置背景
         self.bg = pygame.Surface((DialogSettings.boxWidth,
             DialogSettings.boxHeight), pygame.SRCALPHA)
@@ -106,7 +107,7 @@ class ShoppingBox:
                     if self.selectedID == 4:
                         pygame.event.post(pygame.event.Event(GameEvent.EVENT_END_SHOP))
                         self.state="Close"
-                        self.npc.reset_talkCD("Select")
+                        self.npc.reset_talkCD("Talk")
                     else:
                         self.buy() 
                         self.npc.reset_talkCD("Talk")

@@ -3,7 +3,7 @@
 import sys
 import pygame
 
-from Player import Player
+from Player import *
 from Scene import *
 from Settings import *
 from PopUpBox import *
@@ -52,7 +52,7 @@ class GameManager:
         self.scene_reset()
     #重置场景的函数
     def scene_reset(self):
-        self.player.reset_pos()#主人公回到屏幕中央
+        self.player.reset_pos(self.state)#主人公回到屏幕中央
         self.player.attacks.empty()#请空子弹
     #总更新函数
     def update(self):
@@ -155,7 +155,6 @@ class GameManager:
     def update_attack(self):
         for attack in self.player.attacks:
             attack.update()
-            self.update_collide(attack)
     #更新NPC
     def update_NPCs(self):
         for npc in self.scene.npcs.sprites():
@@ -225,14 +224,12 @@ class GameManager:
 
             if self.player.collide.collidingWith["obstacle"]:#与障碍物碰撞
                 self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
-
             if self.player.collide.collidingWith["npc"]:#与NPC碰撞
                 if self.player.collide.collidingObject["npc"].can_talk() and not (self.player.talking or self.player.shopping):
                     if isinstance(self.player.collide.collidingObject["npc"],DialogNPC):
                         pygame.event.post(pygame.event.Event(GameEvent.EVENT_DIALOG))
                     if isinstance(self.player.collide.collidingObject["npc"],ShopNPC):
                         pygame.event.post(pygame.event.Event(GameEvent.EVENT_SHOP))
-
             if self.player.collide.collidingWith["monster"]:#与怪物碰撞
                 self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
         #更新子弹碰撞
@@ -264,7 +261,7 @@ class GameManager:
     #渲染城市
     def render_city(self):
         self.scene.render(self.player)#渲染场景
-        self.render_guide()
+        #self.render_guide()
         #如果正在对话,渲染对话栏
         if self.player.talking:
             self.render_dialogbox()

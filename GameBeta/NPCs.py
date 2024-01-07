@@ -46,28 +46,32 @@ class NPC(pygame.sprite.Sprite, Collidable):
 class DialogNPC(NPC):
     def __init__(self, x, y, name,dialog):
         super().__init__(x, y, name,dialog)
-        self.image=pygame.transform.scale(pygame.image.load(GamePath.npc),
-                                          (NPCSettings.npcWidth,NPCSettings.npcHeight))
+        if name=="Caroline":
+            self.image=pygame.transform.scale(pygame.image.load(GamePath.Caroline),
+                                            (NPCSettings.npcWidth,NPCSettings.npcHeight))
+        if name=="Justine":
+            self.image=pygame.transform.scale(pygame.image.load(GamePath.Justine),
+                                            (NPCSettings.npcWidth,NPCSettings.npcHeight))
         #设置坐标
         self.rect=self.image.get_rect()
         self.rect.topleft=(x,y)
         self.talking=False
     def update(self,cameraX,cameraY):
         ##### Your Code Here ↓ #####
-        if not self.talking:
-            if self.direction==DirectionType.RIGHT:
-                self.rect.x += self.speed 
-            else:
-                self.rect.x -= self.speed
-            #如果超出移动范围，转向
-            if abs(cameraX + self.rect.x -self.initialPosition) > 50:
-                #翻转图片
-                self.image = pygame.transform.flip(self.image, True, False)
-                # 反转方向
-                if self.direction ==  DirectionType.RIGHT:
-                    self.direction=DirectionType.LEFT
-                else:
-                    self.direction=DirectionType.RIGHT
+        # if not self.talking:
+        #     if self.direction==DirectionType.RIGHT:
+        #         self.rect.x += self.speed 
+        #     else:
+        #         self.rect.x -= self.speed
+        #     #如果超出移动范围，转向
+        #     if abs(cameraX + self.rect.x -self.initialPosition) > 50:
+        #         #翻转图片
+        #         self.image = pygame.transform.flip(self.image, True, False)
+        #         # 反转方向
+        #         if self.direction ==  DirectionType.RIGHT:
+        #             self.direction=DirectionType.LEFT
+        #         else:
+        #             self.direction=DirectionType.RIGHT
         #更新冷却
         if not self.can_talk():
             self.talkcd -= 1

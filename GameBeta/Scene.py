@@ -15,8 +15,7 @@ class Scene():
     def __init__(self, window):
         self.window=window
         #设置镜头位置
-        self.cameraX=0
-        self.cameraY=0
+        
         #设置偏移量
         self.dx=0
         self.dy=0
@@ -26,10 +25,11 @@ class Scene():
         self.npcs=pygame.sprite.Group()
         #生成怪物
         self.monsters=pygame.sprite.Group()
+        self.obstacles=pygame.sprite.Group()
     def get_width(self):
-        return WindowSettings.width * WindowSettings.outdoorScale
+        return int(WindowSettings.width * WindowSettings.outdoorScale)
     def get_height(self):
-        return WindowSettings.height * WindowSettings.outdoorScale
+        return int(WindowSettings.height * WindowSettings.outdoorScale)
     def update_camera(self, player):
         
         self.dx=self.dy=0
@@ -38,31 +38,35 @@ class Scene():
             if self.cameraX < self.get_width() - WindowSettings.width:
                 self.dx=-player.speed
             else:
+                self.dx=(self.cameraX - player.speed)-(self.get_width() - WindowSettings.width)
                 self.cameraX = self.get_width() - WindowSettings.width
         elif player.rect.x < WindowSettings.width / 4:
             self.cameraX -= player.speed
             if self.cameraX > 0:
                 self.dx=player.speed
             else:
+                self.dx=self.cameraX+player.speed
                 self.cameraX = 0
         if player.rect.y > WindowSettings.height / 4 * 3:
             self.cameraY += player.speed
             if self.cameraY < self.get_height() - WindowSettings.height:
                 self.dy=-player.speed
             else:
+                self.dy=(self.cameraY-player.speed)-(self.get_height() - WindowSettings.height)
                 self.cameraY = self.get_height() - WindowSettings.height
         elif player.rect.y < WindowSettings.height / 4:
             self.cameraY -= player.speed
             if self.cameraY > 0:
                 self.dy=player.speed
             else:
+                self.dy=self.cameraY+player.speed
                 self.cameraY = 0
-
     def render(self, player):
        #渲染地图
-        for i in range(SceneSettings.tileXnum):
-            for j in range(SceneSettings.tileYnum):
-                self.window.blit(self.map[i][j],(SceneSettings.tileWidth*i-self.cameraX,SceneSettings.tileHeight*j-self.cameraY))
+        # for i in range(SceneSettings.tileXnum):
+        #     for j in range(SceneSettings.tileYnum):
+        #         self.window.blit(self.map[i][j],(SceneSettings.tileWidth*i-self.cameraX,SceneSettings.tileHeight*j-self.cameraY))
+        self.render_map()
         #渲染主人公
         player.draw(self.window,self.dx,self.dy)
         #渲染传送门
@@ -74,10 +78,11 @@ class Scene():
         #渲染NPC
         for npc in self.npcs.sprites():
             npc.draw(self.window,self.dx,self.dy)
-        #渲染怪物
-        for monster in self.monsters.sprites():
-            monster.draw(self.window,self.dx,self.dy)
-        
+        # #渲染怪物
+        # for monster in self.monsters.sprites():
+        #     monster.draw(self.window,self.dx,self.dy)
+    def render_map(self):
+        self.window.blit(self.bg,(-self.cameraX,-self.cameraY))
 class StartCG():
     def __init__(self, window):
         self.window=window
@@ -116,34 +121,43 @@ class StartMenu():
 class CityScene(Scene):
     def __init__(self, window):
         super().__init__(window=window)
+        self.cameraX=320
+        self.cameraY=0
         self.gen_CITY()
 
     def gen_CITY(self):
-        self.map=Maps.gen_city_map()
-        
-        self.portals.add(Portal(PortalSettings.coordX1,PortalSettings.coordY1,SceneType.WILD))
+        self.bg=pygame.image.load(GamePath.city_bg)
+
+        self.portals.add(Portal(-160,200,SceneType.WILD,"Water"))
+        self.portals.add(Portal(1140,200,SceneType.WILD,"Grass"))
+        self.portals.add(Portal(480,600,SceneType.WILD,"Fire"))
         
         self.obstacles =Maps.gen_city_obstacle()
         
-        self.npcs.add(DialogNPC(100,100,"John",[["Hello","2024"],["I'm fine","Tkx"]]))
+        self.npcs.add(DialogNPC(680,280,"Caroline",[["喂，犯人，","休息得够久了吧？","快去干活!"]]))
+        self.npcs.add(DialogNPC(560,280,"Justine",[["Hello","2024"],["I'm fine","Tkx"]]))
 
-        self.npcs.add(ShopNPC(100,500,"Jack",[["Have a look"]],{"Attack +1": "Coin -15", "Defence +1": "Coin -15",
-             "HP +1": "Coin -15", "???": "HP -5", "Exit": ""}))
+        # self.npcs.add(ShopNPC(100,500,"Jack",[["Have a look"]],{"Attack +1": "Coin -15", "Defence +1": "Coin -15",
+        #      "HP +1": "Coin -15", "???": "HP -5", "Exit": ""}))
 class WildScene(Scene):
     def __init__(self, window):
         super().__init__(window=window)
+        self.cameraX=640
+        self.cameraY=360
         self.gen_WILD()
-        self.gen_monsters()
+        #self.gen_monsters()
 
 
     def gen_WILD(self):
 
-        self.map=Maps.gen_wild_map()
+        self.bg=pygame.image.load(GamePath.wild_bg)
         
-        self.obstacles=Maps.gen_wild_obstacle()
+        self.obstacles=Maps.gen_wild_obstacle(self.cameraX,self.cameraY)
 
-        self.portals.add(Portal(PortalSettings.coordX1,PortalSettings.coordY1,SceneType.BOSS))
-        self.portals.add(Portal(PortalSettings.coordX2,PortalSettings.coordY2,SceneType.CITY))
+        self.portals.add(Portal(SceneSettings.tileXnum//3//2*SceneSettings.tileWidth-self.cameraX,
+                                SceneSettings.tileYnum//3*SceneSettings.tileHeight-self.cameraY,
+                                SceneType.BOSS,"WILD"))
+        self.portals.add(Portal(1200,600,SceneType.CITY,"WILD"))
 
 
     def gen_monsters(self, num = 10):
@@ -155,12 +169,14 @@ class WildScene(Scene):
 class BossScene(Scene):
     def __init__(self, window):
         super().__init__(window=window)
+        self.cameraX=320
+        self.cameraY=0
         self.gen_BOSS()
 
     def gen_BOSS(self):
         
-        self.map=Maps.gen_boss_map()
+        self.bg=pygame.image.load(GamePath.boss_bg)
         
-        self.portals.add(Portal(PortalSettings.coordX2,PortalSettings.coordY2,SceneType.WILD))
+        self.portals.add(Portal(PortalSettings.coordX2,PortalSettings.coordY2,SceneType.CITY,"BOSS"))
         
-        self.obstacles=Maps.gen_boss_obstacle()
+        #self.obstacles=Maps.gen_boss_obstacle()
