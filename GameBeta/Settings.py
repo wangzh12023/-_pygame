@@ -55,6 +55,14 @@ class DirectionType(Enum):
     RIGHT = 3
 
 class BossSettings:
+    bossWidth = 100
+    bossHeight = 100
+    bossHP = 100
+    bossAttack = 10
+    bossDefence = 1
+    bossAttackCooldown = 0.5
+    bossAttackSpeed = 10
+    bossAttackRange = 20
     width = 300
     height = 300
     coordX = (SceneSettings.tileXnum / 2) * SceneSettings.tileWidth - width / 2
@@ -174,11 +182,6 @@ class GamePath:
     portal_water = r".\assets\background\portal_water.png"
     portal_grass = r".\assets\background\portal_grass.png"
     portal_fire = r".\assets\background\portal_fire.png"
-
-    
-    
-
-    
     attack = [r"assets\attack\up.png",
               r"assets\attack\down.png",
               r"assets\attack\left.png",
@@ -189,13 +192,28 @@ class GamePath:
            r"assets\gun\left.png",
            r"assets\gun\right.png"
            ]
-    
+    #boss 是按照“下左右上”的顺序
+    boss=[  [[r"assets\npc\boss\grass\1.png",r"assets\npc\boss\grass\2.png",r"assets\npc\boss\grass\3.png",r"assets\npc\boss\grass\4.png"],
+                [r"assets\npc\boss\grass\5.png",r"assets\npc\boss\grass\6.png",r"assets\npc\boss\grass\7.png",r"assets\npc\boss\grass\8.png"],
+                [r"assets\npc\boss\grass\9.png",r"assets\npc\boss\grass\10.png",r"assets\npc\boss\grass\11.png",r"assets\npc\boss\grass\12.png"],
+                [r"assets\npc\boss\grass\13.png",r"assets\npc\boss\grass\14.png",r"assets\npc\boss\grass\15.png",r"assets\npc\boss\grass\16.png"],
+            ],
+            [[r"assets\npc\boss\water\1.png",r"assets\npc\boss\water\2.png",r"assets\npc\boss\water\3.png",r"assets\npc\boss\water\4.png"],
+                [r"assets\npc\boss\water\5.png",r"assets\npc\boss\water\6.png",r"assets\npc\boss\water\7.png",r"assets\npc\boss\water\8.png"],
+                [r"assets\npc\boss\water\9.png",r"assets\npc\boss\water\10.png",r"assets\npc\boss\water\11.png",r"assets\npc\boss\water\12.png"],
+                [r"assets\npc\boss\water\13.png",r"assets\npc\boss\water\14.png",r"assets\npc\boss\water\15.png",r"assets\npc\boss\water\16.png"],
+            ],
+            [[r"assets\npc\boss\fire\1.png",r"assets\npc\boss\fire\2.png",r"assets\npc\boss\fire\3.png",r"assets\npc\boss\fire\4.png"],
+                [r"assets\npc\boss\fire\5.png",r"assets\npc\boss\fire\6.png",r"assets\npc\boss\fire\7.png",r"assets\npc\boss\fire\8.png"],
+                [r"assets\npc\boss\fire\9.png",r"assets\npc\boss\fire\10.png",r"assets\npc\boss\fire\11.png",r"assets\npc\boss\fire\12.png"],
+                [r"assets\npc\boss\fire\13.png",r"assets\npc\boss\fire\14.png",r"assets\npc\boss\fire\15.png",r"assets\npc\boss\fire\16.png"],
+            ]
+        ]
 class PortalSettings:
     width = 300
     height = 360
     coordX1 = (SceneSettings.tileXnum - 10) * SceneSettings.tileWidth - width / 2
     coordY1 = (SceneSettings.tileYnum / 2) * SceneSettings.tileHeight - height / 2
-
     coordX2 = width / 2
     coordY2 = height / 2
 
@@ -207,6 +225,7 @@ class GameState(Enum):
     GAME_PLAY_BOSS = 5
 
 class GameEvent:
+    
     EVENT_SWITCH_START_MENU = pygame.USEREVENT + 1
     EVENT_SWITCH_CITY= pygame.USEREVENT + 2
     EVENT_SWITCH_WILD= pygame.USEREVENT + 3

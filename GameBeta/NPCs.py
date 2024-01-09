@@ -124,12 +124,63 @@ class Monster(pygame.sprite.Sprite):
 class Boss(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
+        self.map=0
+        self.images=[[pygame.transform.scale(
+            pygame.image.load(img),(BossSettings.bossWidth,BossSettings.bossHeight)) 
+            for img in GamePath.boss[self.map][index]] for index in range(4)]
+
+        self.dir=DirectionType.LEFT
+        self.speed=BossSettings.bossSpeed
+        self.image_index=2
+        self.index=0
+        self.image=self.images[self.image_index][self.index]
+        self.rect=self.image.get_rect()
+        self.rect.x=None
+        self.rect.y=None
+        self.width=BossSettings.bossWidth
+        self.height=BossSettings.bossHeight
+
+    def choose_map(self):
+        pass
+
+    def boss_try_move(self, x, y):
+        dis_x=x-self.rect.x
+        dis_y=y-self.rect.y
+        move=False
+        if abs(dis_y) <= abs(dis_x) and abs(dis_y) > 3*(self.height+PlayerSettings.playerWidth):
+            move=True
+            if dis_y > 0:
+                self.dir=DirectionType.UP
+                self.rect.y -= self.speed
+            else:
+                self.dir=DirectionType.DOWN
+                self.rect.y += self.speed
+        if abs(dis_x) < abs(dis_y) and abs(dis_x) > 3*(self.width+PlayerSettings.playerWidth):
+            move=True
+            if dis_x > 0:
+                self.dir=DirectionType.RIGHT
+                self.rect.x += self.speed
+            else:
+                self.dir=DirectionType.LEFT
+        if self.dir == DirectionType.DOWN:
+            self.image_index=0
+        if self.dir == DirectionType.RIGHT:
+            self.image_index=1
+        if self.dir == DirectionType.RIGHT:
+            self.image_index=2
+        if self.dir == DirectionType.LEFT:
+            self.image_index=3
+        if move:
+            self.index=(self.index+1) % 4
+            self.image=self.images[self.image_index][self.index]
+    
+
+
+    def draw(self, window, dx=0, dy=0):
+        window.blit(self.images[self.image_index][self.index],(dx,dy))
         
         ##### Your Code Here ↓ #####
         pass
         ##### Your Code Here ↑ #####
-
-    def draw(self, window, dx=0, dy=0):
-        ##### Your Code Here ↓ #####
-        pass
-        ##### Your Code Here ↑ #####
+class BossAttack(pygame.sprite.Sprite):
+    pass

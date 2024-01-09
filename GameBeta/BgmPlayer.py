@@ -3,16 +3,11 @@ from Settings import *
 
 class BgmPlayer():
     def __init__(self):
-        pygame.mixer.init()
-    def play(self, index):
-        pygame.mixer_music.load(GamePath.bgm[index])
-        pygame.mixer_music.play()
 
-    def stop(self):
-        pygame.mixer_music.stop()
-
-    def update(self, GOTO):
-        pass
+        self.start=pygame.mixer.Sound(GamePath.bgm[0])
+        self.city=pygame.mixer.Sound(GamePath.bgm[1])
+        self.wild=pygame.mixer.Sound(GamePath.bgm[2])
+        self.boss=pygame.mixer.Sound(GamePath.bgm[3])
 
 
     

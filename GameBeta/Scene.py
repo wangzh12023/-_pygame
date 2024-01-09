@@ -80,8 +80,6 @@ class Scene():
         # #渲染怪物
         # for monster in self.monsters.sprites():
         #     monster.draw(self.window,self.dx,self.dy)
-
-        
     def render_map(self):
         self.window.blit(self.bg,(-self.cameraX,-self.cameraY))
 class StartCG():
@@ -168,9 +166,7 @@ class BossScene(Scene):
         self.gen_BOSS()
 
     def gen_BOSS(self):
-        
         self.bg=pygame.image.load(GamePath.boss_bg)
-        
         self.portals.add(Portal(PortalSettings.coordX2,PortalSettings.coordY2,SceneType.CITY,"BOSS"))
         
         #self.obstacles=Maps.gen_boss_obstacle()

@@ -10,7 +10,7 @@ class GameManager:
     def __init__(self):
         #设置背景音乐播放器并播放初始背景音乐
         self.bgmplayer=BgmPlayer()
-        self.bgmplayer.play(0)
+        self.bgmplayer.start.play()
         #创建窗口
         self.window=pygame.display.set_mode((WindowSettings.width,WindowSettings.height))
         pygame.display.set_caption(WindowSettings.name)
@@ -63,12 +63,19 @@ class GameManager:
                 self.state=GameState.MAIN_MENU
                 self.flush_scene(SceneType.MENU) 
             if event.type==GameEvent.EVENT_SWITCH_CITY:#进入城市
+                self.bgmplayer.boss.stop()
+                self.bgmplayer.city.play(-1)
                 self.state=GameState.GAME_PLAY_CITY
                 self.flush_scene(SceneType.CITY) 
             if event.type==GameEvent.EVENT_SWITCH_WILD:#进入野外
+                self.bgmplayer.city.stop()
+                self.bgmplayer.boss.stop()
+                self.bgmplayer.wild.play(-1)
                 self.state=GameState.GAME_PLAY_WILD
                 self.flush_scene(SceneType.WILD) 
             if event.type==GameEvent.EVENT_SWITCH_BOSS:#进入BOSS房
+                self.bgmplayer.wild.stop()
+                self.bgmplayer.boss.play(-1)
                 self.state=GameState.GAME_PLAY_BOSS
                 self.flush_scene(SceneType.BOSS) 
             if event.type==GameEvent.EVENT_DIALOG:#开始对话
@@ -99,16 +106,17 @@ class GameManager:
             self.update_boss()
     #更新CG
     def update_start_cg(self):
-        if  self.get_time()>BGMSettings.Test:#StartBGM_length=22
+        keys=pygame.key.get_pressed()
+        if  self.get_time()>BGMSettings.Test or keys[pygame.K_q]:#StartBGM_length=22
             pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_START_MENU))
     #更新背景音乐
     def update_bgmplayer(self):
         if self.state!=GameState.START_CG:
-            self.bgmplayer.stop()
+            self.bgmplayer.start.stop()
     #更新主菜单
     def update_main_menu(self):
         keys=pygame.key.get_pressed()
-        if any(keys):#按下任意键进入游戏
+        if keys[pygame.K_RETURN]:#按下任意键进入游戏
             pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_CITY))
     #更新城市
     def update_city(self):
@@ -240,8 +248,6 @@ class GameManager:
     def render(self):
         if self.state==GameState.START_CG:
             self.render_start()
-            #渲染音乐
-            
         if self.state==GameState.MAIN_MENU:
             self.render_main_menu()
         if self.state==GameState.GAME_PLAY_CITY:
