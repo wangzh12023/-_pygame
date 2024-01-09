@@ -73,7 +73,7 @@ class Player(pygame.sprite.Sprite, Collidable):
         #初始化移动量
         self.dx=0
         self.dy=0
-        if keys[pygame.K_w] and self.rect.top > 0 :
+        if keys[pygame.K_w] and self.rect.top > 0 + self.speed:
             self.dy -= self.speed
             self.image_index=3
         if keys[pygame.K_s] and self.rect.bottom< WindowSettings.height:

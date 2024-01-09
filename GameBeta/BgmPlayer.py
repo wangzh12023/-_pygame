@@ -4,9 +4,8 @@ from Settings import *
 class BgmPlayer():
     def __init__(self):
         pygame.mixer.init()
-    def play(self, name, loop=-1):
-        if name=="start_bgm":
-            pygame.mixer_music.load(GamePath.bgm[0])
+    def play(self, index):
+        pygame.mixer_music.load(GamePath.bgm[index])
         pygame.mixer_music.play()
 
     def stop(self):

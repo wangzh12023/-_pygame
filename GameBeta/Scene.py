@@ -80,6 +80,8 @@ class Scene():
         # #渲染怪物
         # for monster in self.monsters.sprites():
         #     monster.draw(self.window,self.dx,self.dy)
+
+        
     def render_map(self):
         self.window.blit(self.bg,(-self.cameraX,-self.cameraY))
 class StartCG():

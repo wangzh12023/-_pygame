@@ -10,7 +10,7 @@ class GameManager:
     def __init__(self):
         #设置背景音乐播放器并播放初始背景音乐
         self.bgmplayer=BgmPlayer()
-        self.bgmplayer.play("start_bgm")
+        self.bgmplayer.play(0)
         #创建窗口
         self.window=pygame.display.set_mode((WindowSettings.width,WindowSettings.height))
         pygame.display.set_caption(WindowSettings.name)
@@ -99,7 +99,7 @@ class GameManager:
             self.update_boss()
     #更新CG
     def update_start_cg(self):
-        if self.get_time()>BGMSettings.Test:#StartBGM_length=22
+        if  self.get_time()>BGMSettings.Test:#StartBGM_length=22
             pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_START_MENU))
     #更新背景音乐
     def update_bgmplayer(self):
@@ -240,6 +240,8 @@ class GameManager:
     def render(self):
         if self.state==GameState.START_CG:
             self.render_start()
+            #渲染音乐
+            
         if self.state==GameState.MAIN_MENU:
             self.render_main_menu()
         if self.state==GameState.GAME_PLAY_CITY:
