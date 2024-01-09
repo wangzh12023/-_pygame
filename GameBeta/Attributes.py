@@ -1,5 +1,3 @@
-# -*- coding:utf-8 -*-
-
 class Collidable:
     def __init__(self):
         self.collidingWith = {

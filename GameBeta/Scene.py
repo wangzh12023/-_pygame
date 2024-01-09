@@ -1,21 +1,21 @@
-# -*- coding:utf-8 -*-
-
 import pygame
 import Maps
 from random import randint
-
 from enum import Enum
 from Settings import *
 from NPCs import *
-from PopUpBox import *
+#NPC, DialogNPC, ShopNPC, Monster, Boss
+from PopUpBox import *          
+#DialogBox, ShoppingBox
 from Portal import *
+#Portal
 from BgmPlayer import *
+from Player import Player
 
 class Scene():
     def __init__(self, window):
         self.window=window
         #设置镜头位置
-        
         #设置偏移量
         self.dx=0
         self.dy=0
@@ -31,7 +31,6 @@ class Scene():
     def get_height(self):
         return int(WindowSettings.height * WindowSettings.outdoorScale)
     def update_camera(self, player):
-        
         self.dx=self.dy=0
         if player.rect.x > WindowSettings.width / 4 * 3:
             self.cameraX += player.speed
@@ -89,24 +88,22 @@ class StartCG():
         #导入背景图
         self.bg=pygame.image.load(GamePath.white_bg)
         self.bg=pygame.transform.scale(self.bg,(WindowSettings.width,WindowSettings.height))
-
         self.cg=pygame.image.load(GamePath.cg)
         self.cg=pygame.transform.scale(self.cg,(WindowSettings.width,WindowSettings.height))
         self.cg.set_alpha(0)
     def render(self, time):
         self.window.blit(self.bg,(0,0))
         #从14-19秒透明度变低
-        if 14<time<=15:
-            self.cg.set_alpha(int(255*(time-14)))
+        if 6.2<time<=7.2:
+            self.cg.set_alpha(int(255*(time-6.2)))
         #19-20秒透明度变高
-        if 19<time<20:
-            self.cg.set_alpha(int(255*(20-time)))
+        if 13<time<15:
+            self.cg.set_alpha(int(255*(15-time)))
         self.window.blit(self.cg,(0,0))
 
 class StartMenu():
     def __init__(self, window):
         self.window=window
-        
         #导入背景图
         self.bg=pygame.image.load(GamePath.menu)
         self.bg=pygame.transform.scale(self.bg,(WindowSettings.width,WindowSettings.height))
@@ -146,14 +143,9 @@ class WildScene(Scene):
         self.cameraY=360
         self.gen_WILD()
         #self.gen_monsters()
-
-
     def gen_WILD(self):
-
         self.bg=pygame.image.load(GamePath.wild_bg)
-        
         self.obstacles=Maps.gen_wild_obstacle(self.cameraX,self.cameraY)
-
         self.portals.add(Portal(SceneSettings.tileXnum//3//2*SceneSettings.tileWidth-self.cameraX,
                                 SceneSettings.tileYnum//3*SceneSettings.tileHeight-self.cameraY,
                                 SceneType.BOSS,"WILD"))

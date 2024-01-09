@@ -1,7 +1,4 @@
-# -*- coding:utf-8 -*-
-
 import pygame
-
 from Settings import *
 from Attributes import *
 

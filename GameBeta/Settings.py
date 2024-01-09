@@ -1,5 +1,3 @@
-# -*- coding:utf-8 -*-
-
 from enum import Enum
 import pygame
 
@@ -7,11 +5,11 @@ class WindowSettings:
     name = "冤申"
     width = 1280
     height = 720
-    outdoorScale = 1.5 # A necessary scale to allow camera movement in outdoor scenes
+    outdoorScale = 1.5 
 
 class BGMSettings:
     StartBGM_length=22
-    Test=1
+    Test=15
 
 class SceneSettings:
     tileXnum = 48 # 64
@@ -20,7 +18,6 @@ class SceneSettings:
     obstacleDensity=0.1
     
 class PlayerSettings:
-    # Initial Player Settings
     playerSpeed = 7
     playerWidth = 33
     playerHeight = 33
@@ -31,8 +28,8 @@ class PlayerSettings:
     playerAttackCooldown = 0.3
     playerAttackSpeed = 15
     playerAttackRange = 20
-    playerGunWidth = 35
-    playerGunHeight = 35
+    playerGunWidth = 25
+    playerGunHeight = 25
     maze_start_x=44
     maze_start_y=23
     Wildcoodx=1120
@@ -125,15 +122,22 @@ class GamePath:
     Justine = r".\assets\npc\Justine.png"
     trader = r".\assets\npc\trader.png"
     player = [
-        r".\assets\player\1.png", 
-        r".\assets\player\1.png",
-        r".\assets\player\2.png", 
-        r".\assets\player\2.png", 
-        r".\assets\player\3.png", 
-        r".\assets\player\3.png", 
-        r".\assets\player\4.png", 
-        r".\assets\player\4.png", 
-        # 8 frames for a single loop of animation looks much better.
+        [r".\assets\player\1.png", r".\assets\player\1.png",
+        r".\assets\player\2.png", r".\assets\player\2.png", 
+        r".\assets\player\3.png", r".\assets\player\3.png", 
+        r".\assets\player\4.png", r".\assets\player\4.png"], 
+        [r".\assets\player\5.png", r".\assets\player\5.png",
+        r".\assets\player\6.png", r".\assets\player\6.png", 
+        r".\assets\player\7.png", r".\assets\player\7.png", 
+        r".\assets\player\8.png", r".\assets\player\8.png"],
+        [r".\assets\player\9.png", r".\assets\player\9.png", 
+        r".\assets\player\10.png", r".\assets\player\10.png", 
+        r".\assets\player\11.png", r".\assets\player\11.png", 
+        r".\assets\player\12.png", r".\assets\player\12.png"],
+        [r".\assets\player\13.png", r".\assets\player\13.png", 
+        r".\assets\player\14.png", r".\assets\player\14.png", 
+        r".\assets\player\15.png", r".\assets\player\15.png", 
+        r".\assets\player\16.png", r".\assets\player\16.png"]
     ]
     monster = r".\assets\npc\monster\1.png"
     boss = r".\assets\npc\boss.png"

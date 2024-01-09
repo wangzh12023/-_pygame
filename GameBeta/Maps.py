@@ -1,29 +1,25 @@
-# -*- coding:utf-8 -*-
-
 import pygame
-
 from Settings import *
 from random import random, randint
+
 class Obsatacle(pygame.sprite.Sprite):
-    def __init__(self, image,x,y):
+    def __init__(self,image,x,y):
         super().__init__()
         self.image=image
-
         self.rect=self.image.get_rect()
         self.rect.topleft=(x,y)
 
     def draw(self, window, dx=0, dy=0):
         self.rect=self.rect.move(dx,dy)
         window.blit(self.image,self.rect)
+        
 class Block(pygame.sprite.Sprite):
     def __init__(self, image, x=0, y=0, width=SceneSettings.tileWidth, height=SceneSettings.tileHeight):
         super().__init__()
-        self.image=image
-        self.image=pygame.transform.scale(self.image,(width,height))
-
+        self.image=pygame.transform.scale(image,(width,height))
         self.rect=self.image.get_rect()
         self.rect.topleft=(x,y)
-
+        
     def draw(self, window, dx=0, dy=0):
         self.rect=self.rect.move(dx,dy)
         window.blit(self.image,self.rect)
@@ -55,7 +51,6 @@ def gen_city_map():
     return mapObj
 '''
 def gen_boss_map():
-
     images=[pygame.transform.scale(pygame.image.load(tile),
                 (SceneSettings.tileWidth,SceneSettings.tileHeight)) 
                 for tile in GamePath.bossTiles]
@@ -68,7 +63,6 @@ def gen_boss_map():
     return mapObj
 
 def gen_city_obstacle():
-
     image = pygame.image.load(GamePath.cityWall)
     obstacles = pygame.sprite.Group()
     obstacles.add(Obsatacle(image,480,40))

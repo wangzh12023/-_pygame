@@ -1,7 +1,4 @@
-# -*- coding:utf-8 -*-
-
 from Settings import *
-
 import pygame
 
 class Portal(pygame.sprite.Sprite):
@@ -31,7 +28,6 @@ class Portal(pygame.sprite.Sprite):
         self.GOTO=GOTO
 
     def draw(self, window, dx=0, dy=0):
-  
         self.rect=self.rect.move(dx,dy)
         window.blit(self.image,self.rect)
 

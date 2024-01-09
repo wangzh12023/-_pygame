@@ -1,13 +1,10 @@
-# -*- coding:utf-8 -*-
-
 import sys
 import pygame
-
 from Player import *
 from Scene import *
 from Settings import *
 from PopUpBox import *
-from Guide import *
+from Guide import *                       #Guideboard
 from BgmPlayer import BgmPlayer
 class GameManager:
     def __init__(self):
@@ -90,11 +87,10 @@ class GameManager:
                 self.shopbox.npc.shopping=False
         #更新背景音乐
         self.update_bgmplayer()
-        
         if self.state==GameState.START_CG:
             self.update_start_cg()
         if self.state==GameState.MAIN_MENU:
-                self.update_main_menu()
+            self.update_main_menu()
         if self.state==GameState.GAME_PLAY_CITY:
             self.update_city()
         if self.state==GameState.GAME_PLAY_WILD:
@@ -104,7 +100,7 @@ class GameManager:
     #更新CG
     def update_start_cg(self):
         if self.get_time()>BGMSettings.Test:#StartBGM_length=22
-                pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_START_MENU))
+            pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_START_MENU))
     #更新背景音乐
     def update_bgmplayer(self):
         if self.state!=GameState.START_CG:

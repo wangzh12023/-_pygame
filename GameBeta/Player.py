@@ -1,7 +1,4 @@
-# -*- coding:utf-8 -*-
-
 import pygame
-
 from Settings import *
 from Attributes import *
 
@@ -10,12 +7,13 @@ class Player(pygame.sprite.Sprite, Collidable):
         pygame.sprite.Sprite.__init__(self)
         Collidable.__init__(self)
         #读取图片
-        self.images=[pygame.transform.scale(pygame.image.load(img),
-                    (PlayerSettings.playerWidth,PlayerSettings.playerHeight)) 
-                     for img in GamePath.player]
+        self.images=[[pygame.transform.scale(
+            pygame.image.load(img),(PlayerSettings.playerWidth,PlayerSettings.playerHeight)) 
+            for img in GamePath.player[index]] for index in range(len(GamePath.player))]
         #设置初始图片
         self.index=0
-        self.image=self.images[self.index]
+        self.image_index=2
+        self.image=self.images[self.image_index][self.index]
         #设置方向
         self.direction=DirectionType.RIGHT
         #设置坐标
@@ -75,37 +73,32 @@ class Player(pygame.sprite.Sprite, Collidable):
         #初始化移动量
         self.dx=0
         self.dy=0
-        
         if keys[pygame.K_w] and self.rect.top > 0 :
             self.dy -= self.speed
+            self.image_index=3
         if keys[pygame.K_s] and self.rect.bottom< WindowSettings.height:
             self.dy += self.speed
-        if keys[pygame.K_a] and self.rect.left> 0:
+            self.image_index=0
+        if keys[pygame.K_a] and self.rect.left > 0 + self.speed:
             self.dx -= self.speed
-            if self.direction==DirectionType.RIGHT:#水平反方向移动时水平翻转图像
-                self.images=[pygame.transform.flip(img,True,False) for img in self.images]
-                self.direction=DirectionType.LEFT
-        if keys[pygame.K_d] and self.rect.right< WindowSettings.width:
+            self.image_index=1
+        if keys[pygame.K_d] and self.rect.right < WindowSettings.width - self.speed:
             self.dx += self.speed
-            if self.direction==DirectionType.LEFT:#水平反方向移动时水平翻转图像
-                self.images=[pygame.transform.flip(img,True,False) for img in self.images]
-                self.direction=DirectionType.RIGHT
+            self.image_index=2
         #更新坐标
         self.rect=self.rect.move(self.dx,self.dy)
         #如果发生移动，更换人物图像
         if self.dx!=0 or self.dy!=0:
-            self.index=(self.index+1)%len(self.images)
-            self.image=self.images[self.index]
+            self.index=(self.index+1) % 4
+            self.image=self.images[self.image_index][self.index]
     def try_attack(self,current_time):
         # 玩家攻击
         player_pos = [self.rect.x,self.rect.y]
         keys=pygame.key.get_pressed()
         if keys[pygame.K_j]:
             if current_time - self.last_attack_time > self.attack_cooldown:
-                
                 self.attacks.add(Attack(player_pos[0], player_pos[1]+PlayerSettings.playerHeight//3,DirectionType.LEFT,self.attack_speed))
                 self.last_attack_time = current_time
-                
                 self.gun.update(DirectionType.LEFT)
         if keys[pygame.K_k]:
             if current_time - self.last_attack_time > self.attack_cooldown:
@@ -116,25 +109,23 @@ class Player(pygame.sprite.Sprite, Collidable):
                 self.gun.update(DirectionType.RIGHT)
         if keys[pygame.K_i]:
             if current_time - self.last_attack_time > self.attack_cooldown:
-                
                 self.attacks.add(Attack(player_pos[0], player_pos[1],DirectionType.UP,self.attack_speed))
                 self.last_attack_time = current_time
-                
                 self.gun.update(DirectionType.UP)
         if keys[pygame.K_m]:
             if current_time - self.last_attack_time > self.attack_cooldown:
-                
                 self.attacks.add(Attack(player_pos[0], player_pos[1],DirectionType.DOWN,self.attack_speed))
                 self.last_attack_time = current_time
-                
                 self.gun.update(DirectionType.DOWN)
     #更新子弹速度
     def try_change_attack_speed(self):
         keys=pygame.key.get_pressed()
         if keys[pygame.K_o]:
             self.attack_speed+=5
+            self.attack_cooldown=self.attack_cooldown*0.8
         if keys[pygame.K_p] and self.attack_speed > 5 :
             self.attack_speed-=5
+            self.attack_cooldown=self.attack_cooldown/0.8
     #渲染角色
     def draw(self, window,dx=0,dy=0):
         #根据镜头偏移量更改坐标
@@ -150,13 +141,20 @@ class Gun:
         #加载图片
         self.images=[pygame.transform.scale(pygame.image.load(img),(PlayerSettings.playerGunWidth,PlayerSettings.playerGunHeight)) for img in GamePath.gun]    
         #设置初始方向
-        self.direction=DirectionType.RIGHT#0123为上下左右
+        self.direction=DirectionType.RIGHT           #0123为上下左右
     def update(self,direction):
         #更新方向
         self.direction=direction
     #渲染枪
     def draw(self,window,rect):
-        window.blit(self.images[self.direction.value],rect)
+        if self.direction==DirectionType.UP:
+            window.blit(self.images[self.direction.value],(rect.x + PlayerSettings.playerWidth * 0.25,rect.y))
+        if self.direction==DirectionType.DOWN:
+            window.blit(self.images[self.direction.value],(rect.x + PlayerSettings.playerWidth * 0.25,rect.y + PlayerSettings.playerHeight * 0.6))
+        if self.direction==DirectionType.RIGHT:
+            window.blit(self.images[self.direction.value],(rect.x + PlayerSettings.playerWidth * 0.25,rect.y + PlayerSettings.playerHeight * 0.4))
+        if self.direction==DirectionType.LEFT:
+            window.blit(self.images[self.direction.value],(rect.x + PlayerSettings.playerWidth * 0.25,rect.y + PlayerSettings.playerHeight * 0.33))
 
 class Attack(pygame.sprite.Sprite):
     def __init__(self,x,y,direction,speed):

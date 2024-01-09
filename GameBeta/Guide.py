@@ -17,11 +17,8 @@ class Guideboard:
         self.window.blit(self.images[self.state],(0,0))
     #更新提示板状态
     def update(self,current_time):
+        keys=pygame.key.get_pressed()
         if current_time - self.last_time > self.cooldown:
-            
-            keys=pygame.key.get_pressed()
-
             if keys[pygame.K_q]:
                 self.state=(self.state+1)%len(self.images)
-            
             self.last_time=current_time
