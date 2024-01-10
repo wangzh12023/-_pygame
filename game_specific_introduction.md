@@ -1,5 +1,5 @@
 # Game introduction :rocket:
-目录：
+### Content 📑：
 
 - [Game Operation](# "Game Operation :dart:" )
 
