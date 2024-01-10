@@ -1,18 +1,23 @@
 # Game introduction :rocket:
-目录：
+### Content 📑：
 
-- [游戏操作](# "游戏操作 :dart:" )
-## 游戏操作 :dart:
-- 在游戏内按q可在左上角查看部分简单操作指南
+- [Game Operation](# "Game Operation :dart:" )
+
+## Game Operation :dart:
+
+##### :o: You can clck "Q" in game to check some basic game operation rules
+- Move: "W","A","S","D" (Represents respectely towards up,left,down,right)
+- Attack: "I","J","M","K" (Represents respectely towards up,left,down,right)
+- Help: "Q"
 
 
-## 游戏构成
+## Game Composition :triangular_flag_on_post:
 ### Characters :triangular_flag_on_post:
 - #### A main character :boy: ➡️ A knight  with a gun :gun: 
 - #### Two different friendly NPCs :neckbeard: ➡️ You can see in the main map
 - #### A simple enemy :imp: ➡️ Some monsters in wild map
 - #### A special enemy :imp: ➡️ Three bosses in boss map
-### Game
+
 ### Game Machanics :wrench:
 - Core mechanics ➡️ 
 - Collision system ➡️ 
@@ -21,5 +26,7 @@
 - Main menu ➡️ 
 - BGM ➡️ 
 
+### Code 📖
+- The code is comprised of various module files and a main program file. It adeptly utilizes Python's "classes" for encapsulating the code. Moreover, and adheres to the PEP 8 principles whether in variable naming or function calls.
 
-:fire:
+
