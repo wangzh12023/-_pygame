@@ -1,6 +1,5 @@
 import pygame
 from GameManager import GameManager
-
 def main():
     pygame.init()
     manager = GameManager()

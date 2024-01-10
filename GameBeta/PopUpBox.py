@@ -159,7 +159,7 @@ class ShoppingBox:
 
             
             texts = ["Coins: " + str(self.player.money),
-                    "HP: " + str(self.player.HP),
+                    "HP: " + str(self.player.MaxHP),
                     "Attack: " + str(self.player.attack),
                     "Defence: " + str(self.player.defence)]
         

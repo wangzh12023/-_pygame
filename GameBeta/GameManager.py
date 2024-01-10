@@ -20,8 +20,10 @@ class GameManager:
         self.scene=StartCG(self.window) 
         #创建主人公
         self.player=Player(WindowSettings.width//2,WindowSettings.height//2)  
+        
         #创建提示板
         self.guideboard=Guideboard(self.window)
+
         #创建对话栏
         self.dialogbox=DialogBox(self.window)
         #创建购物栏
@@ -41,10 +43,18 @@ class GameManager:
             self.scene=StartMenu(self.window)
         if GOTO==SceneType.CITY:
             self.scene=CityScene(self.window)
-        if GOTO==SceneType.WILD:
-            self.scene=WildScene(self.window)
-        if GOTO==SceneType.BOSS:
-            self.scene=BossScene(self.window)
+        if GOTO==SceneType.WILD_GRASS:
+            self.scene=WildGrassScene(self.window)
+        if GOTO==SceneType.WILD_WATER:
+            self.scene=WildWaterScene(self.window)
+        if GOTO==SceneType.WILD_FIRE:
+            self.scene=WildFireScene(self.window)
+        if GOTO==SceneType.BOSS_GRASS:
+            self.scene=BossGrassScene(self.window)
+        if GOTO==SceneType.BOSS_WATER:
+            self.scene=BossWaterScene(self.window)
+        if GOTO==SceneType.BOSS_FIRE:
+            self.scene=BossFireScene(self.window)       
         #将场景重置
         self.scene_reset()
     #重置场景的函数
@@ -67,17 +77,44 @@ class GameManager:
                 self.bgmplayer.city.play(-1)
                 self.state=GameState.GAME_PLAY_CITY
                 self.flush_scene(SceneType.CITY) 
-            if event.type==GameEvent.EVENT_SWITCH_WILD:#进入野外
+            
+            #进入野外
+            if event.type==GameEvent.EVENT_SWITCH_WILD_GRASS:
                 self.bgmplayer.city.stop()
                 self.bgmplayer.boss.stop()
                 self.bgmplayer.wild.play(-1)
-                self.state=GameState.GAME_PLAY_WILD
-                self.flush_scene(SceneType.WILD) 
-            if event.type==GameEvent.EVENT_SWITCH_BOSS:#进入BOSS房
+                self.state=GameState.GAME_PLAY_WILD_GRASS
+                self.flush_scene(SceneType.WILD_GRASS) 
+            if event.type==GameEvent.EVENT_SWITCH_WILD_WATER:
+                self.bgmplayer.city.stop()
+                self.bgmplayer.boss.stop()
+                self.bgmplayer.wild.play(-1)
+                self.state=GameState.GAME_PLAY_WILD_WATER
+                self.flush_scene(SceneType.WILD_WATER) 
+            if event.type==GameEvent.EVENT_SWITCH_WILD_FIRE:
+                self.bgmplayer.city.stop()
+                self.bgmplayer.boss.stop()
+                self.bgmplayer.wild.play(-1)
+                self.state=GameState.GAME_PLAY_WILD_FIRE
+                self.flush_scene(SceneType.WILD_FIRE) 
+                
+            #进入BOSS房
+            if event.type==GameEvent.EVENT_SWITCH_BOSS_GRASS:
                 self.bgmplayer.wild.stop()
                 self.bgmplayer.boss.play(-1)
-                self.state=GameState.GAME_PLAY_BOSS
-                self.flush_scene(SceneType.BOSS) 
+                self.state=GameState.GAME_PLAY_BOSS_GRASS
+                self.flush_scene(SceneType.BOSS_GRASS) 
+            if event.type==GameEvent.EVENT_SWITCH_BOSS_WATER:
+                self.bgmplayer.wild.stop()
+                self.bgmplayer.boss.play(-1)
+                self.state=GameState.GAME_PLAY_BOSS_WATER
+                self.flush_scene(SceneType.BOSS_WATER) 
+            if event.type==GameEvent.EVENT_SWITCH_BOSS_FIRE:
+                self.bgmplayer.wild.stop()
+                self.bgmplayer.boss.play(-1)
+                self.state=GameState.GAME_PLAY_BOSS_FIRE
+                self.flush_scene(SceneType.BOSS_FIRE) 
+                
             if event.type==GameEvent.EVENT_DIALOG:#开始对话
                 self.player.talking=True
                 self.dialogbox.set_npc(self.player.collide.collidingObject["npc"])
@@ -100,9 +137,17 @@ class GameManager:
             self.update_main_menu()
         if self.state==GameState.GAME_PLAY_CITY:
             self.update_city()
-        if self.state==GameState.GAME_PLAY_WILD:
+        if self.state==GameState.GAME_PLAY_WILD_GRASS:
             self.update_wild()
-        if self.state==GameState.GAME_PLAY_BOSS:
+        if self.state==GameState.GAME_PLAY_WILD_WATER:
+            self.update_wild()
+        if self.state==GameState.GAME_PLAY_WILD_FIRE:
+            self.update_wild()
+        if self.state==GameState.GAME_PLAY_BOSS_GRASS:
+            self.update_boss()
+        if self.state==GameState.GAME_PLAY_BOSS_WATER:
+            self.update_boss()
+        if self.state==GameState.GAME_PLAY_BOSS_FIRE:
             self.update_boss()
     #更新CG
     def update_start_cg(self):
@@ -137,7 +182,7 @@ class GameManager:
         self.update_player()#更新主人公状态
         self.update_attack()#更新子弹状态
         self.update_NPCs()#更新NPC状态
-        self.update_monsters()#更新monster状态
+        self.update_monsters()
         self.update_guide()#更新提示板状态
         #处理碰撞
         self.manage_collide()
@@ -147,27 +192,30 @@ class GameManager:
     def update_boss(self):
         self.update_player()#更新主人公状态
         self.update_attack()#更新子弹状态
-        self.update_NPCs()#更新NPC状态
+        self.update_bosses()
         self.update_guide()#更新提示板状态
         #处理碰撞
         self.manage_collide()
         #更新镜头
         self.scene.update_camera(self.player)
+
     #更新主人公状态
     def update_player(self):
         self.player.update(self.get_time())
+    
     #更新子弹状态
     def update_attack(self):
         for attack in self.player.attacks:
             attack.update()
-    #更新monster
-    def update_monsters(self):
-        for monster in self.scene.monsters.sprites():
-            monster.update()
     #更新NPC
     def update_NPCs(self):
         for npc in self.scene.npcs.sprites():
             npc.update(self.scene.cameraX,self.scene.cameraY)
+    def update_monsters(self):
+        for monster in self.scene.monsters.sprites():
+            monster.update()
+    def update_bosses(self):
+        self.scene.boss.update(self.player.rect.x,self.player.rect.y)
     #更新提示板
     def update_guide(self):
         self.guideboard.update(self.get_time())
@@ -224,13 +272,22 @@ class GameManager:
         #处理主人公碰撞
         if self.player.collide.is_colliding():
             if self.player.collide.collidingWith["portal"]:#与传送门碰撞
-                if self.player.collide.collidingObject["portal"].GOTO==SceneType.WILD:
-                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_WILD))
+                if self.player.collide.collidingObject["portal"].GOTO==SceneType.WILD_GRASS:
+                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_WILD_GRASS))
+                if self.player.collide.collidingObject["portal"].GOTO==SceneType.WILD_WATER:
+                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_WILD_WATER))
+                if self.player.collide.collidingObject["portal"].GOTO==SceneType.WILD_FIRE:
+                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_WILD_FIRE))                                   
                 if self.player.collide.collidingObject["portal"].GOTO==SceneType.CITY:
                     pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_CITY))
-                if self.player.collide.collidingObject["portal"].GOTO==SceneType.BOSS:
-                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_BOSS))
-
+                if self.player.collide.collidingObject["portal"].GOTO==SceneType.BOSS_GRASS:
+                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_BOSS_GRASS))
+                if self.player.collide.collidingObject["portal"].GOTO==SceneType.BOSS_WATER:
+                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_BOSS_WATER))
+                if self.player.collide.collidingObject["portal"].GOTO==SceneType.BOSS_FIRE:
+                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_BOSS_FIRE))
+                    
+                    
             if self.player.collide.collidingWith["obstacle"]:#与障碍物碰撞
                 self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
             if self.player.collide.collidingWith["npc"]:#与NPC碰撞
@@ -240,25 +297,33 @@ class GameManager:
                     if isinstance(self.player.collide.collidingObject["npc"],ShopNPC):
                         pygame.event.post(pygame.event.Event(GameEvent.EVENT_SHOP))
             if self.player.collide.collidingWith["monster"]:#与怪物碰撞
-                self.player.rect=self.player.rect.move(-self.player.dx,-self.player.dy)
+                if self.player.can_collide():
+                    self.player.HP-=(self.player.collide.collidingObject["monster"].attack-self.player.defence)
+                    self.player.reset_collideCD()
         #更新子弹碰撞
         for attack in self.player.attacks:
             self.update_collide(attack)
         #处理子弹碰撞
         for attack in self.player.attacks:
             #如果越过边界或发生碰撞就删除子弹
+            if attack.collide.collidingWith["monster"]:
+                monster=attack.collide.collidingObject["monster"]
+                monster.HP-=(self.player.attack-monster.defence)
+                if monster.HP<=0:
+                    self.player.attr_update(addCoins=monster.money)
+                    monster.kill()
             if attack.over_range(self.scene.cameraX,self.scene.cameraY) or attack.collide.is_colliding():
                 attack.kill()
-        for monster in self.scene.monsters.sprites():
-            if monster.check==False:
-                self.scene.monsters.remove(monster)
-                self.update_collide(monster)
-                self.scene.monsters.add(monster)
-                monster.check=True
-        for monster in self.scene.monsters.sprites():
-            monster.check=False
-            monster.fix(self.scene.cameraX,self.scene.cameraY)
-        
+        if isinstance(self.scene,WildScene):
+            for monster in self.scene.monsters.sprites():
+                if monster.check==False:
+                    self.scene.monsters.remove(monster)
+                    self.update_collide(monster)
+                    self.scene.monsters.add(monster)
+                    monster.check=True
+            for monster in self.scene.monsters.sprites():
+                monster.check=False
+                monster.fix(self.scene.cameraX,self.scene.cameraY)
     #总渲染函数
     def render(self):
         if self.state==GameState.START_CG:
@@ -267,10 +332,18 @@ class GameManager:
             self.render_main_menu()
         if self.state==GameState.GAME_PLAY_CITY:
             self.render_city()
-        if self.state==GameState.GAME_PLAY_WILD:
+        if self.state==GameState.GAME_PLAY_WILD_GRASS:
             self.render_wild()
-        if self.state==GameState.GAME_PLAY_BOSS:
-            self.render_boss()
+        if self.state==GameState.GAME_PLAY_WILD_WATER:
+            self.render_wild()
+        if self.state==GameState.GAME_PLAY_WILD_FIRE:
+            self.render_wild()
+        if self.state==GameState.GAME_PLAY_BOSS_GRASS:
+            self.render_boss_grass()
+        if self.state==GameState.GAME_PLAY_BOSS_WATER:
+            self.render_boss_water()
+        if self.state==GameState.GAME_PLAY_BOSS_FIRE:
+            self.render_boss_fire()
     #渲染开场CG
     def render_start(self):
         self.scene.render(self.get_time())
@@ -280,7 +353,7 @@ class GameManager:
     #渲染城市
     def render_city(self):
         self.scene.render(self.player)#渲染场景
-        #self.render_guide()
+        self.render_guide()
         #如果正在对话,渲染对话栏
         if self.player.talking:
             self.render_dialogbox()
@@ -291,9 +364,13 @@ class GameManager:
         self.scene.render(self.player)#渲染场景
         self.render_guide()#渲染提示
     #渲染BOSS房
-    def render_boss(self):
+    def render_boss_grass(self):
         self.scene.render(self.player)#渲染场景
         self.render_guide()#渲染提示
+    def render_boss_water(self):
+        self.scene.render(self.player)
+    def render_boss_fire(self):
+        self.scene.render(self.player)
     #渲染提示   
     def render_guide(self):
         self.guideboard.draw()
@@ -302,3 +379,4 @@ class GameManager:
         self.dialogbox.draw()
     def render_shopbox(self):
         self.shopbox.draw()
+        

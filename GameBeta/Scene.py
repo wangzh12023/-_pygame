@@ -26,6 +26,8 @@ class Scene():
         #生成怪物
         self.monsters=pygame.sprite.Group()
         self.obstacles=pygame.sprite.Group()
+        self.boss=None
+
     def get_width(self):
         return int(WindowSettings.width * WindowSettings.outdoorScale)
     def get_height(self):
@@ -67,7 +69,7 @@ class Scene():
         #         self.window.blit(self.map[i][j],(SceneSettings.tileWidth*i-self.cameraX,SceneSettings.tileHeight*j-self.cameraY))
         self.render_map()
         #渲染主人公
-        player.draw(self.window,self.dx,self.dy)
+        
         #渲染传送门
         for portal in self.portals.sprites():
             portal.draw(self.window,self.dx,self.dy)
@@ -80,6 +82,7 @@ class Scene():
         #渲染怪物
         for monster in self.monsters.sprites():
             monster.draw(self.window,self.dx,self.dy)
+        player.draw(self.window,self.dx,self.dy)
     def render_map(self):
         self.window.blit(self.bg,(-self.cameraX,-self.cameraY))
 class StartCG():
@@ -125,9 +128,9 @@ class CityScene(Scene):
     def gen_CITY(self):
         self.bg=pygame.image.load(GamePath.city_bg)
 
-        self.portals.add(Portal(-160,200,SceneType.WILD,"Water"))
-        self.portals.add(Portal(1140,200,SceneType.WILD,"Grass"))
-        self.portals.add(Portal(480,600,SceneType.WILD,"Fire"))
+        self.portals.add(Portal(-160,200,SceneType.WILD_WATER,"Water"))
+        self.portals.add(Portal(1140,200,SceneType.WILD_GRASS,"Grass"))
+        self.portals.add(Portal(480,600,SceneType.WILD_FIRE,"Fire"))
         
         self.obstacles =Maps.gen_city_obstacle()
         
@@ -141,38 +144,101 @@ class WildScene(Scene):
         super().__init__(window=window)
         self.cameraX=640
         self.cameraY=360
-        self.gen_WILD()
-        self.gen_monsters()
-    def gen_WILD(self):
-        self.bg=pygame.image.load(GamePath.wild_bg)
-        self.obstacles,self.map=Maps.gen_wild_obstacle(self.cameraX,self.cameraY)
+        
+    def gen_WILD(self,wild_map,boss_map):
+        
+        self.obstacles,self.map=Maps.gen_wild_obstacle(self.cameraX,self.cameraY,wild_map)
         self.portals.add(Portal(SceneSettings.tileXnum//3//2*SceneSettings.tileWidth-self.cameraX,
                                 SceneSettings.tileYnum//3*SceneSettings.tileHeight-self.cameraY,
-                                SceneType.BOSS,"WILD"))
-        self.portals.add(Portal(1200,600,SceneType.CITY,"WILD"))
-
-
-    def gen_monsters(self, num = 10):
-        for i in range(num):
+                                boss_map,wild_map))
+        self.portals.add(Portal(1200,600,SceneType.CITY,wild_map))
+    def gen_monsters(self,wild_map,num = 10):
+        i=0
+        while i<num:
             x=randint(1,SceneSettings.tileXnum-2)
             y=randint(1,SceneSettings.tileYnum-2)
-            if x<16 and y <9:
+            if (x<=16 and y <=9) or (x>=41 and x>=20):
                 continue
             flag=True
             for obstacle in self.map:
                 if obstacle[0]==x and obstacle[1]==y: 
                     flag=False
             if flag:
-                self.monsters.add(Monster(SceneSettings.tileWidth * x-self.cameraX, SceneSettings.tileHeight * y-self.cameraY))
+                self.monsters.add(Monster(SceneSettings.tileWidth * x-self.cameraX, SceneSettings.tileHeight * y-self.cameraY,wild_map))
+                i+=1
+class WildGrassScene(WildScene):
+    def __init__(self,window):
+        super().__init__(window=window)
+        self.bg=pygame.transform.scale(pygame.image.load(GamePath.grass_wild_bg),
+                                       (SceneSettings.Wildwidth,SceneSettings.Wildheight))
+        self.wild_map="GRASSWILD"
+        self.boss_map=SceneType.BOSS_GRASS
+        self.gen_WILD(self.wild_map,self.boss_map)
+        self.gen_monsters(self.wild_map)
+class WildWaterScene(WildScene):
+    def __init__(self,window):
+        super().__init__(window=window)
+        self.bg=pygame.transform.scale(pygame.image.load(GamePath.water_wild_bg),
+                                       (SceneSettings.Wildwidth,SceneSettings.Wildheight))
+        self.wild_map="WATERWILD"
+        self.boss_map=SceneType.BOSS_WATER
+        self.gen_WILD(self.wild_map,self.boss_map)
+        self.gen_monsters(self.wild_map)
+class WildFireScene(WildScene):
+    def __init__(self,window):
+        super().__init__(window=window)
+        self.bg=pygame.transform.scale(pygame.image.load(GamePath.fire_wild_bg),
+                                       (SceneSettings.Wildwidth,SceneSettings.Wildheight))
+        self.wild_map="FIREWILD"
+        self.boss_map=SceneType.BOSS_FIRE
+        self.gen_WILD(self.wild_map,self.boss_map)
+        self.gen_monsters(self.wild_map)
+
+
+
 class BossScene(Scene):
     def __init__(self, window):
         super().__init__(window=window)
         self.cameraX=320
         self.cameraY=0
-        self.gen_BOSS()
+        
 
-    def gen_BOSS(self):
-        self.bg=pygame.image.load(GamePath.boss_bg)
-        self.portals.add(Portal(PortalSettings.coordX2,PortalSettings.coordY2,SceneType.CITY,"BOSS"))
+    
         
         #self.obstacles=Maps.gen_boss_obstacle()
+
+class BossGrassScene(BossScene):
+    def __init__(self,window):
+        super().__init__(window=window)
+        self.boss_map="BOSSGRASS"
+        self.gen_BOSS(self.boss_map)
+        self.boss=BossGrass(WindowSettings.width//2+200,WindowSettings.height//2+200)
+        self.monsters.add(self.boss)
+    def gen_BOSS(self,boss_map):
+        self.bg=pygame.transform.scale(pygame.image.load(GamePath.grass_boss_bg),
+                                       (SceneSettings.Wildwidth,SceneSettings.Wildheight))
+        self.portals.add(Portal(PortalSettings.coordX2/6,PortalSettings.coordY2/6,SceneType.CITY,boss_map))  
+
+class BossWaterScene(BossScene):
+    def __init__(self,window):
+        super().__init__(window=window)
+        self.boss_map="BOSSWATER"
+        self.gen_BOSS(self.boss_map)
+        self.boss=BossWater(WindowSettings.width//2+200,WindowSettings.height//2+200)
+        self.monsters.add(self.boss)
+    def gen_BOSS(self,boss_map):
+        self.bg=pygame.transform.scale(pygame.image.load(GamePath.water_boss_bg),
+                                       (SceneSettings.Wildwidth,SceneSettings.Wildheight))
+        self.portals.add(Portal(PortalSettings.coordX2/6,PortalSettings.coordY2/6,SceneType.CITY,boss_map))  
+
+class BossFireScene(BossScene):
+    def __init__(self,window):
+        super().__init__(window=window)
+        self.boss_map="BOSSFIRE"
+        self.gen_BOSS(self.boss_map)
+        self.boss=BossFire(WindowSettings.width//2+200,WindowSettings.height//2+200)
+        self.monsters.add(self.boss)
+    def gen_BOSS(self,boss_map):
+        self.bg=pygame.transform.scale(pygame.image.load(GamePath.fire_boss_bg),
+                                       (SceneSettings.Wildwidth,SceneSettings.Wildheight))
+        self.portals.add(Portal(PortalSettings.coordX2/6,PortalSettings.coordY2/6,SceneType.CITY,boss_map))  

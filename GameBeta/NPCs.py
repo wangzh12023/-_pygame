@@ -2,6 +2,8 @@ import pygame
 from Settings import *
 from Attributes import *
 import random
+from StatusBar import *
+
 class NPC(pygame.sprite.Sprite, Collidable):
     def __init__(self, x, y, name,dialog):
         # Initialize father classes
@@ -21,12 +23,10 @@ class NPC(pygame.sprite.Sprite, Collidable):
         self.talkcd=0
     #重置对话冷却时间
     def reset_talkCD(self,cdtype):
-        ##### Your Code Here ↓ #####
         if cdtype=="Talk":
             self.talkcd = NPCSettings.talkCD 
         if cdtype=="Select":
             self.talkcd = NPCSettings.SelectCD
-        ##### Your Code Here ↑ #####
     #检测能否对话
     def can_talk(self):
         return self.talkcd <= 0
@@ -105,28 +105,60 @@ class ShopNPC(NPC):
     
 
 class Monster(pygame.sprite.Sprite):
-    def __init__(self, x, y, HP = 10, Attack = 3, Defence = 1, Money = 15):
+    def __init__(self, x, y,wild_map,HP = 10, Attack = 3, Defence = 1, Money = 15):
         super().__init__()
-        
-        ##### Your Code Here ↓ #####
-        self.image=pygame.image.load(GamePath.monster)
-        self.image=pygame.transform.scale(self.image,(NPCSettings.npcWidth,NPCSettings.npcHeight))
+        if wild_map=="GRASSWILD":
+            self.images=[pygame.transform.scale(
+            pygame.image.load(img),(NPCSettings.npcWidth,NPCSettings.npcHeight)) 
+            for img in GamePath.grass_monster]
+        if wild_map=="WATERWILD":
+            self.images=[pygame.transform.scale(
+            pygame.image.load(img),(NPCSettings.npcWidth,NPCSettings.npcHeight)) 
+            for img in GamePath.blue_monster]
+        if wild_map=="FIREWILD":
+            self.images=[pygame.transform.scale(
+            pygame.image.load(img),(NPCSettings.npcWidth,NPCSettings.npcHeight)) 
+            for img in GamePath.red_monster]
+        self.image_index=0
+        self.image=self.images[self.image_index]
+
+        self.money=Money
+        self.HP=HP
+        self.attack=Attack
+        self.defence=Defence
+
         self.rect=self.image.get_rect()
         self.rect.topleft=(x,y)
 
+        self.HP=HP
+        self.attack=Attack
+        
         self.dire = [(1, 0), (0, 1), (-1, 0), (0, -1)]
         self.direindex = random.randint(0, 3)
+        if self.direindex==2:
+            self.direction=DirectionType.LEFT
+            self.images=[pygame.transform.flip(img,True,False) for img in self.images]
+        else:
+            self.direction=DirectionType.RIGHT
+
         self.collide=Collidable()
         self.check = False
         self.dx=0
         self.dy=0
-        ##### Your Code Here ↑ #####
     def update(self):
-        self.dx, self.dy = self.dire[self.direindex][0]*10,self.dire[self.direindex][1]*10
+        self.image_index=(self.image_index+1)%len(self.images)
+        self.image=self.images[self.image_index]
+        self.dx, self.dy = self.dire[self.direindex][0],self.dire[self.direindex][1]
         self.rect = self.rect.move(self.dx, self.dy)
     def fix(self,cameraX,cameraY):
         if self.collide.is_colliding() or self.over_range(cameraX,cameraY):
             self.direindex = random.randint(0, 3)
+            if self.direction ==DirectionType.RIGHT and self.direindex==2:
+                self.direction=DirectionType.LEFT
+                self.images=[pygame.transform.flip(img,True,False) for img in self.images]
+            if self.direction ==DirectionType.LEFT and self.direindex==0:
+                self.direction=DirectionType.RIGHT
+                self.images=[pygame.transform.flip(img,True,False) for img in self.images]
             self.rect = self.rect.move(-self.dx,-self.dy)
     def over_range(self,cameraX,cameraY):
         #计算实际位置
@@ -140,12 +172,19 @@ class Monster(pygame.sprite.Sprite):
         window.blit(self.image,self.rect)
 
 class Boss(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y,HP = 50, Attack = 5, Defence = 2, Money = 100):
         super().__init__()
         self.map=0
         self.images=[[pygame.transform.scale(
             pygame.image.load(img),(BossSettings.bossWidth,BossSettings.bossHeight)) 
             for img in GamePath.boss[self.map][index]] for index in range(4)]
+        
+        self.money=Money
+        self.MaxHP=HP
+        self.HP=HP
+        self.attack=Attack
+        self.defence=Defence
+        self.scale=BossHPScale(self.MaxHP,self.HP)
 
         self.dir=DirectionType.LEFT
         self.speed=BossSettings.bossSpeed
@@ -153,33 +192,52 @@ class Boss(pygame.sprite.Sprite):
         self.index=0
         self.image=self.images[self.image_index][self.index]
         self.rect=self.image.get_rect()
-        self.rect.x=None
-        self.rect.y=None
+        self.rect.topleft=(x,y)
+
         self.width=BossSettings.bossWidth
         self.height=BossSettings.bossHeight
 
-    def choose_map(self):
-        pass
+    def choose_map(self,boss_map):
+        if boss_map == SceneType.BOSS_GRASS:
+            self.map=0
+            self.images=[[pygame.transform.scale(
+            pygame.image.load(img),(BossSettings.bossWidth,BossSettings.bossHeight)) 
+            for img in GamePath.boss[self.map][index]] for index in range(4)]
+            self.image=self.images[self.image_index][self.index]
+        if boss_map == SceneType.BOSS_WATER:
+            self.map=1
+            self.images=[[pygame.transform.scale(
+            pygame.image.load(img),(BossSettings.bossWidth,BossSettings.bossHeight)) 
+            for img in GamePath.boss[self.map][index]] for index in range(4)]
+            self.image=self.images[self.image_index][self.index]
+        if boss_map == SceneType.BOSS_FIRE:
+            self.map=2      
+            self.images=[[pygame.transform.scale(
+            pygame.image.load(img),(BossSettings.bossWidth,BossSettings.bossHeight)) 
+            for img in GamePath.boss[self.map][index]] for index in range(4)] 
+            self.image=self.images[self.image_index][self.index]
 
-    def boss_try_move(self, x, y):
-        dis_x=x-self.rect.x
-        dis_y=y-self.rect.y
+    def boss_try_move(self, player_x, player_y):
+        dis_x=player_x-self.rect.x
+        dis_y=player_y-self.rect.y
         move=False
-        if abs(dis_y) <= abs(dis_x) and abs(dis_y) > 3*(self.height+PlayerSettings.playerWidth):
+        if abs(dis_x) < abs(dis_y):
             move=True
             if dis_y > 0:
-                self.dir=DirectionType.UP
-                self.rect.y -= self.speed
-            else:
                 self.dir=DirectionType.DOWN
                 self.rect.y += self.speed
-        if abs(dis_x) < abs(dis_y) and abs(dis_x) > 3*(self.width+PlayerSettings.playerWidth):
+            else:
+                self.dir=DirectionType.UP
+                self.rect.y -= self.speed
+        if abs(dis_y) <= abs(dis_x):
             move=True
             if dis_x > 0:
                 self.dir=DirectionType.RIGHT
                 self.rect.x += self.speed
             else:
                 self.dir=DirectionType.LEFT
+                self.rect.x -= self.speed
+
         if self.dir == DirectionType.DOWN:
             self.image_index=0
         if self.dir == DirectionType.RIGHT:
@@ -191,14 +249,23 @@ class Boss(pygame.sprite.Sprite):
         if move:
             self.index=(self.index+1) % 4
             self.image=self.images[self.image_index][self.index]
-    
-
-
+    def update(self,x,y):
+        self.boss_try_move(x,y)
+        self.scale.update(self.HP)
     def draw(self, window, dx=0, dy=0):
-        window.blit(self.images[self.image_index][self.index],(dx,dy))
-        
-        ##### Your Code Here ↓ #####
-        pass
-        ##### Your Code Here ↑ #####
-class BossAttack(pygame.sprite.Sprite):
-    pass
+        self.rect=self.rect.move(dx,dy)
+        window.blit(self.image,self.rect)
+        self.scale.draw(window)
+class BossGrass(Boss):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.choose_map(SceneType.BOSS_GRASS)
+class BossWater(Boss):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.choose_map(SceneType.BOSS_WATER)
+class BossFire(Boss):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.choose_map(SceneType.BOSS_FIRE)
+

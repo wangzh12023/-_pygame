@@ -67,31 +67,16 @@ def gen_city_obstacle():
     obstacles = pygame.sprite.Group()
     obstacles.add(Obsatacle(image,480,40))
     return obstacles
-'''
-def gen_wild_obstacle():
 
-    image = pygame.image.load(GamePath.tree)
-    obstacles = pygame.sprite.Group()
-
-    midX = SceneSettings.tileXnum // 2
-    midY = SceneSettings.tileYnum // 2
-
-    for i in range(SceneSettings.tileXnum):
-        for j in range(SceneSettings.tileYnum):
-            if random() < SceneSettings.obstacleDensity and \
-                ((i not in range(midX - 3, midX + 4))\
-                or (j not in range(midY - 3, midY + 4)))\
-                and (i > midX or j > midY):
-                obstacles.add(Block(image, 
-                    SceneSettings.tileWidth * i, SceneSettings.tileHeight * j))
-                
-    return obstacles
-'''
-def gen_wild_obstacle(cameraX,cameraY):#生成障碍物
+def gen_wild_obstacle(cameraX,cameraY,wild_map):#生成障碍物
     #障碍物包括：隔离boss区的障碍围栏和构成迷宫的随机生成障碍。
     #障碍围栏中有一个特殊的door对象，负责检测碰撞并进行传送
-    
-    image=pygame.image.load(GamePath.tree)
+    if wild_map=="GRASSWILD":
+        image=pygame.image.load(GamePath.tree)
+    if wild_map=="WATERWILD":
+        image=pygame.image.load(GamePath.ice)
+    if wild_map=="FIREWILD":
+        image=pygame.image.load(GamePath.fire)
     #image为障碍物的图片。由于迷宫有7个，每个迷宫用的障碍图片又不相同，所以每个迷宫都设置一个不同的path用来载入对应的不同的图片
     obstacles = pygame.sprite.Group()
 
@@ -113,24 +98,6 @@ def gen_wild_obstacle(cameraX,cameraY):#生成障碍物
         obstacles.add(Block(image,obstacle_x*SceneSettings.tileWidth-cameraX,obstacle_y*SceneSettings.tileHeight-cameraY))
     return obstacles,random_obstacle
 
-
-def gen_boss_obstacle():
-
-    image = pygame.image.load(GamePath.bossWall)
-    obstacles = pygame.sprite.Group()
-
-    midX = SceneSettings.tileXnum // 2
-    midY = SceneSettings.tileYnum // 2
-
-    for i in range(SceneSettings.tileXnum):
-        for j in range(SceneSettings.tileYnum):
-            if random() < SceneSettings.obstacleDensity and \
-                ((i not in range(midX - 3, midX + 4))\
-                or (j not in range(midY - 3, midY + 4)))\
-                and (i > midX or j > midY):
-                obstacles.add(Block(image, 
-                    SceneSettings.tileWidth * i, SceneSettings.tileHeight * j))
-    return obstacles
 #下面是用于随机生成迷宫的函数
 def get_random(xx,yy):#生成一组随机的坐标，对应随机生成的障碍物的坐标
     sequence = []#sequence[1]代表x坐标，sequence[2]代表y坐标

@@ -14,7 +14,7 @@ class Guideboard:
         #设置转换cd
         self.cooldown=GuideboardSettings.change_CD
     def draw(self):
-        self.window.blit(self.images[self.state],(0,0))
+        self.window.blit(self.images[self.state],(300,0))
     #更新提示板状态
     def update(self,current_time):
         keys=pygame.key.get_pressed()

@@ -13,14 +13,32 @@ class Portal(pygame.sprite.Sprite):
         if attribute=="Fire":
             self.image=pygame.image.load(GamePath.portal_fire)
             self.image=pygame.transform.scale(self.image,(PortalSettings.width,PortalSettings.height))
-        if attribute=="WILD" and GOTO==SceneType.BOSS:
-            self.image=pygame.image.load(GamePath.bossdoor)
+        if attribute=="GRASSWILD" and GOTO==SceneType.BOSS_GRASS:
+            self.image=pygame.image.load(GamePath.grass_bossdoor)
             self.image=pygame.transform.scale(self.image,(SceneSettings.tileWidth,SceneSettings.tileHeight))
-        if attribute=="WILD" and GOTO==SceneType.CITY:
+        if attribute=="WATERWILD" and GOTO==SceneType.BOSS_WATER:
+            self.image=pygame.image.load(GamePath.water_bossdoor)
+            self.image=pygame.transform.scale(self.image,(SceneSettings.tileWidth,SceneSettings.tileHeight))
+        if attribute=="FIREWILD" and GOTO==SceneType.BOSS_FIRE:
+            self.image=pygame.image.load(GamePath.fire_bossdoor)
+            self.image=pygame.transform.scale(self.image,(SceneSettings.tileWidth,SceneSettings.tileHeight))
+        if attribute=="GRASSWILD"  and GOTO==SceneType.CITY:
             self.image=pygame.image.load(GamePath.portal_grass)
             self.image=pygame.transform.scale(self.image,(80,120))
-        if attribute=="BOSS" and GOTO==SceneType.CITY:
+        if attribute=="WATERWILD"  and GOTO==SceneType.CITY:
+            self.image=pygame.image.load(GamePath.portal_water)
+            self.image=pygame.transform.scale(self.image,(80,120))
+        if attribute=="FIREWILD"  and GOTO==SceneType.CITY:
+            self.image=pygame.image.load(GamePath.portal_fire)
+            self.image=pygame.transform.scale(self.image,(80,120))
+        if attribute=="BOSSGRASS" and GOTO==SceneType.CITY:
             self.image=pygame.image.load(GamePath.portal_grass)
+            self.image=pygame.transform.scale(self.image,(PortalSettings.width,PortalSettings.height))
+        if attribute=="BOSSWATER" and GOTO==SceneType.CITY:
+            self.image=pygame.image.load(GamePath.portal_water)
+            self.image=pygame.transform.scale(self.image,(PortalSettings.width,PortalSettings.height))
+        if attribute=="BOSSFIRE" and GOTO==SceneType.CITY:
+            self.image=pygame.image.load(GamePath.portal_fire)
             self.image=pygame.transform.scale(self.image,(PortalSettings.width,PortalSettings.height))
         self.rect=self.image.get_rect()
         self.rect.topleft=(x,y)

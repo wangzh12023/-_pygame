@@ -1,7 +1,7 @@
 import pygame
 from Settings import *
 from Attributes import *
-
+from StatusBar import *
 class Player(pygame.sprite.Sprite, Collidable):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -24,11 +24,14 @@ class Player(pygame.sprite.Sprite, Collidable):
         #设置移动量
         self.dx=0
         self.dy=0
-        #设置设置
+        #设置状态
         self.money=PlayerSettings.playerMoney
+        self.MaxHP=PlayerSettings.playerHP
         self.HP=PlayerSettings.playerHP
         self.attack=PlayerSettings.playerAttack
         self.defence=PlayerSettings.playerDefence
+        #创建状态面板
+        self.status=StatusBar(self.MaxHP,self.HP,self.attack,self.defence,self.money)
         #设置对话状态
         self.talking=False
         self.shopping=False
@@ -44,19 +47,24 @@ class Player(pygame.sprite.Sprite, Collidable):
         self.last_attack_time = 0
         #创建碰撞检测器
         self.collide=Collidable()
+        self.collide_cd=PlayerSettings.collideCD
+    def reset_collideCD(self):
+        self.collide_cd = PlayerSettings.collideCD
+    def can_collide(self):
+        return self.collide_cd <= 0
     #更新状态
     def attr_update(self, addCoins = 0, addHP = 0, addAttack = 0, addDefence = 0):
         self.money+=addCoins
-        self.HP+=addHP
+        self.MaxHP+=addHP
         self.attack+=addAttack
         self.defence+=addDefence
     #回到画面中心
     def reset_pos(self,state):
         if state==GameState.GAME_PLAY_CITY:
             self.rect.topleft=(PlayerSettings.Citycoodx,PlayerSettings.Citycoody)
-        if state==GameState.GAME_PLAY_WILD:
+        if state==GameState.GAME_PLAY_WILD_GRASS or state==GameState.GAME_PLAY_WILD_WATER or state==GameState.GAME_PLAY_WILD_FIRE:
             self.rect.topleft=(PlayerSettings.Wildcoodx,PlayerSettings.Wildcoody)##44,24
-        if state==GameState.GAME_PLAY_BOSS:
+        if state==GameState.GAME_PLAY_BOSS_GRASS or state==GameState.GAME_PLAY_BOSS_WATER or state==GameState.GAME_PLAY_BOSS_FIRE:
             self.rect.topleft=(PlayerSettings.Citycoodx,PlayerSettings.Citycoody)
     def update(self,time):
         #如果正在对话则则不尝试更新
@@ -67,6 +75,10 @@ class Player(pygame.sprite.Sprite, Collidable):
             self.try_attack(time)
             #尝试更新子弹速度
             self.try_change_attack_speed()
+        if not self.can_collide():
+            self.collide_cd-=1
+            
+        self.status.update(self.MaxHP,self.HP,self.attack,self.defence,self.money)
     #尝试移动
     def try_move(self):
         keys=pygame.key.get_pressed()
@@ -136,6 +148,8 @@ class Player(pygame.sprite.Sprite, Collidable):
         #渲染子弹
         for attack in self.attacks:
             attack.draw(window,dx,dy)
+        #渲染状态面板
+        self.status.draw(window)
 class Gun:
     def __init__(self):
         #加载图片
