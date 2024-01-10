@@ -33,6 +33,9 @@ Here are the contributors :clap::arrow_down:
 
 ## Poject introduction 
 
+- :heavy_exclamation_mark: If you need more specific information, you can click here ➡️
+&nbsp;&nbsp;&nbsp;[![Static Badge](https://img.shields.io/badge/Introduction-green)](game_specific_introduction.md)
+
 ### 一、Game Name :dart:
 - `Marked Odyssey`
 ### 二、Game Type：
