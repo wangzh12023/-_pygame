@@ -26,7 +26,7 @@ class PlayerSettings:
     playerSpeed = 7
     playerWidth = 33
     playerHeight = 33
-    playerHP = 20
+    playerHP = 4
     playerAttack = 5
     playerDefence = 1
     playerMoney = 100
@@ -62,8 +62,8 @@ class DirectionType(Enum):
     RIGHT = 3
 
 class BossSettings:
-    bossWidth = 150
-    bossHeight = 150
+    bossWidth = 1000
+    bossHeight = 1000
     bossSpeed = 4
     bossHP = 100
     bossAttack = 10
@@ -144,7 +144,8 @@ class GamePath:
 
     guide =[ r".\assets\background\GuideClose.png",
             r".\assets\background\GuideOpen.png"]
-    
+    guide_attention = r".\assets\background\guide_attention.png"
+    guied_return = r".\assets\background\return_attention.png"
     statusbar=r".\assets\background\StatusBar.png"
     hpscale=r".\assets\background\HealthScale.png"
     boss_scale_bg=r".\assets\background\HealthScaleBG.png"
@@ -308,6 +309,7 @@ class GameState(Enum):
     GAME_PLAY_BOSS_GRASS = 7
     GAME_PLAY_BOSS_WATER = 8
     GAME_PLAY_BOSS_FIRE = 9
+
 class GameEvent:
     EVENT_SWITCH_START_MENU = pygame.USEREVENT + 1
     EVENT_SWITCH_CITY= pygame.USEREVENT + 2

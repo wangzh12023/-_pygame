@@ -121,18 +121,14 @@ class Monster(pygame.sprite.Sprite):
             for img in GamePath.red_monster]
         self.image_index=0
         self.image=self.images[self.image_index]
-
         self.money=Money
         self.HP=HP
         self.attack=Attack
         self.defence=Defence
-
         self.rect=self.image.get_rect()
         self.rect.topleft=(x,y)
-
         self.HP=HP
         self.attack=Attack
-        
         self.dire = [(1, 0), (0, 1), (-1, 0), (0, -1)]
         self.direindex = random.randint(0, 3)
         if self.direindex==2:
@@ -178,22 +174,21 @@ class Boss(pygame.sprite.Sprite):
         self.images=[[pygame.transform.scale(
             pygame.image.load(img),(BossSettings.bossWidth,BossSettings.bossHeight)) 
             for img in GamePath.boss[self.map][index]] for index in range(4)]
-        
         self.money=Money
         self.MaxHP=HP
         self.HP=HP
         self.attack=Attack
         self.defence=Defence
         self.scale=BossHPScale(self.MaxHP,self.HP)
-
         self.dir=DirectionType.LEFT
         self.speed=BossSettings.bossSpeed
+        # self.speed_2=BossSettings.bossSpeed / 3
+        # self.speed_3=BossSettings.bossSpeed
         self.image_index=2
         self.index=0
         self.image=self.images[self.image_index][self.index]
         self.rect=self.image.get_rect()
         self.rect.topleft=(x,y)
-
         self.width=BossSettings.bossWidth
         self.height=BossSettings.bossHeight
 
@@ -221,7 +216,7 @@ class Boss(pygame.sprite.Sprite):
         dis_x=player_x-self.rect.x
         dis_y=player_y-self.rect.y
         move=False
-        if abs(dis_x) < abs(dis_y):
+        if abs(dis_x) < abs(dis_y) :
             move=True
             if dis_y > 0:
                 self.dir=DirectionType.DOWN
@@ -229,7 +224,7 @@ class Boss(pygame.sprite.Sprite):
             else:
                 self.dir=DirectionType.UP
                 self.rect.y -= self.speed
-        if abs(dis_y) <= abs(dis_x):
+        if abs(dis_y) <= abs(dis_x) :  #abs(dis_x)+abs(dis_y) >  self.width
             move=True
             if dis_x > 0:
                 self.dir=DirectionType.RIGHT
@@ -237,15 +232,18 @@ class Boss(pygame.sprite.Sprite):
             else:
                 self.dir=DirectionType.LEFT
                 self.rect.x -= self.speed
-
+        # if abs(dis_x) < self.width*1.3 or abs(dis_y) < self.width*1.3 :
+        #     self.speed = self.speed_2
+        # if abs(dis_x) > self.width*1.3 and abs(dis_y) > self.width*1.3 :
+        #     self.speed=self.speed_3
         if self.dir == DirectionType.DOWN:
             self.image_index=0
         if self.dir == DirectionType.RIGHT:
-            self.image_index=1
-        if self.dir == DirectionType.RIGHT:
             self.image_index=2
-        if self.dir == DirectionType.LEFT:
+        if self.dir == DirectionType.UP:
             self.image_index=3
+        if self.dir == DirectionType.LEFT:
+            self.image_index=1
         if move:
             self.index=(self.index+1) % 4
             self.image=self.images[self.image_index][self.index]
@@ -256,6 +254,7 @@ class Boss(pygame.sprite.Sprite):
         self.rect=self.rect.move(dx,dy)
         window.blit(self.image,self.rect)
         self.scale.draw(window)
+
 class BossGrass(Boss):
     def __init__(self, x, y):
         super().__init__(x, y)
@@ -269,3 +268,42 @@ class BossFire(Boss):
         super().__init__(x, y)
         self.choose_map(SceneType.BOSS_FIRE)
 
+class BossAttack(pygame.sprite.Sprite):
+    def __init__(self,x,y,direction,speed):
+        super().__init__()
+        self.images=[pygame.transform.scale(pygame.image.load(img),(PlayerSettings.playerAttackRange,PlayerSettings.playerAttackRange)) for img in GamePath.attack]
+        #设置子弹方向
+        self.direction=direction
+        self.image=self.images[direction.value]
+        #设置坐标
+        self.rect=self.image.get_rect()
+        self.rect.topleft=(x,y)
+        #设置子弹速度
+        self.attack_speed=speed
+        #设置碰撞检测
+        self.collide=Collidable()
+    def update(self):
+        #设置偏移量
+        dx=dy=0
+        if self.direction==DirectionType.LEFT:
+            dx -= self.attack_speed
+        if self.direction==DirectionType.RIGHT:
+            dx += self.attack_speed
+        if self.direction==DirectionType.UP:
+            dy -= self.attack_speed
+        if self.direction==DirectionType.DOWN: 
+            dy += self.attack_speed
+        #更新坐标
+        self.rect=self.rect.move(dx,dy)
+    #检测是否超过地图边界
+    def over_range(self,cameraX,cameraY):
+        #计算实际位置
+        real_X=self.rect.x+cameraX
+        real_Y=self.rect.y+cameraY
+        if real_X<0 or real_Y<0 or real_X>WindowSettings.width * WindowSettings.outdoorScale or real_Y>WindowSettings.height * WindowSettings.outdoorScale:
+            return True
+        return False
+    #渲染子弹
+    def draw(self, window, dx=0, dy=0):
+        self.rect=self.rect.move(dx,dy)
+        window.blit(self.image,self.rect)

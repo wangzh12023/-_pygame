@@ -27,6 +27,7 @@ class Scene():
         self.monsters=pygame.sprite.Group()
         self.obstacles=pygame.sprite.Group()
         self.boss=None
+        self.if_can_generate_portals = True
 
     def get_width(self):
         return int(WindowSettings.width * WindowSettings.outdoorScale)
@@ -71,8 +72,9 @@ class Scene():
         #渲染主人公
         
         #渲染传送门
-        for portal in self.portals.sprites():
-            portal.draw(self.window,self.dx,self.dy)
+        if self.if_can_generate_portals:
+            for portal in self.portals.sprites():
+                portal.draw(self.window,self.dx,self.dy)
         #渲染障碍物
         for obstacle in self.obstacles.sprites():
             obstacle.draw(self.window,self.dx,self.dy)
@@ -201,9 +203,6 @@ class BossScene(Scene):
         super().__init__(window=window)
         self.cameraX=320
         self.cameraY=0
-        
-
-    
         
         #self.obstacles=Maps.gen_boss_obstacle()
 

@@ -68,6 +68,7 @@ class Player(pygame.sprite.Sprite, Collidable):
             self.rect.topleft=(PlayerSettings.Citycoodx,PlayerSettings.Citycoody)
     def update(self,time):
         #如果正在对话则则不尝试更新
+        self.status.update(self.MaxHP,self.HP,self.attack,self.defence,self.money)
         if not self.talking and not self.shopping:
             #尝试移动
             self.try_move()
@@ -78,7 +79,7 @@ class Player(pygame.sprite.Sprite, Collidable):
         if not self.can_collide():
             self.collide_cd-=1
             
-        self.status.update(self.MaxHP,self.HP,self.attack,self.defence,self.money)
+        
     #尝试移动
     def try_move(self):
         keys=pygame.key.get_pressed()

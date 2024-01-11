@@ -4,7 +4,7 @@ from Player import *
 from Scene import *
 from Settings import *
 from PopUpBox import *
-from Guide import *                       #Guideboard
+from Guide import *                       
 from BgmPlayer import BgmPlayer
 class GameManager:
     def __init__(self):
@@ -20,16 +20,15 @@ class GameManager:
         self.scene=StartCG(self.window) 
         #创建主人公
         self.player=Player(WindowSettings.width//2,WindowSettings.height//2)  
-        
         #创建提示板
         self.guideboard=Guideboard(self.window)
-
         #创建对话栏
         self.dialogbox=DialogBox(self.window)
         #创建购物栏
         self.shopbox=ShoppingBox(self.window)
         #初始游戏状态
         self.state=GameState.START_CG
+
     #设置帧率
     def tick(self, fps):
         self.clock.tick(fps)
@@ -77,7 +76,6 @@ class GameManager:
                 self.bgmplayer.city.play(-1)
                 self.state=GameState.GAME_PLAY_CITY
                 self.flush_scene(SceneType.CITY) 
-            
             #进入野外
             if event.type==GameEvent.EVENT_SWITCH_WILD_GRASS:
                 self.bgmplayer.city.stop()
@@ -165,6 +163,8 @@ class GameManager:
             pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_CITY))
     #更新城市
     def update_city(self):
+        self.player.HP=PlayerSettings.playerHP
+        self.update_game_over()
         self.update_player()#更新主人公状态
         self.update_attack()#更新子弹状态
         self.update_NPCs()#更新NPC状态
@@ -177,8 +177,10 @@ class GameManager:
         self.update_dialogbox()
         #更新对话栏
         self.update_shopbox()
+
     #更新野外
     def update_wild(self):
+        self.update_game_over()
         self.update_player()#更新主人公状态
         self.update_attack()#更新子弹状态
         self.update_NPCs()#更新NPC状态
@@ -188,6 +190,8 @@ class GameManager:
         self.manage_collide()
         #更新镜头
         self.scene.update_camera(self.player)
+
+        
     #更新BOSS房
     def update_boss(self):
         self.update_player()#更新主人公状态
@@ -198,6 +202,7 @@ class GameManager:
         self.manage_collide()
         #更新镜头
         self.scene.update_camera(self.player)
+
 
     #更新主人公状态
     def update_player(self):
@@ -216,15 +221,32 @@ class GameManager:
             monster.update()
     def update_bosses(self):
         self.scene.boss.update(self.player.rect.x,self.player.rect.y)
+        if len(self.scene.monsters) != 0:
+            self.scene.if_can_generate_portals = False
+        else:
+            self.scene.if_can_generate_portals = True
+            
     #更新提示板
     def update_guide(self):
         self.guideboard.update(self.get_time())
+        self.guideboard.is_attention=False
     def update_dialogbox(self):
         if self.dialogbox.open:
             self.dialogbox.update()
     def update_shopbox(self):
         if self.shopbox.state!="Close":
             self.shopbox.update()
+    
+    def update_game_over(self):
+        keys=pygame.key.get_pressed()
+        if self.player.status.game_over:
+            if keys[pygame.K_RETURN]:
+                self.guideboard.is_game_over=False
+                self.player.status.game_over=False
+                pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_CITY)) 
+            else:
+                self.guideboard.is_game_over=True
+
     #更新给定对象（包括主人公和子弹）的碰撞
     def update_collide(self,object):
         # object -> Obstacles
@@ -280,12 +302,21 @@ class GameManager:
                     pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_WILD_FIRE))                                   
                 if self.player.collide.collidingObject["portal"].GOTO==SceneType.CITY:
                     pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_CITY))
-                if self.player.collide.collidingObject["portal"].GOTO==SceneType.BOSS_GRASS:
-                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_BOSS_GRASS))
+                if self.player.collide.collidingObject["portal"].GOTO==SceneType.BOSS_GRASS :
+                    if len(self.scene.monsters)>0:
+                        self.guideboard.is_attention=True
+                    else:
+                        pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_BOSS_GRASS))
                 if self.player.collide.collidingObject["portal"].GOTO==SceneType.BOSS_WATER:
-                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_BOSS_WATER))
-                if self.player.collide.collidingObject["portal"].GOTO==SceneType.BOSS_FIRE:
-                    pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_BOSS_FIRE))
+                    if len(self.scene.monsters) >= 8:
+                        self.guideboard.is_attention=True
+                    if len(self.scene.monsters)<=9 : 
+                        pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_BOSS_WATER))
+                if self.player.collide.collidingObject["portal"].GOTO==SceneType.BOSS_FIRE :
+                    if len(self.scene.monsters)!=0:
+                        self.guideboard.is_attention=True
+                    if len(self.scene.monsters)==0 : 
+                        pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_BOSS_FIRE))
                     
                     
             if self.player.collide.collidingWith["obstacle"]:#与障碍物碰撞
@@ -344,6 +375,9 @@ class GameManager:
             self.render_boss_water()
         if self.state==GameState.GAME_PLAY_BOSS_FIRE:
             self.render_boss_fire()
+        
+
+         
     #渲染开场CG
     def render_start(self):
         self.scene.render(self.get_time())
@@ -353,6 +387,7 @@ class GameManager:
     #渲染城市
     def render_city(self):
         self.scene.render(self.player)#渲染场景
+
         self.render_guide()
         #如果正在对话,渲染对话栏
         if self.player.talking:
@@ -361,6 +396,7 @@ class GameManager:
             self.render_shopbox()
     #渲染野外
     def render_wild(self):
+
         self.scene.render(self.player)#渲染场景
         self.render_guide()#渲染提示
     #渲染BOSS房
@@ -369,11 +405,14 @@ class GameManager:
         self.render_guide()#渲染提示
     def render_boss_water(self):
         self.scene.render(self.player)
+        self.render_guide()#渲染提示
     def render_boss_fire(self):
         self.scene.render(self.player)
+        self.render_guide()#渲染提示
     #渲染提示   
     def render_guide(self):
         self.guideboard.draw()
+
     #渲染对话栏
     def render_dialogbox(self):
         self.dialogbox.draw()
