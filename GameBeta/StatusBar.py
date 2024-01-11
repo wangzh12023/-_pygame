@@ -27,7 +27,6 @@ class StatusBar:
         self.attack=attack
         self.defence=defence
         self.money=money
-        self.game_over = False
         #设置状态40,13
     #根据所给信息更新
     def update(self,MaxHP,HP,attack,defence,money):
@@ -36,10 +35,9 @@ class StatusBar:
         self.attack=attack
         self.defence=defence
         self.money=money
-        if self.HP>0:
-            self.scale=pygame.transform.scale(self.scale,
-                                (int(self.HP/self.MaxHP*StatusBarSettings.ScaleWidth)
-                                    ,StatusBarSettings.ScaleHeight))
+        self.scale=pygame.transform.scale(self.scale,
+                            (int(self.HP/self.MaxHP*StatusBarSettings.ScaleWidth)
+                                ,StatusBarSettings.ScaleHeight))
 
     def draw(self,window):
         window.blit(self.image, (0,0))
@@ -55,8 +53,6 @@ class StatusBar:
         window.blit(self.font_resource.render(str(self.money),
             True, self.fontColor),
             (230,60))
-        if self.HP <= 0:
-            self.game_over=True
         window.blit(self.scale,(40,13))
 class BossHPScale:
     def __init__(self,MaxHP,HP):
