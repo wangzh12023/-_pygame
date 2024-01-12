@@ -73,10 +73,13 @@ def gen_wild_obstacle(cameraX,cameraY,wild_map):#生成障碍物
     #障碍围栏中有一个特殊的door对象，负责检测碰撞并进行传送
     if wild_map=="GRASSWILD":
         image=pygame.image.load(GamePath.tree)
+        boss_image=pygame.transform.scale(pygame.image.load(GamePath.boss[0][2][1]),(100,100))
     if wild_map=="WATERWILD":
         image=pygame.image.load(GamePath.ice)
+        boss_image=pygame.transform.scale(pygame.image.load(GamePath.boss[1][2][1]),(100,100))
     if wild_map=="FIREWILD":
         image=pygame.image.load(GamePath.fire)
+        boss_image=pygame.transform.scale(pygame.image.load(GamePath.boss[2][2][1]),(100,100))
     #image为障碍物的图片。由于迷宫有7个，每个迷宫用的障碍图片又不相同，所以每个迷宫都设置一个不同的path用来载入对应的不同的图片
     obstacles = pygame.sprite.Group()
 
@@ -84,10 +87,14 @@ def gen_wild_obstacle(cameraX,cameraY,wild_map):#生成障碍物
     xx=SceneSettings.tileXnum//3
     yy=SceneSettings.tileYnum//3
     for i in range(xx+1):
-        if i==xx//2:continue#这行是留个空给door
+        if i==xx//2:
+            obstacles.add(Block(image,i*SceneSettings.tileWidth-cameraX,(yy-1)*SceneSettings.tileHeight-cameraY))
+            continue#这行是留个空给door
         obstacles.add(Block(image,i*SceneSettings.tileWidth-cameraX,yy*SceneSettings.tileHeight-cameraY))
     for j in range(yy):
         obstacles.add(Block(image,xx*SceneSettings.tileWidth-cameraX,j*SceneSettings.tileHeight-cameraY))
+    boss=pygame.sprite.Group()
+    boss.add(Block(boss_image,xx/3*2*SceneSettings.tileWidth-cameraX,yy/2*SceneSettings.tileHeight-cameraY,200,200))
     #以上两个for循环，生成了除door之外的boss区障碍围栏并加入精灵组obstacles
 
     #随机生成非boss区障碍物
@@ -96,7 +103,7 @@ def gen_wild_obstacle(cameraX,cameraY,wild_map):#生成障碍物
         obstacle_x=random_obstacle[i][0]
         obstacle_y=random_obstacle[i][1]
         obstacles.add(Block(image,obstacle_x*SceneSettings.tileWidth-cameraX,obstacle_y*SceneSettings.tileHeight-cameraY))
-    return obstacles,random_obstacle
+    return obstacles,random_obstacle,boss
 
 #下面是用于随机生成迷宫的函数
 def get_random(xx,yy):#生成一组随机的坐标，对应随机生成的障碍物的坐标

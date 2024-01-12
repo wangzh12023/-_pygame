@@ -308,9 +308,9 @@ class GameManager:
                     else:
                         pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_BOSS_GRASS))
                 if self.player.collide.collidingObject["portal"].GOTO==SceneType.BOSS_WATER:
-                    if len(self.scene.monsters) >= 8:
+                    if len(self.scene.monsters) >= 9:
                         self.guideboard.is_attention=True
-                    if len(self.scene.monsters)<=9 : 
+                    if len(self.scene.monsters)<9 : 
                         pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_BOSS_WATER))
                 if self.player.collide.collidingObject["portal"].GOTO==SceneType.BOSS_FIRE :
                     if len(self.scene.monsters)!=0:

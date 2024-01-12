@@ -62,8 +62,8 @@ class DirectionType(Enum):
     RIGHT = 3
 
 class BossSettings:
-    bossWidth = 1000
-    bossHeight = 1000
+    bossWidth = 400  
+    bossHeight = 400
     bossSpeed = 4
     bossHP = 100
     bossAttack = 10

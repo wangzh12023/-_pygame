@@ -26,6 +26,7 @@ class Scene():
         #生成怪物
         self.monsters=pygame.sprite.Group()
         self.obstacles=pygame.sprite.Group()
+        self.boss_show = pygame.sprite.Group()
         self.boss=None
         self.if_can_generate_portals = True
 
@@ -70,7 +71,6 @@ class Scene():
         #         self.window.blit(self.map[i][j],(SceneSettings.tileWidth*i-self.cameraX,SceneSettings.tileHeight*j-self.cameraY))
         self.render_map()
         #渲染主人公
-        
         #渲染传送门
         if self.if_can_generate_portals:
             for portal in self.portals.sprites():
@@ -84,6 +84,9 @@ class Scene():
         #渲染怪物
         for monster in self.monsters.sprites():
             monster.draw(self.window,self.dx,self.dy)
+        #渲染boss略缩图
+        for boss in self.boss_show.sprites():
+            boss.draw(self.window,self.dx,self.dy)
         player.draw(self.window,self.dx,self.dy)
     def render_map(self):
         self.window.blit(self.bg,(-self.cameraX,-self.cameraY))
@@ -149,7 +152,7 @@ class WildScene(Scene):
         
     def gen_WILD(self,wild_map,boss_map):
         
-        self.obstacles,self.map=Maps.gen_wild_obstacle(self.cameraX,self.cameraY,wild_map)
+        self.obstacles,self.map,self.boss_show=Maps.gen_wild_obstacle(self.cameraX,self.cameraY,wild_map)
         self.portals.add(Portal(SceneSettings.tileXnum//3//2*SceneSettings.tileWidth-self.cameraX,
                                 SceneSettings.tileYnum//3*SceneSettings.tileHeight-self.cameraY,
                                 boss_map,wild_map))
