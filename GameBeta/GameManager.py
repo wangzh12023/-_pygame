@@ -284,6 +284,9 @@ class GameManager:
             else:
                 object.collide.collidingWith["boss"]=False
                 object.collide.collidingObject["boss"]=None
+        else:
+            object.collide.collidingWith["boss"]=False
+            object.collide.collidingObject["boss"]=None
     #处理碰撞
     def manage_collide(self):
         self.update_collide(self.player)#更新主人公碰撞
@@ -326,6 +329,8 @@ class GameManager:
                 if self.player.can_collide():
                     self.player.attr_update(addHP=self.player.defence
                                             -self.player.collide.collidingObject["boss"].attack)
+                    if self.player.HP<=0:
+                        pygame.event.post(pygame.event.Event(GameEvent.EVENT_GAME_OVER))
                     self.player.reset_collideCD()
         #更新子弹碰撞
         for attack in self.player.attacks:

@@ -161,7 +161,12 @@ class Monster(pygame.sprite.Sprite):
     def draw(self, window, dx=0, dy=0):
         self.rect=self.rect.move(dx,dy)
         window.blit(self.image,self.rect)
-
+class Boss_show(Monster):
+    def __init__(self,image_path,x, y,HP = 10, Attack = 3, Defence = 1, Money = 15):
+        super().__init__(image_path,x,y)
+        self.images=[pygame.transform.scale(
+        img,(NPCSettings.npcWidth*3,NPCSettings.npcHeight*3)) 
+        for img in self.images]
 class Boss(pygame.sprite.Sprite):
     def __init__(self,image_path,x, y,HP = 50, Attack = 5, Defence = 2, Money = 100):
         super().__init__()
