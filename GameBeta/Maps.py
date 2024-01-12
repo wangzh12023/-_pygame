@@ -24,32 +24,6 @@ class Block(pygame.sprite.Sprite):
         self.rect=self.rect.move(dx,dy)
         window.blit(self.image,self.rect)
 #随机生成地图
-'''
-def gen_wild_map():
-    images=[pygame.transform.scale(pygame.image.load(tile),
-                (SceneSettings.tileWidth,SceneSettings.tileHeight)) 
-                for tile in GamePath.groundTiles]
-    mapObj=[]
-    for i in range(SceneSettings.tileXnum):
-        tmp=[]
-        for j in range(SceneSettings.tileYnum):
-            tmp.append(images[randint(0,len(images)-1)])
-        mapObj.append(tmp)
-    return mapObj
-'''
-'''
-def gen_city_map():
-    images=[pygame.transform.scale(pygame.image.load(tile),
-                (SceneSettings.tileWidth,SceneSettings.tileHeight)) 
-                for tile in GamePath.cityTiles]
-    mapObj=[]
-    for i in range(SceneSettings.tileXnum):
-        tmp=[]
-        for j in range(SceneSettings.tileYnum):
-            tmp.append(images[randint(0,len(images)-1)])
-        mapObj.append(tmp)
-    return mapObj
-'''
 def gen_boss_map():
     images=[pygame.transform.scale(pygame.image.load(tile),
                 (SceneSettings.tileWidth,SceneSettings.tileHeight)) 
@@ -68,18 +42,11 @@ def gen_city_obstacle():
     obstacles.add(Obsatacle(image,480,40))
     return obstacles
 
-def gen_wild_obstacle(cameraX,cameraY,wild_map):#生成障碍物
+def gen_wild_obstacle(image_path,image_boss_path,cameraX,cameraY):#生成障碍物
     #障碍物包括：隔离boss区的障碍围栏和构成迷宫的随机生成障碍。
     #障碍围栏中有一个特殊的door对象，负责检测碰撞并进行传送
-    if wild_map=="GRASSWILD":
-        image=pygame.image.load(GamePath.tree)
-        boss_image=pygame.transform.scale(pygame.image.load(GamePath.boss[0][2][1]),(100,100))
-    if wild_map=="WATERWILD":
-        image=pygame.image.load(GamePath.ice)
-        boss_image=pygame.transform.scale(pygame.image.load(GamePath.boss[1][2][1]),(100,100))
-    if wild_map=="FIREWILD":
-        image=pygame.image.load(GamePath.fire)
-        boss_image=pygame.transform.scale(pygame.image.load(GamePath.boss[2][2][1]),(100,100))
+    boss_image=pygame.image.load(image_boss_path)
+    image=pygame.image.load(image_path)
     #image为障碍物的图片。由于迷宫有7个，每个迷宫用的障碍图片又不相同，所以每个迷宫都设置一个不同的path用来载入对应的不同的图片
     obstacles = pygame.sprite.Group()
 

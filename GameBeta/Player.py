@@ -50,12 +50,15 @@ class Player(pygame.sprite.Sprite, Collidable):
         self.collide_cd=PlayerSettings.collideCD
     def reset_collideCD(self):
         self.collide_cd = PlayerSettings.collideCD
+    def reset_HP(self):
+        self.HP=self.MaxHP
     def can_collide(self):
         return self.collide_cd <= 0
     #更新状态
-    def attr_update(self, addCoins = 0, addHP = 0, addAttack = 0, addDefence = 0):
+    def attr_update(self, addCoins = 0, addMAXHP = 0,addHP = 0,addAttack = 0, addDefence = 0):
         self.money+=addCoins
-        self.MaxHP+=addHP
+        self.MaxHP+=addMAXHP
+        self.HP+=addHP
         self.attack+=addAttack
         self.defence+=addDefence
     #回到画面中心
@@ -63,7 +66,7 @@ class Player(pygame.sprite.Sprite, Collidable):
         if state==GameState.GAME_PLAY_CITY:
             self.rect.topleft=(PlayerSettings.Citycoodx,PlayerSettings.Citycoody)
         if state==GameState.GAME_PLAY_WILD_GRASS or state==GameState.GAME_PLAY_WILD_WATER or state==GameState.GAME_PLAY_WILD_FIRE:
-            self.rect.topleft=(PlayerSettings.Wildcoodx,PlayerSettings.Wildcoody)##44,24
+            self.rect.topleft=(PlayerSettings.Wildcoodx,PlayerSettings.Wildcoody)
         if state==GameState.GAME_PLAY_BOSS_GRASS or state==GameState.GAME_PLAY_BOSS_WATER or state==GameState.GAME_PLAY_BOSS_FIRE:
             self.rect.topleft=(PlayerSettings.Citycoodx,PlayerSettings.Citycoody)
     def update(self,time):

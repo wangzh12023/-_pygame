@@ -62,8 +62,8 @@ class DirectionType(Enum):
     RIGHT = 3
 
 class BossSettings:
-    bossWidth = 400  
-    bossHeight = 400
+    bossWidth = 300
+    bossHeight = 300
     bossSpeed = 4
     bossHP = 100
     bossAttack = 10
@@ -85,6 +85,7 @@ class SceneType(Enum):
     BOSS_WATER = 6
     BOSS_FIRE = 7
     MENU = 8
+    GAME_OVER = 9
     
 
 class DialogSettings:
@@ -128,6 +129,7 @@ class StatusBarSettings:
     BossScaleBgHeight=67
     ResourceSize=20
     Hpsize=10
+
 class GamePath:
     bgm = [r".\assets\bgm\start_bgm.mp3",
            r".\assets\bgm\city.mp3",
@@ -144,8 +146,10 @@ class GamePath:
 
     guide =[ r".\assets\background\GuideClose.png",
             r".\assets\background\GuideOpen.png"]
-    guide_attention = r".\assets\background\guide_attention.png"
-    guied_return = r".\assets\background\return_attention.png"
+
+    gameover = r".\assets\background\gameover.png"
+    gameover_text = r".\assets\background\return_attention.png"
+
     statusbar=r".\assets\background\StatusBar.png"
     hpscale=r".\assets\background\HealthScale.png"
     boss_scale_bg=r".\assets\background\HealthScaleBG.png"
@@ -309,6 +313,7 @@ class GameState(Enum):
     GAME_PLAY_BOSS_GRASS = 7
     GAME_PLAY_BOSS_WATER = 8
     GAME_PLAY_BOSS_FIRE = 9
+    GAME_OVER =10
 
 class GameEvent:
     EVENT_SWITCH_START_MENU = pygame.USEREVENT + 1
@@ -323,3 +328,4 @@ class GameEvent:
     EVENT_END_DIALOG = pygame.USEREVENT + 10
     EVENT_SHOP = pygame.USEREVENT + 11
     EVENT_END_SHOP = pygame.USEREVENT + 12
+    EVENT_GAME_OVER = pygame.USEREVENT + 13

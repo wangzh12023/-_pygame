@@ -14,17 +14,8 @@ class Guideboard:
         self.last_time=-1
         #设置转换cd
         self.cooldown=GuideboardSettings.change_CD
-        self.attention_image=pygame.transform.scale(pygame.image.load(GamePath.guide_attention),(2*GuideboardSettings.guideWidth,2*GuideboardSettings.guideHeight)) 
-        self.return_image = pygame.transform.scale(pygame.image.load(GamePath.guied_return),(2*GuideboardSettings.guideWidth,2*GuideboardSettings.guideHeight)) 
-        self.is_attention=False
-        self.is_game_over =False
     def draw(self):
         self.window.blit(self.images[self.state],(300,0))
-        if self.is_attention:
-            self.window.blit(self.attention_image,(300,300))
-        if self.is_game_over:
-            self.window.blit(self.return_image,(300,300))
-
     #更新提示板状态
     def update(self,current_time):
         keys=pygame.key.get_pressed()

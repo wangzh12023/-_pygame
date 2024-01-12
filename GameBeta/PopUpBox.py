@@ -117,16 +117,14 @@ class ShoppingBox:
                         self.state="Shopping"
                     self.npc.reset_talkCD("Select")
     def buy(self):
-        ##### Your Code Here ↓ #####
         if self.selectedID == 0:
             self.player.attr_update(addCoins = -15, addAttack = 1)
         elif self.selectedID == 1:
             self.player.attr_update(addCoins = -15, addDefence = 1)
         elif self.selectedID == 2:
-            self.player.attr_update(addCoins = -15, addHP = 1)
+            self.player.attr_update(addCoins = -15, addMAXHP = 1)
         elif self.selectedID == 3:
-            self.player.attr_update(addHP = -5)
-        ##### Your Code Here ↑ #####
+            self.player.attr_update(addMAXHP = -5)
 
     def draw(self):
         if self.state=="Talking":
