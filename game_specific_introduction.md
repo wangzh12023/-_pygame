@@ -1,13 +1,16 @@
-# Game introduction :rocket:
-### Content 📑：
+# Game Introduction  
 
-- [Game Operation](# "Game Operation :dart:" )
+## Content 📑：
+
+- [Game Operation](## "Game Operation :dart:" )
+- [Game Composition](## "Game Composition :triangular_flag_on_post:")
+- [Game File Manage](## "Game File Manage :rocket: ")
 
 ## Game Operation :dart:
 
 ##### :o: You can clck "Q" in game to check some basic game operation rules
-- Move: "W","A","S","D" (Represents respectely towards up,left,down,right)
-- Attack: "I","J","M","K" (Represents respectely towards up,left,down,right)
+- Move: "W","A","S","D" (Represents respectely up,left,down,right)
+- Attack: "I","J","M","K" (Represents respectely up,left,down,right)
 - Help: "Q"
 
 
@@ -20,13 +23,31 @@
 
 ### Game Machanics :wrench:
 - Core mechanics ➡️ 
-- Collision system ➡️ 
+- Collision system ➡️ When player, npcs and the monsters collide with some barriers, they will stay still or just change the directions.
 - Resource system ➡️ 
 ### Gameplay ⚔️
-- Main menu ➡️ 
-- BGM ➡️ 
+- Main menu ➡️ When you start the game, the window will automatically display a tween animation `冤申`, after which you can see the game starter page.
+- BGM ➡️ When you enter different maps, the bgmplayer will play different music. So, enjoy your fantastic tour in our game!
 
 ### Code 📖
-- The code is comprised of various module files and a main program file. It adeptly utilizes Python's "classes" for encapsulating the code. Moreover, and adheres to the PEP 8 principles whether in variable naming or function calls.
+- Very nice! 🌟
+
+## Game File Manage :rocket: 
+- Attributes.py
+
+- BgmPlayer.py
+
+- GameManager.py
+
+- Guide.py
+- Main.py
+- Maps.py
+- NPCs.py
+- Player.py
+- PopUpBox.py
+- Portal.py
+- Scene.py
+- Settings.py
+- StatusBar.py
 
 
