@@ -63,8 +63,8 @@ Here are the contributors :clap::arrow_down:
   - 敌人设置：
     每个敌人拥有固定的血量值和攻击力，在生成所属地图的同时生成。
 ## Project File Arrangement
-
-> #### This project contains some files below:
+#### Check here [![Static Badge](https://img.shields.io/badge/Introduction-green)](game_specific_introduction.md)
+<!-- > #### This project contains some files below:
 > - Main.py (run game)
 > - SceneManager.py (which is used to centrally manage the following files for image generation)
 >   - Map.py   (generate map)
@@ -72,7 +72,7 @@ Here are the contributors :clap::arrow_down:
 >   - NPC.py (set NPC's attributes)
 >   - Monster.py (set monster's attibutes)
 >   - Diologue.py (set diologue)
->   - Battle.py (make battle effects)
+>   - Battle.py (make battle effects) -->
 
 
 
