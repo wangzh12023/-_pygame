@@ -37,14 +37,10 @@
 
 It contains:
 
-class Collidable:
-
+-class Collidable:
     It is aimed to determine whether the event:collide occurs
-    
-    Classes maybe collided:
-    
-        obstacle npc boss monster portal
-        
+    Classes maybe collided:    
+        obstacle npc boss monster portal        
     If one of them be collided,it will return true.
 
   
