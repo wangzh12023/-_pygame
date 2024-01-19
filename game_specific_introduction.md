@@ -76,9 +76,27 @@
         - and so on
 
 - PopUpBox.py
-- Portal.py
-- Scene.py
-- Settings.py
-- StatusBar.py
+    - It is aimed to generate dialogbox / shopbox and update them
 
+- Portal.py
+    - It is aimed to generate Protals in different maps:
+        - in CITY_MAP : Transmit player to the corresponding WILD_MAP
+        - in WILD_MAP : Transmit player to the BOSS_MAP
+        - in BOSS_MAP : Transmit player to the CITY_MAP
+
+- Scene.py
+    - It is aimed to generate all the things related to scenes of the game.Such as:
+        - The updating of the camara
+        - CityScene / WildScene / BossScene
+        - GameOverScene
+        - StartCG : “冤申”
+        - StartMenu : “Press To Enter”
+
+- Settings.py
+    - It is aimed to define all the settings of the game
+
+- StatusBar.py
+    - It is aimed to generate and update all the states of characters.Such as:
+        - HP / Money / Attack / Defence of the player
+        - The Blood-State-Bar of the boss
 
