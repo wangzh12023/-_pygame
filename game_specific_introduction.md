@@ -34,7 +34,13 @@
 
 ## Game File Manage :rocket: 
 - Attributes.py
-
+It contains:
+### class Collidable:
+    It is aimed to determine whether the event:collide occurs.
+    Classes maybe collided:
+        obstacle npc boss monster portal
+    If one of them be collided,it will return true.
+  
 - BgmPlayer.py
 
 - GameManager.py
