@@ -35,7 +35,7 @@
 ## Game File Manage :rocket: 
 - Attributes.py
 It contains:
-### class Collidable:
+class Collidable:
     It is aimed to determine whether the event:collide occurs.
     Classes maybe collided:
         obstacle npc boss monster portal
