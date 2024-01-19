@@ -35,10 +35,12 @@
 ## Game File Manage :rocket: 
 - Attributes.py
     - It is aimed to determine whether the event:collide occurs
-        - Tips : classes maybe collided : obstacle / npc / boss / monster / portal        
+        - Tips : classes maybe collided : obstacle / npc / boss / monster / portal
+           
 - BgmPlayer.py
     - It is aimed to play 3 different BGMs : CITY / WILD_GRASS / BOSS_GRASS.
         - Tips : The BGM played now determined with current SceneType of the player.
+        
 - GameManager.py
     - The most important part,which is aimed to manage the whole game,such as:
         - update  all  scenes / characters / events / BMGs
@@ -47,11 +49,32 @@
         - and so on
 
 - Guide.py
+    - It is aimed to generate and update the guideboard at the left top corner.
+    - such as:“ 按‘Q’打开操作指南 ”
+
 - Main.py
     - The main manager of the game,which is aimed to update the display window / call GameManager to update and render the game
+    
 - Maps.py
+    - It is aimed to generate:
+        - Maps for different scenes
+        - Obstacles for different sences
+    - Moreover,we use Breadth-First Search to determine whether the random-generated obstacles are appropriate
+
 - NPCs.py
+    - It is aimed to generate four types of NPC characters:
+        - DialogNpc,which can talk with player
+        - ShopNPC,which can transaet with player
+        - Monster,which moves randomly and player will lose HP if collided with them
+        - Boss,which always moves towards the player and can attack player with bullet
+
 - Player.py
+    - It is aimed to define all characteristics of the player and update it.Such as:
+        - Parameters : HP / speed / directions and so on
+        - Special images : Hold and turns the direction of guns according to the moving direction and so on
+        - Abilities : Attack with gun / dialog with NPC and so on
+        - and so on
+
 - PopUpBox.py
 - Portal.py
 - Scene.py
