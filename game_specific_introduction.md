@@ -34,20 +34,21 @@
 
 ## Game File Manage :rocket: 
 - Attributes.py
-    ### It contains:
-    #### class Collidable:
     - It is aimed to determine whether the event:collide occurs
-    - Classes maybe collided:    
-        - obstacle npc boss monster portal        
-    - If one of them be collided,it will return true.
-
-  
+        - Tips : classes maybe collided : obstacle / npc / boss / monster / portal        
 - BgmPlayer.py
-
+    - It is aimed to play 3 different BGMs : CITY / WILD_GRASS / BOSS_GRASS.
+        - Tips : The BGM played now determined with current SceneType of the player.
 - GameManager.py
+    - The most important part,which is aimed to manage the whole game,such as:
+        - update  all  scenes / characters / events / BMGs
+        - render all scenes / characters / events
+        - flush or reset scenes,if your SceneType changes
+        - and so on
 
 - Guide.py
 - Main.py
+    - The main manager of the game,which is aimed to update the display window / call GameManager to update and render the game
 - Maps.py
 - NPCs.py
 - Player.py
