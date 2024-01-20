@@ -5,10 +5,13 @@ import random
 from StatusBar import *
 
 class NPC(pygame.sprite.Sprite, Collidable):
-    def __init__(self, x, y, name,dialog):
+    def __init__(self,image_path,image_path_talk,x, y, name,dialog):
         # Initialize father classes
         pygame.sprite.Sprite.__init__(self)
         Collidable.__init__(self)
+        self.image=pygame.transform.scale(pygame.image.load(image_path),
+                                        (NPCSettings.npcWidth,NPCSettings.npcHeight))
+        self.image_talk=pygame.image.load(image_path_talk)
         #设置名字
         self.name=name
         #记录初始位置
@@ -23,10 +26,12 @@ class NPC(pygame.sprite.Sprite, Collidable):
         self.talkcd=0
     #重置对话冷却时间
     def reset_talkCD(self,cdtype):
-        if cdtype=="Talk":
+        if cdtype==CDType.LONG:
             self.talkcd = NPCSettings.talkCD 
-        if cdtype=="Select":
+        if cdtype==CDType.SHORT:
             self.talkcd = NPCSettings.SelectCD
+        if cdtype==CDType.MEDIUM:
+            self.talkcd = NPCSettings.shopCD
     #检测能否对话
     def can_talk(self):
         return self.talkcd <= 0
@@ -35,20 +40,12 @@ class NPC(pygame.sprite.Sprite, Collidable):
         self.rect=self.rect.move(dx,dy)
         window.blit(self.image,self.rect)
     def talk_image(self):
-        if self.direction==DirectionType.RIGHT:
-            return self.image
-        else:
-            return pygame.transform.flip(self.image, True, False)   
-
+        return pygame.transform.scale(self.image_talk,
+                                        (DialogSettings.npcWidth,DialogSettings.npcHeight))
 class DialogNPC(NPC):
-    def __init__(self, x, y, name,dialog):
-        super().__init__(x, y, name,dialog)
-        if name=="Caroline":
-            self.image=pygame.transform.scale(pygame.image.load(GamePath.Caroline),
-                                            (NPCSettings.npcWidth,NPCSettings.npcHeight))
-        if name=="Justine":
-            self.image=pygame.transform.scale(pygame.image.load(GamePath.Justine),
-                                            (NPCSettings.npcWidth,NPCSettings.npcHeight))
+    def __init__(self,image_path,image_path_talk, x, y, name,dialog):
+        super().__init__(image_path,image_path_talk,x, y, name,dialog)
+        
         #设置坐标
         self.rect=self.image.get_rect()
         self.rect.topleft=(x,y)
@@ -73,10 +70,8 @@ class DialogNPC(NPC):
         if not self.can_talk():
             self.talkcd -= 1
 class ShopNPC(NPC):
-    def __init__(self, x, y, name, dialog,items):
-        super().__init__(x, y, name,dialog)
-        self.image=pygame.transform.scale(pygame.image.load(GamePath.trader),
-                                          (NPCSettings.npcWidth,NPCSettings.npcHeight))
+    def __init__(self,image_path,image_path_talk, x, y, name, dialog,items):
+        super().__init__(image_path,image_path_talk,x, y, name,dialog)
         self.rect=self.image.get_rect()
         self.rect.topleft=(x,y)
         self.items=items
@@ -84,20 +79,20 @@ class ShopNPC(NPC):
     
     def update(self, cameraX,cameraY):
         ##### Your Code Here ↓ #####
-        if not self.shopping:
-            if self.direction==DirectionType.RIGHT:
-                self.rect.x += self.speed 
-            else:
-                self.rect.x -= self.speed
-            #如果超出移动范围，转向
-            if abs(cameraX + self.rect.x -self.initialPosition) > 50:
-                #翻转图片
-                self.image = pygame.transform.flip(self.image, True, False)
-                # 反转方向
-                if self.direction ==  DirectionType.RIGHT:
-                    self.direction=DirectionType.LEFT
-                else:
-                    self.direction=DirectionType.RIGHT
+        # if not self.shopping:
+        #     if self.direction==DirectionType.RIGHT:
+        #         self.rect.x += self.speed 
+        #     else:
+        #         self.rect.x -= self.speed
+        #     #如果超出移动范围，转向
+        #     if abs(cameraX + self.rect.x -self.initialPosition) > 50:
+        #         #翻转图片
+        #         self.image = pygame.transform.flip(self.image, True, False)
+        #         # 反转方向
+        #         if self.direction ==  DirectionType.RIGHT:
+        #             self.direction=DirectionType.LEFT
+        #         else:
+        #             self.direction=DirectionType.RIGHT
         #更新冷却
         if not self.can_talk():
             self.talkcd -= 1
@@ -105,7 +100,7 @@ class ShopNPC(NPC):
     
 
 class Monster(pygame.sprite.Sprite):
-    def __init__(self,image_path,x, y,HP = 10, Attack = 3, Defence = 1, Money = 15):
+    def __init__(self,image_path,x, y,killedBOSSnum,HP = 10, Attack = 3, Defence = 1, Money = 15,Speed=2):
         super().__init__()
         self.images=[pygame.transform.scale(
         pygame.image.load(img),(NPCSettings.npcWidth,NPCSettings.npcHeight)) 
@@ -116,10 +111,11 @@ class Monster(pygame.sprite.Sprite):
         self.rect=self.image.get_rect()
         self.rect.topleft=(x,y)
 
-        self.money=Money
-        self.HP=HP
-        self.attack=Attack
-        self.defence=Defence
+        self.money=Money*(killedBOSSnum+1)
+        self.HP=HP*(killedBOSSnum+1)
+        self.attack=Attack*(killedBOSSnum+1)
+        self.defence=Defence*(killedBOSSnum+1)
+        self.speed=Speed*(killedBOSSnum+1)
     
         self.dire = [(1, 0), (0, 1), (-1, 0), (0, -1)]
         self.direindex = random.randint(0, 3)
@@ -137,7 +133,7 @@ class Monster(pygame.sprite.Sprite):
     def update(self):
         self.image_index=(self.image_index+1)%len(self.images)
         self.image=self.images[self.image_index]
-        self.dx, self.dy = self.dire[self.direindex][0],self.dire[self.direindex][1]
+        self.dx, self.dy = self.dire[self.direindex][0]*self.speed,self.dire[self.direindex][1]*self.speed
         self.rect = self.rect.move(self.dx, self.dy)
         
     def fix(self,cameraX,cameraY):
@@ -161,14 +157,15 @@ class Monster(pygame.sprite.Sprite):
     def draw(self, window, dx=0, dy=0):
         self.rect=self.rect.move(dx,dy)
         window.blit(self.image,self.rect)
+
 class Boss_show(Monster):
-    def __init__(self,image_path,x, y,HP = 10, Attack = 3, Defence = 1, Money = 15):
-        super().__init__(image_path,x,y)
+    def __init__(self,image_path,x, y,killedBOSSnum,HP = 10, Attack = 3, Defence = 1, Money = 15):
+        super().__init__(image_path,x,y,killedBOSSnum)
         self.images=[pygame.transform.scale(
         img,(NPCSettings.npcWidth*3,NPCSettings.npcHeight*3)) 
         for img in self.images]
 class Boss(pygame.sprite.Sprite):
-    def __init__(self,image_path,x, y,HP = 50, Attack = 5, Defence = 2, Money = 100):
+    def __init__(self,image_path,x, y,killedBOSSnum,HP = 50, Attack = 5, Defence = 2, Money = 100):
         super().__init__()
 
         self.images=[[pygame.transform.scale(
@@ -181,15 +178,15 @@ class Boss(pygame.sprite.Sprite):
         self.rect=self.image.get_rect()
         self.rect.topleft=(x,y)
 
-        self.money=Money
-        self.MaxHP=HP
-        self.HP=HP
-        self.attack=Attack
-        self.defence=Defence
+        self.money=Money*(killedBOSSnum+1)
+        self.MaxHP=HP*(killedBOSSnum+1)
+        self.HP=HP*(killedBOSSnum+1)
+        self.attack=Attack*(killedBOSSnum+1)
+        self.defence=Defence*(killedBOSSnum+1)
 
         self.scale=BossHPScale(self.MaxHP,self.HP)
         self.dir=DirectionType.LEFT
-        self.speed=BossSettings.bossSpeed
+        self.speed=BossSettings.bossSpeed*(killedBOSSnum+1)
 
         self.width=BossSettings.bossWidth
         self.height=BossSettings.bossHeight

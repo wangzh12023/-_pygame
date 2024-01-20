@@ -7,7 +7,7 @@ class Portal(pygame.sprite.Sprite):
         
         if GOTO==SceneType.CITY:
             self.image=pygame.image.load(image_path)
-            self.image=pygame.transform.scale(self.image,(PortalSettings.width,PortalSettings.height))
+            self.image=pygame.transform.scale(self.image,(PortalSettings.citywidth,PortalSettings.cityheight))
 
         if GOTO==SceneType.WILD_FIRE or GOTO==SceneType.WILD_GRASS or GOTO==SceneType.WILD_WATER:
             self.image=pygame.image.load(image_path)

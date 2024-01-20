@@ -28,7 +28,9 @@ class GameManager:
         self.shopbox=ShoppingBox(self.window)
         #初始游戏状态
         self.state=GameState.START_CG
-
+        #初始化BOSS击杀数量
+        self.killedBOSSnum=0
+        self.is_killed=[False,False,False]
     #设置帧率
     def tick(self, fps):
         self.clock.tick(fps)
@@ -41,21 +43,23 @@ class GameManager:
         if GOTO==SceneType.MENU:
             self.scene=StartMenu(self.window)
         if GOTO==SceneType.CITY:
-            self.scene=CityScene(self.window)
+            self.scene=CityScene(self.window,self.is_killed)
         if GOTO==SceneType.WILD_GRASS:
-            self.scene=WildGrassScene(self.window)
+            self.scene=WildGrassScene(self.window,self.killedBOSSnum)
         if GOTO==SceneType.WILD_WATER:
-            self.scene=WildWaterScene(self.window)
+            self.scene=WildWaterScene(self.window,self.killedBOSSnum)
         if GOTO==SceneType.WILD_FIRE:
-            self.scene=WildFireScene(self.window)
+            self.scene=WildFireScene(self.window,self.killedBOSSnum)
         if GOTO==SceneType.BOSS_GRASS:
-            self.scene=BossGrassScene(self.window)
+            self.scene=BossGrassScene(self.window,self.killedBOSSnum)
         if GOTO==SceneType.BOSS_WATER:
-            self.scene=BossWaterScene(self.window)
+            self.scene=BossWaterScene(self.window,self.killedBOSSnum)
         if GOTO==SceneType.BOSS_FIRE:
-            self.scene=BossFireScene(self.window)     
+            self.scene=BossFireScene(self.window,self.killedBOSSnum)     
         if GOTO==SceneType.GAME_OVER:
             self.scene=GameOverScene(self.window)  
+        if GOTO==SceneType.GAME_CLEAR:
+            self.scene=GameClearScene(self.window)  
         #将场景重置
         self.scene_reset()
     #重置场景的函数
@@ -70,6 +74,9 @@ class GameManager:
             if event.type==pygame.QUIT:#退出
                 pygame.QUIT()
                 sys.exit()
+            if event.type==GameEvent.GAME_CLEAR:
+                self.state=GameState.GAME_CLEAR
+                self.flush_scene(SceneType.GAME_CLEAR) 
             if event.type==GameEvent.EVENT_SWITCH_START_MENU:#进入主菜单
                 self.state=GameState.MAIN_MENU
                 self.flush_scene(SceneType.MENU) 
@@ -79,6 +86,8 @@ class GameManager:
                 self.player.reset_HP()
                 self.state=GameState.GAME_PLAY_CITY
                 self.flush_scene(SceneType.CITY) 
+                if self.killedBOSSnum==3:
+                    pygame.event.post(pygame.event.Event(GameEvent.GAME_CLEAR))
             #进入野外
             if event.type==GameEvent.EVENT_SWITCH_WILD_GRASS:
                 self.update_bgmplayer(SceneType.WILD_GRASS)
@@ -146,6 +155,8 @@ class GameManager:
             self.update_boss()
         if self.state==GameState.GAME_OVER:
             self.update_game_over()
+        if self.state==GameState.GAME_CLEAR:
+            self.update_game_clear()
     #更新CG
     def update_start_cg(self):
         keys=pygame.key.get_pressed()
@@ -163,7 +174,7 @@ class GameManager:
             pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_CITY))
     #更新城市
     def update_city(self):
-        self.player.HP=PlayerSettings.playerHP
+        self.player.reset_HP()
         self.update_player()#更新主人公状态
         self.update_attack()#更新子弹状态
         self.update_NPCs()#更新NPC状态
@@ -229,14 +240,17 @@ class GameManager:
         if self.dialogbox.open:
             self.dialogbox.update()
     def update_shopbox(self):
-        if self.shopbox.state!="Close":
+        if self.shopbox.state!=ShopType.CLOSE:
             self.shopbox.update()
     
     def update_game_over(self):
         keys=pygame.key.get_pressed()
         if keys[pygame.K_RETURN]:#按下任意键进入游戏
             pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_CITY))
-
+    def update_game_clear(self):
+        keys=pygame.key.get_pressed()
+        if keys[pygame.K_RETURN]:#按下任意键进入游戏
+            pygame.event.post(pygame.event.Event(pygame.QUIT))
     #更新给定对象（包括主人公和子弹）的碰撞
     def update_collide(self,object):
         # object -> Obstacles
@@ -349,6 +363,8 @@ class GameManager:
                 boss.HP-=(self.player.attack-boss.defence)
                 if boss.HP<=0:
                     self.player.attr_update(addCoins=boss.money)
+                    self.killedBOSSnum+=1
+                    self.is_killed[self.scene.boss_index]=True
                     self.scene.boss=None
             if attack.over_range(self.scene.cameraX,self.scene.cameraY) or attack.collide.is_colliding():
                 attack.kill()
@@ -377,6 +393,8 @@ class GameManager:
             self.render_boss()
         if self.state==GameState.GAME_OVER:
             self.render_gameover()
+        if self.state==GameState.GAME_CLEAR:
+            self.render_gameclear()
         
 
          
@@ -406,6 +424,8 @@ class GameManager:
     #渲染游戏结束
     def render_gameover(self):
         self.scene.render(self.get_time())
+    def render_gameclear(self):
+        self.scene.render()
     #渲染提示   
     def render_guide(self):
         self.guideboard.draw()

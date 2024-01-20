@@ -26,9 +26,9 @@ class PlayerSettings:
     playerSpeed = 7
     playerWidth = 33
     playerHeight = 33
-    playerHP = 4
-    playerAttack = 5
-    playerDefence = 1
+    playerHP = 50
+    playerAttack = 10
+    playerDefence = 3
     playerMoney = 100
     playerAttackCooldown = 0.3
     playerAttackSpeed = 15
@@ -48,12 +48,24 @@ class NPCSettings:
     npcWidth = 40
     npcHeight = 40
     talkCD = 30
-    SelectCD = 5
+    SelectCD = 4
+    shopCD = 15
+    monsterNum = 10
+
+class CDType(Enum):
+    LONG=1
+    SHORT=2
+    MEDIUM=3
 
 class NPCType(Enum):
     DIALOG = 1
     MONSTER = 2
     SHOP = 3
+
+class ShopType(Enum):
+    TALK=1
+    SHOP=2
+    CLOSE=3
 
 class DirectionType(Enum):
     UP = 0 
@@ -86,29 +98,32 @@ class SceneType(Enum):
     BOSS_FIRE = 7
     MENU = 8
     GAME_OVER = 9
+    GAME_CLEAR =10
     
 
 class DialogSettings:
     boxWidth = 800
     boxHeight = 180
-    boxStartX = WindowSettings.width // 4           # Coordinate X of the box
-    boxStartY = WindowSettings.height // 3 * 2 + 20 # Coordinate Y of the box
+    boxStartX = WindowSettings.width // 4 +50         # Coordinate X of the box
+    boxStartY = WindowSettings.height // 3 * 2 - 30 # Coordinate Y of the box
 
-    textSize = 48 # Default font size
-    textStartX = WindowSettings.width // 4 + 10         # Coordinate X of the first line of dialog
-    textStartY = WindowSettings.height // 3 * 2 + 30    # Coordinate Y of the first line of dialog
+    textSize = 36 # Default font size
+    nameStartX= WindowSettings.width // 4 + 75
+    nameStartY= WindowSettings.height // 3 * 2 -25 
+    textStartX = WindowSettings.width // 4 + 70         # Coordinate X of the first line of dialog
+    textStartY = WindowSettings.height // 3 * 2 +40    # Coordinate Y of the first line of dialog
     textVerticalDist = textSize               # Vertical distance of two lines
 
-    npcWidth = WindowSettings.width // 5
-    npcHeight = WindowSettings.height // 3
+    npcWidth = 400
+    npcHeight = 400
     npcCoordX = 0
-    npcCoordY = WindowSettings.height * 2 // 3 - 20
+    npcCoordY = WindowSettings.height-400
 
 class ShopSettings:
-    boxWidth = 800
-    boxHeight = 200
-    boxStartX = WindowSettings.width // 4   # Coordinate X of the box
-    boxStartY = WindowSettings.height // 3  # Coordinate Y of the box
+    boxWidth = 500
+    boxHeight = 220
+    boxStartX = WindowSettings.width // 4+100  # Coordinate X of the box
+    boxStartY = WindowSettings.height // 3 +20  # Coordinate Y of the box
 
     textSize = 56 # Default font size
     textStartX = boxStartX + 10         # Coordinate X of the first line of dialog
@@ -146,9 +161,14 @@ class GamePath:
 
     guide =[ r".\assets\background\GuideClose.png",
             r".\assets\background\GuideOpen.png"]
+    dialogbox=r".\assets\background\dialogbox.png"
+    shopbox=r".\assets\background\shopbox.png"
+
 
     gameover = r".\assets\background\gameover.png"
     gameover_text = r".\assets\background\return_attention.png"
+
+    gameclear = r".\assets\background\gameclear.png"
 
     statusbar=r".\assets\background\StatusBar.png"
     hpscale=r".\assets\background\HealthScale.png"
@@ -160,8 +180,12 @@ class GamePath:
     # player/npc related path
     npc = r".\assets\npc\npc.png"
     Caroline = r".\assets\npc\Caroline.png"
+    Caroline_Talk = r".\assets\npc\Caroline_talk.png"
     Justine = r".\assets\npc\Justine.png"
-    trader = r".\assets\npc\trader.png"
+    Justine_Talk = r".\assets\npc\Justine_talk.png"
+
+    Igor = r".\assets\npc\Igor.png"
+    Igor_Talk = r".\assets\npc\Igor_talk.png"
     player = [
         [r".\assets\player\1.png", r".\assets\player\1.png",
         r".\assets\player\2.png", r".\assets\player\2.png", 
@@ -298,10 +322,8 @@ class GamePath:
 class PortalSettings:
     width = 300
     height = 360
-    coordX1 = (SceneSettings.tileXnum - 10) * SceneSettings.tileWidth - width / 2
-    coordY1 = (SceneSettings.tileYnum / 2) * SceneSettings.tileHeight - height / 2
-    coordX2 = width / 2
-    coordY2 = height / 2
+    citywidth = 80
+    cityheight =120
 
 class GameState(Enum):
     START_CG = 1
@@ -313,7 +335,8 @@ class GameState(Enum):
     GAME_PLAY_BOSS_GRASS = 7
     GAME_PLAY_BOSS_WATER = 8
     GAME_PLAY_BOSS_FIRE = 9
-    GAME_OVER =10
+    GAME_OVER = 10
+    GAME_CLEAR = 11
 
 class GameEvent:
     EVENT_SWITCH_START_MENU = pygame.USEREVENT + 1
@@ -329,3 +352,4 @@ class GameEvent:
     EVENT_SHOP = pygame.USEREVENT + 11
     EVENT_END_SHOP = pygame.USEREVENT + 12
     EVENT_GAME_OVER = pygame.USEREVENT + 13
+    GAME_CLEAR = pygame.USEREVENT + 14

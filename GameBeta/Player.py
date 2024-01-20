@@ -78,7 +78,7 @@ class Player(pygame.sprite.Sprite, Collidable):
             #尝试攻击
             self.try_attack(time)
             #尝试更新子弹速度
-            self.try_change_attack_speed()
+            #self.try_change_attack_speed()
         if not self.can_collide():
             self.collide_cd-=1
             
