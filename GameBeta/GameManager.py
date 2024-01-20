@@ -230,7 +230,9 @@ class GameManager:
             monster.update()
     def update_bosses(self):
         if self.scene.boss:
-            self.scene.boss.update(self.player.rect.x,self.player.rect.y)
+            self.scene.boss.update(self.player.rect.x,self.player.rect.y,self.get_time())
+        for attack in self.scene.boss.attacks:
+            attack.update(self.get_time())
             
     #更新提示板
     def update_guide(self):

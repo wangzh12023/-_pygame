@@ -92,19 +92,21 @@ class DirectionType(Enum):
     RIGHT = 3
 
 class BossSettings:
-    bossWidth = 300
-    bossHeight = 300
-    bossSpeed = 4
+    bossWidth = 250
+    bossHeight = 250
+    bossSpeed = 3
     bossHp = 100
     bossAttack = 10
     bossDefence = 1
-    bossAttackCooldown = 0.5
     bossAttackSpeed = 10
     bossAttackRange = 20
     width = 300
     height = 300
     coordX = (SceneSettings.tileXnum / 2) * SceneSettings.tileWidth - width / 2
     coordY = (SceneSettings.tileYnum / 2) * SceneSettings.tileHeight - height / 2
+    bossAttackRange = 80
+    bossAttack2Time = 0.3
+    bossAttackSpeed = 15
 
 class SceneType(Enum):
     CITY = 1
@@ -359,6 +361,7 @@ class GamePath:
                  r"assets\npc\boss\fire\15.png",r"assets\npc\boss\fire\15.png",r"assets\npc\boss\fire\16.png",r"assets\npc\boss\fire\16.png"],
             ]
         ]
+    bossAttack = [r"assets\bossAttack\grass.png",r"assets\bossAttack\fire.png",r"assets\bossAttack\water1.png",r"assets\bossAttack\grass2.png",r"assets\bossAttack\fire2.png",r"assets\bossAttack\water2.png"]
 class PortalSettings:
     width = 300
     height = 360

@@ -1,4 +1,4 @@
-import pygame
+import pygame,random
 from Settings import *
 from Attributes import *
 import random
@@ -149,9 +149,9 @@ class BossShow(Monster):
         img,(NpcSettings.npcWidth*3,NpcSettings.npcHeight*3)) 
         for img in self.images]
 class Boss(pygame.sprite.Sprite):
-    def __init__(self,image_path,x, y,killedBossNum,Hp = 50, Attack = 5, Defence = 2, Money = 100):
+    def __init__(self,image_path,bossMap,x, y,killedBossNum,Hp = 50, Attack = 5, Defence = 2, Money = 100):
         super().__init__()
-
+        self.bossMap=bossMap
         self.images=[[pygame.transform.scale(
             pygame.image.load(img),(BossSettings.bossWidth,BossSettings.bossHeight)) 
             for img in image_path[index]] for index in range(4)]
@@ -167,32 +167,46 @@ class Boss(pygame.sprite.Sprite):
         self.hp=Hp*(killedBossNum+1)
         self.attack=Attack*(killedBossNum+1)
         self.defence=Defence*(killedBossNum+1)
-
         self.scale=BossHpScale(self.maxHp,self.hp)
         self.dir=DirectionType.LEFT
         self.speed=BossSettings.bossSpeed*(killedBossNum+1)
-
         self.width=BossSettings.bossWidth
         self.height=BossSettings.bossHeight
-
+        
+        self.attacks = pygame.sprite.Group()
+        self.attackRange=BossSettings.bossAttackRange
+        self.attackSpeed=BossSettings.bossAttackSpeed
+        self.attack2Time=BossSettings.bossAttack2Time
+        self.stayDirection=False
     def boss_try_move(self, player_x, player_y):
         dis_x=player_x-self.rect.x-self.width//2
         dis_y=player_y-self.rect.y-self.height//2
-        if abs(dis_x) < abs(dis_y) :
-            if dis_y > 0:
-                self.dir=DirectionType.DOWN
-                self.rect.y += self.speed
-            else:
-                self.dir=DirectionType.UP
-                self.rect.y -= self.speed
-        if abs(dis_y) <= abs(dis_x) :  #abs(dis_x)+abs(dis_y) >  self.width
+        if not self.stayDirection:
+            if abs(dis_x) < abs(dis_y) :
+                if dis_y > 0:
+                    self.dir=DirectionType.DOWN
+                    self.rect.y += self.speed
+                else:
+                    self.dir=DirectionType.UP
+                    self.rect.y -= self.speed
+            if abs(dis_y) < abs(dis_x) :  
+                if dis_x > 0:
+                    self.dir=DirectionType.RIGHT
+                    self.rect.x += self.speed
+                else:
+                    self.dir=DirectionType.LEFT
+                    self.rect.x -= self.speed
+        if self.stayDirection:
             if dis_x > 0:
-                self.dir=DirectionType.RIGHT
-                self.rect.x += self.speed
+                    self.dir=DirectionType.RIGHT
+                    self.rect.x += self.speed
             else:
-                self.dir=DirectionType.LEFT
-                self.rect.x -= self.speed
-
+                    self.dir=DirectionType.LEFT
+                    self.rect.x -= self.speed
+        if abs(abs(dis_x) - abs(dis_y)) <=BossSettings.bossSpeed:
+            self.stayDirection = True
+        if abs(dis_x) <=BossSettings.bossSpeed or abs(dis_y) <=BossSettings.bossSpeed :
+            self.stayDirection = False
         if self.dir == DirectionType.DOWN:
             self.imageIndex=0
         if self.dir == DirectionType.RIGHT:
@@ -203,42 +217,113 @@ class Boss(pygame.sprite.Sprite):
             self.imageIndex=1
         self.index=(self.index+1) % 4
         self.image=self.images[self.imageIndex][self.index]
+        
+    def boss_try_attack(self,time):
+        temNum = random.randint(1, 60)
+        temNum2=random.randint(1, 2)
+        ifAttack = False
+        ifAttack2 = False
+        if temNum == 3:
+            if temNum2 == 1:
+                ifAttack = True
+            if temNum2 == 2:
+                ifAttack2 = True
+        if ifAttack:
+            for i in range(8):
+                self.attacks.add(BossAttack(self.rect.x+self.height//4, self.rect.y+self.width//4,1,i,self.bossMap,time))
+        if ifAttack2:
+            for i in range(8):
+                self.attacks.add(BossAttack(self.rect.x+self.height//4, self.rect.y+self.width//4,2,i,self.bossMap,time))
 
-    def update(self,x,y):
+
+
+        
+    def update(self,x,y,time):
         self.boss_try_move(x,y)
         self.scale.update(self.hp)
+        self.boss_try_attack(time)
     def draw(self, window, dx=0, dy=0):
         self.rect=self.rect.move(dx,dy)
         window.blit(self.image,self.rect)
         self.scale.draw(window)
+        for attack in self.attacks:
+            attack.draw(window,dx,dy)
+        #渲染攻击
 
 class BossAttack(pygame.sprite.Sprite):
-    def __init__(self,x,y,direction,speed):
+    def __init__(self,x,y,attackNum,num,map,time):
         super().__init__()
-        self.images=[pygame.transform.scale(pygame.image.load(img),(PlayerSettings.playerAttackRange,PlayerSettings.playerAttackRange)) for img in GamePath.attack]
+        self.images=[pygame.transform.scale(pygame.image.load(img),(BossSettings.bossAttackRange,BossSettings.bossAttackRange)) for img in GamePath.bossAttack]
+        self.num = num
+        self.attackNum = attackNum
+        self.blitTime = time
         #设置子弹方向
-        self.direction=direction
-        self.image=self.images[direction.value]
+        if attackNum == 1:
+            if map == 'GRASS' :
+                self.image=self.images[0]
+            if map == 'FIRE':
+                self.image=self.images[1]
+            if map == 'WATER':
+                self.image=self.images[2]
+        if attackNum == 2:
+            if map == 'GRASS' :
+                self.image=self.images[3]
+            if map == 'FIRE':
+                self.image=self.images[4]
+            if map == 'WATER':
+                self.image=self.images[5]
         #设置坐标
         self.rect=self.image.get_rect()
         self.rect.topleft=(x,y)
         #设置子弹速度
-        self.attack_speed=speed
+        self.attack_speed=BossSettings.bossAttackSpeed
+        if self.attackNum == 2:
+            self.rect.x = random.randint(0,WindowSettings.width-BossSettings.bossAttackRange)
+            self.rect.y = random.randint(0,WindowSettings.height-BossSettings.bossAttackRange)
+
         #设置碰撞检测
         self.collide=Collidable()
-    def update(self):
+    def update1(self):
         #设置偏移量
         dx=dy=0
-        if self.direction==DirectionType.LEFT:
+        if self.num == 0:
             dx -= self.attack_speed
-        if self.direction==DirectionType.RIGHT:
-            dx += self.attack_speed
-        if self.direction==DirectionType.UP:
+        if self.num == 1:
+            dx -= self.attack_speed
             dy -= self.attack_speed
-        if self.direction==DirectionType.DOWN: 
+        if self.num == 2:
+            dy -= self.attack_speed
+        if self.num == 3:
+            dx += self.attack_speed
+            dy -= self.attack_speed
+        if self.num == 4:
+            dx += self.attack_speed
+        if self.num == 5:
+            dx += self.attack_speed
             dy += self.attack_speed
-        #更新坐标
+        if self.num == 6:
+            dy += self.attack_speed
+        if self.num == 7:
+            dy += self.attack_speed
+            dx -= self.attack_speed
         self.rect=self.rect.move(dx,dy)
+    def update2(self,time):
+        
+                
+                
+        if time - self.blitTime > 10*BossSettings.bossAttack2Time:
+            self.rect.x = -WindowSettings.width*2
+            self.rect.y = -WindowSettings.height*2
+            
+            
+    def update(self,time):
+        if self.attackNum == 2:
+            self.update2(time)
+        if self.attackNum == 1:
+            self.update1()
+        
+
+        
     #检测是否超过地图边界
     def over_range(self,cameraX,cameraY):
         #计算实际位置

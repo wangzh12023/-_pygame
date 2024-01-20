@@ -211,8 +211,8 @@ class BossScene(Scene):
         self.cameraY=0
         
         #self.obstacles=Maps.gen_BOSS_obstacle()
-    def gen_boss(self,imagePathBoss,imagePathPortal,imagePathBg,killedBossNum):
-        self.boss=Boss(imagePathBoss,WindowSettings.width//2+200,WindowSettings.height//2+200,killedBossNum)
+    def gen_boss(self,imagePathBoss,bossMap,imagePathPortal,imagePathBg,killedBossNum):
+        self.boss=Boss(imagePathBoss,bossMap,WindowSettings.width//2+200,WindowSettings.height//2+200,killedBossNum)
         self.bosses.add(self.boss)
         self.bg=pygame.transform.scale(pygame.image.load(imagePathBg),
                                        (SceneSettings.wildWidth,SceneSettings.wildHeight))
@@ -221,20 +221,21 @@ class BossScene(Scene):
 class BossGrassScene(BossScene):
     def __init__(self,window,killedBossNum):
         super().__init__(window=window,killedBossNum=killedBossNum)
-        self.gen_boss(GamePath.boss[0],GamePath.portalGrass,GamePath.grassBossBg,killedBossNum)
+        self.gen_boss(GamePath.boss[0],"GRASS",GamePath.portalGrass,GamePath.grassBossBg,killedBossNum)
         self.bossIndex=0
         
-    
 class BossWaterScene(BossScene):
     def __init__(self,window,killedBossNum):
         super().__init__(window=window,killedBossNum=killedBossNum)
-        self.gen_boss(GamePath.boss[1],GamePath.portalWater,GamePath.waterBossBg,killedBossNum)
+        self.gen_boss(GamePath.boss[1],"WATER",GamePath.portalWater,GamePath.waterBossBg,killedBossNum)
         self.bossIndex=1
+        
 class BossFireScene(BossScene):
     def __init__(self,window,killedBossNum):
         super().__init__(window=window,killedBossNum=killedBossNum)
-        self.gen_boss(GamePath.boss[2],GamePath.portalFire,GamePath.fireBossBg,killedBossNum)
+        self.gen_boss(GamePath.boss[2],"FIRE",GamePath.portalFire,GamePath.fireBossBg,killedBossNum)
         self.bossIndex=2
+        
 class GameOverScene():
     def __init__(self, window):
         self.window=window
