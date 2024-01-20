@@ -311,7 +311,7 @@ class BossAttack(pygame.sprite.Sprite):
         
                 
                 
-        if time - self.blitTime > 10*BossSettings.bossAttack2Time:
+        if time - self.blitTime > 6*BossSettings.bossAttack2Time:
             self.rect.x = -WindowSettings.width*2
             self.rect.y = -WindowSettings.height*2
             
