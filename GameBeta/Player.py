@@ -68,7 +68,7 @@ class Player(pygame.sprite.Sprite, Collidable):
         if state==GameState.GAME_PLAY_WILD_GRASS or state==GameState.GAME_PLAY_WILD_WATER or state==GameState.GAME_PLAY_WILD_FIRE:
             self.rect.topleft=(PlayerSettings.wildCoodx,PlayerSettings.wildCoody)
         if state==GameState.GAME_PLAY_BOSS_GRASS or state==GameState.GAME_PLAY_BOSS_WATER or state==GameState.GAME_PLAY_BOSS_FIRE:
-            self.rect.topleft=(PlayerSettings.cityCoodx,PlayerSettings.cityCoody)
+            self.rect.topleft=(PlayerSettings.bossCoodx,PlayerSettings.bossCoody)
     def update(self,time):
         #如果正在对话则则不尝试更新
         self.status.update(self.maxHp,self.hp,self.attack,self.defence,self.money)

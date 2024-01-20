@@ -136,6 +136,21 @@ class CityScene(Scene):
             self.portals.add(Portal(GamePath.portalFire,480,600,SceneType.WILD_FIRE))
         
         self.obstacles =Maps.gen_city_obstacle()
+
+        self.npcs.add(DialogNPC(GamePath.chair,GamePath.chair,NpcSettings.chairCoodX,
+                                NpcSettings.chairCoodY,"凳子",NpcSettings.chairDialog))
+        
+        self.npcs.add(DialogNPC(GamePath.diary,GamePath.diary,NpcSettings.diaryCoodX,
+                                NpcSettings.diaryCoodY,"日记",NpcSettings.diaryDialog))
+        self.npcs.add(DialogNPC(GamePath.elf,GamePath.elf,NpcSettings.elfCoodX,
+                                NpcSettings.elfCoodY,"精灵游侠",NpcSettings.elfDialog))
+        self.npcs.add(DialogNPC(GamePath.sister,GamePath.sister,NpcSettings.sisterCoodX,
+                                NpcSettings.sisterCoodY,"治疗师",NpcSettings.sisterDialog))
+        
+        self.npcs.add(DialogNPC(GamePath.soldier,GamePath.soldier,NpcSettings.soldierOneCoodX,
+                                NpcSettings.soldierOneCoodY,"狱卒甲",NpcSettings.soldierOneDialog))
+        self.npcs.add(DialogNPC(GamePath.soldierTwo,GamePath.soldier,NpcSettings.soldierTwoCoodX,
+                                NpcSettings.soldierTwoCoodY,"狱卒乙",NpcSettings.soldierTwoDialog))
         
         self.npcs.add(DialogNPC(GamePath.caroline,GamePath.carolineTalk,NpcSettings.carolineCoodX,
                                 NpcSettings.carolineCoodY,"卡萝莉娜",NpcSettings.carolineDialog))

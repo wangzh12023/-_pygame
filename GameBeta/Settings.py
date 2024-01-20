@@ -24,7 +24,13 @@ class SceneSettings:
     bossHeight=1080
 
     cityWallCoodX=480
-    cityWallCoodY=40
+    cityWallCoodY=0
+
+    cityObstacleDoorCoodX=-200
+    cityObstacleDoorCoodY=800
+
+    cityObstacleBoardCoodX=800
+    cityObstacleBoardCoodY=100
     
     wildCameraX=640
     wildCameraY=360
@@ -46,8 +52,10 @@ class PlayerSettings:
     mazeStartY= 23
     wildCoodx= 1120
     wildCoody= 560
-    cityCoodx= 640
-    cityCoody= 360
+    cityCoodx= 620
+    cityCoody= 80
+    bossCoodx= 640
+    bossCoody= 360
     collideCd= 30
 
 class NpcSettings:
@@ -57,7 +65,7 @@ class NpcSettings:
     talkCD = 30
     selectCD = 4
     shopCD = 15
-    monsterNum = 10
+    monsterNum = 7
     carolineCoodX=680
     carolineCoodY=280
     carolineDialog=[["喂，犯人，","休息得够久了吧？","快去干活!"]]
@@ -69,7 +77,40 @@ class NpcSettings:
     igorDialog=[["呵呵，看起来你的“冤申”进行的很成功呢。"],["如果你从怪物身上的得到了金币,","可以来我这里换取力量。"]]
     igorShop={"Attack +1": "Coin -15", "Defence +1": "Coin -15",
             "HP +1": "Coin -15", "Coin +50": "HP -5", "Exit": ""}
+    
+    chairCoodX=520
+    chairCoodY=40
+    chairDialog=[["（这是一只板凳）"],["(你坐了上去)"],["(你站了起来)"]]
 
+    elfCoodX=1000
+    elfCoodY=240
+    elfDialog=[["请看这块告示板，","那三只怪物都很危险"],["凤凰会喷吐火球，","而急冻鸟会召唤冰锥，"],["请多加小心。"]]
+
+    sisterCoodX=100
+    sisterCoodY=120
+    sisterDialog=[["如果受伤了的话，可以来我这里治疗哦。"]]
+
+    soldierOneCoodX=1300
+    soldierOneCoodY=900
+    soldierOneDialog=[["好想摸鱼，不想上班~"],["嗯？你在找我?","可你为什么要找我这个连专属立绘","都没有的小卡拉米呢?"]]
+
+    soldierTwoCoodX=1400
+    soldierTwoCoodY=900
+    soldierTwoDialog=[["说起来，你的画风和我们不太一样呢。"]]
+
+    diaryCoodX=720
+    diaryCoodY=40
+    diaryDialog=[["(这是一本日记，记录了你所扮演的角色","“周可儿”————一名铁科学生的故事)"],
+                 ["2024年1月24日","今天早上，我终于结束了我的最后一门期末考试。"],
+                 ["终于可以享受我的假期了！"],
+                 ["————我本来是这么认为的","可当我刚踏出考场的一瞬间,","我听到身边有同学好像在喊“冤申，乞动！”"],
+                 ["然后我感受到了一阵强烈的眩晕，","等我醒来的时候，我身处一座监狱之中。"],
+                 ["虽然不知道我为什么会来到这里，","但我想如果是因为同学的那句话，","那么我再喊一遍就有可能回去。"],
+                 ["在我喊出了:“冤申，乞动！”之后,","这座监狱典狱长伊格尔注意到了我，","认为我想通过行动来洗刷冤情，","于是把一把长得像水枪的东西交给了我，"],
+                 ["在他的授意下，我扣动了扳机，","水枪中射出了真正的子弹。"],
+                 ["伊格尔与我做了一个交易，","只要我使用这把在我到来之前没人可以使用的","神器杀死三只凶恶的怪物，"],
+                 ["他就愿意为我主持一场仪式，","将我送回原本的世界。"],
+                 ["为了守护我本就不多的假期，我决定豁出去了。"]]
 class CdType(Enum):
     LONG=1
     SHORT=2
@@ -185,6 +226,7 @@ class StatusBarSettings:
 
     bossHpScaleCoodX=350
     bossHpScaleCoody=650
+
 class GamePath:
     bgm = [r".\assets\bgm\start_bgm.mp3",
            r".\assets\bgm\city.mp3",
@@ -223,7 +265,12 @@ class GamePath:
     carolineTalk = r".\assets\npc\Caroline_talk.png"
     justine = r".\assets\npc\Justine.png"
     justineTalk = r".\assets\npc\Justine_talk.png"
-
+    chair = r".\assets\npc\chair.png"
+    diary = r".\assets\npc\diary.png"
+    elf=r".\assets\npc\elf.png"
+    sister=r".\assets\npc\sister.png"
+    soldier=r".\assets\npc\soldier.png"
+    soldierTwo=r".\assets\npc\soldier2.png"
     igor = r".\assets\npc\Igor.png"
     igorTalk = r".\assets\npc\Igor_talk.png"
     player = [
@@ -287,6 +334,9 @@ class GamePath:
     ]
     cityBg = r".\assets\background\city_bg.png"
     cityWall = r".\assets\background\city_wall.png"
+
+    cityObstacleDoor=r".\assets\background\city_obstacle1.png"
+    cityObstacleBoard=r".\assets\background\city_obstacle2.png"
 
     grassWildBg= r".\assets\background\grass_wild.png"
     fireWildBg= r".\assets\background\fire_wild.png"

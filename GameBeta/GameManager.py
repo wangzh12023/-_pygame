@@ -83,7 +83,6 @@ class GameManager:
             if event.type==GameEvent.EVENT_SWITCH_CITY:#进入城市
                 self.update_bgmplayer(SceneType.CITY)
                 self.bgmPlayer.play()
-                self.player.reset_hp()
                 self.state=GameState.GAME_PLAY_CITY
                 self.flush_scene(SceneType.CITY) 
                 if self.killedBossNum==3:
@@ -128,6 +127,8 @@ class GameManager:
             if event.type==GameEvent.EVENT_END_DIALOG:#结束对话
                 self.player.talking=False
                 self.dialogBox.npc.talking=False
+                if self.dialogBox.npc.name=="治疗师":
+                    self.player.reset_hp()
 
             if event.type==GameEvent.EVENT_SHOP:#开始购物
                 self.player.shopping=True
@@ -174,7 +175,6 @@ class GameManager:
             pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_CITY))
     #更新城市
     def update_city(self):
-        self.player.reset_hp()
         self.update_player()#更新主人公状态
         self.update_attack()#更新子弹状态
         self.update_npcs()#更新NPC状态
@@ -332,6 +332,7 @@ class GameManager:
                     self.player.attr_update(addHp=self.player.defence
                                             -self.player.collide.collidingObject["monster"].attack)
                     if self.player.hp<=0:
+                        self.player.hp=1
                         pygame.event.post(pygame.event.Event(GameEvent.EVENT_GAME_OVER))
                     self.player.reset_collide_cd()
             if self.player.collide.collidingWith["boss"]:
@@ -339,6 +340,7 @@ class GameManager:
                     self.player.attr_update(addHp=self.player.defence
                                             -self.player.collide.collidingObject["boss"].attack)
                     if self.player.hp<=0:
+                        self.player.hp=1
                         pygame.event.post(pygame.event.Event(GameEvent.EVENT_GAME_OVER))
                     self.player.reset_collide_cd()
         #更新子弹碰撞

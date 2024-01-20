@@ -37,9 +37,13 @@ def gen_boss_map():
     return mapObj
 
 def gen_city_obstacle():
-    image = pygame.image.load(GamePath.cityWall)
     obstacles = pygame.sprite.Group()
-    obstacles.add(Obsatacle(image,SceneSettings.cityWallCoodX,SceneSettings.cityWallCoodY))#480,40
+    obstacles.add(Obsatacle(pygame.image.load(GamePath.cityWall),
+                            SceneSettings.cityWallCoodX,SceneSettings.cityWallCoodY))#480,40
+    obstacles.add(Obsatacle(pygame.image.load(GamePath.cityObstacleDoor),
+                            SceneSettings.cityObstacleDoorCoodX,SceneSettings.cityObstacleDoorCoodY))
+    obstacles.add(Obsatacle(pygame.image.load(GamePath.cityObstacleBoard),
+                            SceneSettings.cityObstacleBoardCoodX,SceneSettings.cityObstacleBoardCoodY))
     return obstacles
 
 def gen_wild_obstacle(imagePath,cameraX,cameraY):#生成障碍物
