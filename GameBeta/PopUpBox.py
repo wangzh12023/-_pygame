@@ -11,31 +11,31 @@ class DialogBox:
         #设置字体参数
         self.fontSize = fontSize
         self.fontColor = fontColor
-        self.font_path=GamePath.font
-        self.font = pygame.font.Font(self.font_path, self.fontSize)
+        self.fontPath=GamePath.font
+        self.font = pygame.font.Font(self.fontPath, self.fontSize)
         #设置背景
-        self.bg = pygame.image.load(GamePath.dialogbox)
+        self.bg = pygame.image.load(GamePath.dialogBox)
         #设置状态
         self.open=False
     #根据所给信息更新
     def set_npc(self,npc):
         self.npc=npc
-        self.npc.reset_talkCD(CDType.SHORT)
+        self.npc.reset_talk_cd(CdType.SHORT)
         self.npc_image=pygame.transform.scale(npc.talk_image(),(DialogSettings.npcWidth,DialogSettings.npcHeight))
         self.dialogs=npc.dialog
-        self.dialog_index=0
+        self.dialogIndex=0
         self.open=True
     def update(self):
         #如果可以说话,则检测是否按下按键，如有则更新
         if self.npc.can_talk():
             keys=pygame.key.get_pressed()
             if any(keys):
-                if self.dialog_index<len(self.dialogs)-1:
-                    self.dialog_index+=1
+                if self.dialogIndex<len(self.dialogs)-1:
+                    self.dialogIndex+=1
                 else:
                     self.open=False
                     pygame.event.post(pygame.event.Event(GameEvent.EVENT_END_DIALOG))
-                self.npc.reset_talkCD(CDType.LONG)
+                self.npc.reset_talk_cd(CdType.LONG)
     
     def draw(self):
         self.window.blit(self.bg, (DialogSettings.boxStartX,
@@ -48,7 +48,7 @@ class DialogBox:
                 (DialogSettings.nameStartX,DialogSettings.nameStartY))
         
         offset = 0
-        for text in self.dialogs[self.dialog_index]:
+        for text in self.dialogs[self.dialogIndex]:
             self.window.blit(self.font.render(text,
                 True, self.fontColor),
                 (DialogSettings.textStartX, DialogSettings.textStartY + offset))
@@ -65,11 +65,11 @@ class ShoppingBox:
         #设置字体参数
         self.fontSize = fontSize
         self.fontColor = fontColor
-        self.font_path=GamePath.font
-        self.font = pygame.font.Font(self.font_path, self.fontSize)
+        self.fontPath=GamePath.font
+        self.font = pygame.font.Font(self.fontPath, self.fontSize)
         #设置背景
-        self.bg = pygame.image.load(GamePath.dialogbox)
-        self.bg2 = pygame.transform.scale(pygame.image.load(GamePath.shopbox),
+        self.bgTalk = pygame.image.load(GamePath.dialogBox)
+        self.bgShop = pygame.transform.scale(pygame.image.load(GamePath.shopBox),
                                           (ShopSettings.boxWidth,ShopSettings.boxHeight))
         #设置状态
         self.state=ShopType.CLOSE
@@ -79,13 +79,13 @@ class ShoppingBox:
     
     def set_npc(self,npc,player):
         self.npc=npc
-        self.npc_image=npc.talk_image()
-        self.npc.reset_talkCD(CDType.LONG)
+        self.npcImage=npc.talk_image()
+        self.npc.reset_talk_cd(CdType.LONG)
         
         self.player=player
         
         self.dialogs=npc.dialog
-        self.dialog_index=0
+        self.dialogIndex=0
         
         self.items=npc.items
         self.selectedID=0
@@ -98,27 +98,27 @@ class ShoppingBox:
                 if keys[pygame.K_w]:
                     self.selectedID = max(0, 
                         self.selectedID - 1)
-                    self.npc.reset_talkCD(CDType.SHORT)
+                    self.npc.reset_talk_cd(CdType.SHORT)
                 elif keys[pygame.K_s]:
                     self.selectedID = min(4, 
                         self.selectedID + 1)
-                    self.npc.reset_talkCD(CDType.SHORT)
+                    self.npc.reset_talk_cd(CdType.SHORT)
                 elif keys[pygame.K_RETURN]:
                     if self.selectedID == 4:
                         pygame.event.post(pygame.event.Event(GameEvent.EVENT_END_SHOP))
                         self.state=ShopType.CLOSE
-                        self.npc.reset_talkCD(CDType.LONG)
+                        self.npc.reset_talk_cd(CdType.LONG)
                     else:
                         self.buy() 
-                        self.npc.reset_talkCD(CDType.MEDIUM)
+                        self.npc.reset_talk_cd(CdType.MEDIUM)
             if self.state==ShopType.TALK:
                 keys=pygame.key.get_pressed()
                 if any(keys):
-                    if self.dialog_index<len(self.dialogs)-1:
-                        self.dialog_index+=1
+                    if self.dialogIndex<len(self.dialogs)-1:
+                        self.dialogIndex+=1
                     else:
                         self.state=ShopType.SHOP
-                    self.npc.reset_talkCD(CDType.SHORT)
+                    self.npc.reset_talk_cd(CdType.SHORT)
     def buy(self):
         if self.selectedID == 0:
             if self.player.money>=15:
@@ -130,32 +130,32 @@ class ShoppingBox:
 
         elif self.selectedID == 2:
             if self.player.money>=15:
-                self.player.attr_update(addCoins = -15, addMAXHP = 1, addHP =1 )
+                self.player.attr_update(addCoins = -15, addMaxHp = 1, addHp =1 )
 
         elif self.selectedID == 3:
-            if self.player.MaxHP>5:
-                self.player.attr_update(addCoins = 50, addMAXHP = -5, addHP = -5)
+            if self.player.maxHp>5:
+                self.player.attr_update(addCoins = 50, addMaxHp = -5, addHp = -5)
 
     def draw(self):
         if self.state==ShopType.TALK:
-            self.window.blit(self.bg, (DialogSettings.boxStartX,
+            self.window.blit(self.bgTalk, (DialogSettings.boxStartX,
             DialogSettings.boxStartY))
-            self.window.blit(self.npc_image, (DialogSettings.npcCoordX,
+            self.window.blit(self.npcImage, (DialogSettings.npcCoordX,
                 DialogSettings.npcCoordY))
             self.window.blit(self.font.render(self.npc.name,
                 True, self.fontColor),
                 (DialogSettings.nameStartX,DialogSettings.nameStartY))
             
             offset = 0
-            for text in self.dialogs[self.dialog_index]:
+            for text in self.dialogs[self.dialogIndex]:
                 self.window.blit(self.font.render(text,
                     True, self.fontColor),
                     (DialogSettings.textStartX, DialogSettings.textStartY + offset))
                 offset += DialogSettings.textVerticalDist
         if self.state==ShopType.SHOP:
-            self.window.blit(self.bg2, 
+            self.window.blit(self.bgShop, 
             (ShopSettings.boxStartX, ShopSettings.boxStartY))
-            self.window.blit(self.npc_image,
+            self.window.blit(self.npcImage,
                 (DialogSettings.npcCoordX, DialogSettings.npcCoordY))
             
             offset = 0
@@ -167,15 +167,3 @@ class ShoppingBox:
                 self.window.blit(self.font.render(text, True, self.fontColor),
                     (ShopSettings.textStartX, ShopSettings.textStartY + offset))
                 offset += DialogSettings.textVerticalDist
-
-            
-            # texts = ["Coins: " + str(self.player.money),
-            #         "HP: " + str(self.player.MaxHP),
-            #         "Attack: " + str(self.player.attack),
-            #         "Defence: " + str(self.player.defence)]
-        
-            # offset = 0
-            # for text in texts:
-            #     self.window.blit(self.font.render(text, True, self.fontColor),
-            #         (ShopSettings.textStartX + ShopSettings.boxWidth * 3 / 4, ShopSettings.textStartY + offset))
-            #     offset += DialogSettings.textVerticalDist

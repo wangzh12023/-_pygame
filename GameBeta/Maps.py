@@ -39,13 +39,13 @@ def gen_boss_map():
 def gen_city_obstacle():
     image = pygame.image.load(GamePath.cityWall)
     obstacles = pygame.sprite.Group()
-    obstacles.add(Obsatacle(image,480,40))
+    obstacles.add(Obsatacle(image,SceneSettings.cityWallCoodX,SceneSettings.cityWallCoodY))#480,40
     return obstacles
 
-def gen_wild_obstacle(image_path,cameraX,cameraY):#生成障碍物
+def gen_wild_obstacle(imagePath,cameraX,cameraY):#生成障碍物
     #障碍物包括：隔离boss区的障碍围栏和构成迷宫的随机生成障碍。
     #障碍围栏中有一个特殊的door对象，负责检测碰撞并进行传送
-    image=pygame.image.load(image_path)
+    image=pygame.image.load(imagePath)
     #image为障碍物的图片。由于迷宫有7个，每个迷宫用的障碍图片又不相同，所以每个迷宫都设置一个不同的path用来载入对应的不同的图片
     obstacles = pygame.sprite.Group()
 
@@ -62,12 +62,12 @@ def gen_wild_obstacle(image_path,cameraX,cameraY):#生成障碍物
     #以上两个for循环，生成了除door之外的boss区障碍围栏并加入精灵组obstacles
 
     #随机生成非boss区障碍物
-    random_obstacle=gen_random_obstacle(xx,yy)#先 生成一个坐标组。
-    for i in range(len(random_obstacle)):#再导入精灵组obstacles
-        obstacle_x=random_obstacle[i][0]
-        obstacle_y=random_obstacle[i][1]
+    randomObstacle=gen_random_obstacle(xx,yy)#先 生成一个坐标组。
+    for i in range(len(randomObstacle)):#再导入精灵组obstacles
+        obstacle_x=randomObstacle[i][0]
+        obstacle_y=randomObstacle[i][1]
         obstacles.add(Block(image,obstacle_x*SceneSettings.tileWidth-cameraX,obstacle_y*SceneSettings.tileHeight-cameraY))
-    return obstacles,random_obstacle
+    return obstacles,randomObstacle
 
 #下面是用于随机生成迷宫的函数
 def get_random(xx,yy):#生成一组随机的坐标，对应随机生成的障碍物的坐标
@@ -76,20 +76,20 @@ def get_random(xx,yy):#生成一组随机的坐标，对应随机生成的障碍
         for j in range(SceneSettings.tileYnum):
             #两个筛选条件：不可在boss区内生成、不可在迷宫出生点的3单位之内生成
             if i<=xx and j<=yy:continue
-            if abs(PlayerSettings.maze_start_x-i)<=3 and abs(PlayerSettings.maze_start_y-j)<=3:continue
+            if abs(PlayerSettings.mazeStartX-i)<=3 and abs(PlayerSettings.mazeStartY-j)<=3:continue
             #开始随机生成障碍物
             if random()>=SceneSettings.obstacleDensity:continue
             sequence.append([i,j])
     return sequence
 
-def BFS(random_obstacle,xx,yy):#用搜索算法检验
+def BFS(randomObstacle,xx,yy):#用搜索算法检验
     step=set()
-    for i in range(len(random_obstacle)):#先将随机生成的障碍物全部标记为不可行
-        x=random_obstacle[i][0];y=random_obstacle[i][1]
+    for i in range(len(randomObstacle)):#先将随机生成的障碍物全部标记为不可行
+        x=randomObstacle[i][0];y=randomObstacle[i][1]
         step.add((x,y))
 
-    step.add((PlayerSettings.maze_start_x,PlayerSettings.maze_start_y))
-    sequence=[(PlayerSettings.maze_start_x,PlayerSettings.maze_start_y)]#将迷宫中的起点入队列
+    step.add((PlayerSettings.mazeStartX,PlayerSettings.mazeStartY))
+    sequence=[(PlayerSettings.mazeStartX,PlayerSettings.mazeStartY)]#将迷宫中的起点入队列
     
     while(len(sequence)!=0):
         dx=sequence[0][0];dy=sequence[0][1]
@@ -111,7 +111,7 @@ def BFS(random_obstacle,xx,yy):#用搜索算法检验
     return False
 
 def gen_random_obstacle(xx,yy):
-    random_obstacle=get_random(xx,yy)
-    while not BFS(random_obstacle,xx,yy):#如果BFS判为false，即不可从起点到达door，就重新生成
-        random_obstacle=get_random(xx,yy)
-    return random_obstacle
+    randomObstacle=get_random(xx,yy)
+    while not BFS(randomObstacle,xx,yy):#如果BFS判为false，即不可从起点到达door，就重新生成
+        randomObstacle=get_random(xx,yy)
+    return randomObstacle

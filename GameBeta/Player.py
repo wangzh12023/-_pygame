@@ -12,8 +12,8 @@ class Player(pygame.sprite.Sprite, Collidable):
             for img in GamePath.player[index]] for index in range(len(GamePath.player))]
         #设置初始图片
         self.index=0
-        self.image_index=2
-        self.image=self.images[self.image_index][self.index]
+        self.imageIndex=2
+        self.image=self.images[self.imageIndex][self.index]
         #设置方向
         self.direction=DirectionType.RIGHT
         #设置坐标
@@ -26,52 +26,52 @@ class Player(pygame.sprite.Sprite, Collidable):
         self.dy=0
         #设置状态
         self.money=PlayerSettings.playerMoney
-        self.MaxHP=PlayerSettings.playerHP
-        self.HP=PlayerSettings.playerHP
+        self.maxHp=PlayerSettings.playerHp
+        self.hp=PlayerSettings.playerHp
         self.attack=PlayerSettings.playerAttack
         self.defence=PlayerSettings.playerDefence
         #创建状态面板
-        self.status=StatusBar(self.MaxHP,self.HP,self.attack,self.defence,self.money)
+        self.status=StatusBar(self.maxHp,self.hp,self.attack,self.defence,self.money)
         #设置对话状态
         self.talking=False
         self.shopping=False
         #创建枪
         self.gun=Gun()
         #设置子弹冷却时间和移动速度
-        self.attack_cooldown=PlayerSettings.playerAttackCooldown
-        self.attack_speed = PlayerSettings.playerAttackSpeed
-        self.attack_range = PlayerSettings.playerAttackRange
+        self.attackCooldown=PlayerSettings.playerAttackCooldown
+        self.attackSpeed = PlayerSettings.playerAttackSpeed
+        self.attackRange = PlayerSettings.playerAttackRange
         #创建子弹组
         self.attacks=pygame.sprite.Group()
         #记录上次射击时间
-        self.last_attack_time = 0
+        self.lastAttackTime = 0
         #创建碰撞检测器
         self.collide=Collidable()
-        self.collide_cd=PlayerSettings.collideCD
-    def reset_collideCD(self):
-        self.collide_cd = PlayerSettings.collideCD
-    def reset_HP(self):
-        self.HP=self.MaxHP
+        self.collideCd=PlayerSettings.collideCd
+    def reset_collide_cd(self):
+        self.collideCd = PlayerSettings.collideCd
+    def reset_hp(self):
+        self.hp=self.maxHp
     def can_collide(self):
-        return self.collide_cd <= 0
+        return self.collideCd <= 0
     #更新状态
-    def attr_update(self, addCoins = 0, addMAXHP = 0,addHP = 0,addAttack = 0, addDefence = 0):
+    def attr_update(self, addCoins = 0, addMaxHp = 0,addHp = 0,addAttack = 0, addDefence = 0):
         self.money+=addCoins
-        self.MaxHP+=addMAXHP
-        self.HP+=addHP
+        self.maxHp+=addMaxHp
+        self.hp+=addHp
         self.attack+=addAttack
         self.defence+=addDefence
     #回到画面中心
     def reset_pos(self,state):
         if state==GameState.GAME_PLAY_CITY:
-            self.rect.topleft=(PlayerSettings.Citycoodx,PlayerSettings.Citycoody)
+            self.rect.topleft=(PlayerSettings.cityCoodx,PlayerSettings.cityCoody)
         if state==GameState.GAME_PLAY_WILD_GRASS or state==GameState.GAME_PLAY_WILD_WATER or state==GameState.GAME_PLAY_WILD_FIRE:
-            self.rect.topleft=(PlayerSettings.Wildcoodx,PlayerSettings.Wildcoody)
+            self.rect.topleft=(PlayerSettings.wildCoodx,PlayerSettings.wildCoody)
         if state==GameState.GAME_PLAY_BOSS_GRASS or state==GameState.GAME_PLAY_BOSS_WATER or state==GameState.GAME_PLAY_BOSS_FIRE:
-            self.rect.topleft=(PlayerSettings.Citycoodx,PlayerSettings.Citycoody)
+            self.rect.topleft=(PlayerSettings.cityCoodx,PlayerSettings.cityCoody)
     def update(self,time):
         #如果正在对话则则不尝试更新
-        self.status.update(self.MaxHP,self.HP,self.attack,self.defence,self.money)
+        self.status.update(self.maxHp,self.hp,self.attack,self.defence,self.money)
         if not self.talking and not self.shopping:
             #尝试移动
             self.try_move()
@@ -80,7 +80,7 @@ class Player(pygame.sprite.Sprite, Collidable):
             #尝试更新子弹速度
             #self.try_change_attack_speed()
         if not self.can_collide():
-            self.collide_cd-=1
+            self.collideCd-=1
             
         
     #尝试移动
@@ -91,57 +91,57 @@ class Player(pygame.sprite.Sprite, Collidable):
         self.dy=0
         if keys[pygame.K_w] and self.rect.top > 0 + self.speed:
             self.dy -= self.speed
-            self.image_index=3
+            self.imageIndex=3
         if keys[pygame.K_s] and self.rect.bottom< WindowSettings.height:
             self.dy += self.speed
-            self.image_index=0
+            self.imageIndex=0
         if keys[pygame.K_a] and self.rect.left > 0 + self.speed:
             self.dx -= self.speed
-            self.image_index=1
+            self.imageIndex=1
         if keys[pygame.K_d] and self.rect.right < WindowSettings.width - self.speed:
             self.dx += self.speed
-            self.image_index=2
+            self.imageIndex=2
         #更新坐标
         self.rect=self.rect.move(self.dx,self.dy)
         #如果发生移动，更换人物图像
         if self.dx!=0 or self.dy!=0:
             self.index=(self.index+1) % 4
-            self.image=self.images[self.image_index][self.index]
-    def try_attack(self,current_time):
+            self.image=self.images[self.imageIndex][self.index]
+    def try_attack(self,currentTime):
         # 玩家攻击
-        player_pos = [self.rect.x,self.rect.y]
+        playerPos = [self.rect.x,self.rect.y]
         keys=pygame.key.get_pressed()
-        if keys[pygame.K_j]:
-            if current_time - self.last_attack_time > self.attack_cooldown:
-                self.attacks.add(Attack(player_pos[0], player_pos[1]+PlayerSettings.playerHeight//3,DirectionType.LEFT,self.attack_speed))
-                self.last_attack_time = current_time
+        if keys[pygame.K_LEFT]:
+            if currentTime - self.lastAttackTime > self.attackCooldown:
+                self.attacks.add(Attack(playerPos[0], playerPos[1]+PlayerSettings.playerHeight//3,DirectionType.LEFT,self.attackSpeed))
+                self.lastAttackTime = currentTime
                 self.gun.update(DirectionType.LEFT)
-        if keys[pygame.K_k]:
-            if current_time - self.last_attack_time > self.attack_cooldown:
+        if keys[pygame.K_RIGHT]:
+            if currentTime - self.lastAttackTime > self.attackCooldown:
                 #如果可以攻击,生成子弹
-                self.attacks.add(Attack(player_pos[0] , player_pos[1]+PlayerSettings.playerHeight//3,DirectionType.RIGHT,self.attack_speed))
-                self.last_attack_time = current_time
+                self.attacks.add(Attack(playerPos[0] , playerPos[1]+PlayerSettings.playerHeight//3,DirectionType.RIGHT,self.attackSpeed))
+                self.lastAttackTime = currentTime
                 #更新枪朝向
                 self.gun.update(DirectionType.RIGHT)
-        if keys[pygame.K_i]:
-            if current_time - self.last_attack_time > self.attack_cooldown:
-                self.attacks.add(Attack(player_pos[0], player_pos[1],DirectionType.UP,self.attack_speed))
-                self.last_attack_time = current_time
+        if keys[pygame.K_UP]:
+            if currentTime - self.lastAttackTime > self.attackCooldown:
+                self.attacks.add(Attack(playerPos[0], playerPos[1],DirectionType.UP,self.attackSpeed))
+                self.lastAttackTime = currentTime
                 self.gun.update(DirectionType.UP)
-        if keys[pygame.K_m]:
-            if current_time - self.last_attack_time > self.attack_cooldown:
-                self.attacks.add(Attack(player_pos[0], player_pos[1],DirectionType.DOWN,self.attack_speed))
-                self.last_attack_time = current_time
+        if keys[pygame.K_DOWN]:
+            if currentTime - self.lastAttackTime > self.attackCooldown:
+                self.attacks.add(Attack(playerPos[0], playerPos[1],DirectionType.DOWN,self.attackSpeed))
+                self.lastAttackTime = currentTime
                 self.gun.update(DirectionType.DOWN)
     #更新子弹速度
     def try_change_attack_speed(self):
         keys=pygame.key.get_pressed()
         if keys[pygame.K_o]:
-            self.attack_speed+=5
-            self.attack_cooldown=self.attack_cooldown*0.8
-        if keys[pygame.K_p] and self.attack_speed > 5 :
-            self.attack_speed-=5
-            self.attack_cooldown=self.attack_cooldown/0.8
+            self.attackSpeed+=5
+            self.attackCooldown=self.attackCooldown*0.8
+        if keys[pygame.K_p] and self.attackSpeed > 5 :
+            self.attackSpeed-=5
+            self.attackCooldown=self.attackCooldown/0.8
     #渲染角色
     def draw(self, window,dx=0,dy=0):
         #根据镜头偏移量更改坐标
@@ -186,28 +186,28 @@ class Attack(pygame.sprite.Sprite):
         self.rect=self.image.get_rect()
         self.rect.topleft=(x,y)
         #设置子弹速度
-        self.attack_speed=speed
+        self.attackSpeed=speed
         #设置碰撞检测
         self.collide=Collidable()
     def update(self):
         #设置偏移量
         dx=dy=0
         if self.direction==DirectionType.LEFT:
-            dx -= self.attack_speed
+            dx -= self.attackSpeed
         if self.direction==DirectionType.RIGHT:
-            dx += self.attack_speed
+            dx += self.attackSpeed
         if self.direction==DirectionType.UP:
-            dy -= self.attack_speed
+            dy -= self.attackSpeed
         if self.direction==DirectionType.DOWN: 
-            dy += self.attack_speed
+            dy += self.attackSpeed
         #更新坐标
         self.rect=self.rect.move(dx,dy)
     #检测是否超过地图边界
     def over_range(self,cameraX,cameraY):
         #计算实际位置
-        real_X=self.rect.x+cameraX
-        real_Y=self.rect.y+cameraY
-        if real_X<0 or real_Y<0 or real_X>WindowSettings.width * WindowSettings.outdoorScale or real_Y>WindowSettings.height * WindowSettings.outdoorScale:
+        realX=self.rect.x+cameraX
+        realY=self.rect.y+cameraY
+        if realX<0 or realY<0 or realX>WindowSettings.width * WindowSettings.outdoorScale or realY>WindowSettings.height * WindowSettings.outdoorScale:
             return True
         return False
     #渲染子弹
