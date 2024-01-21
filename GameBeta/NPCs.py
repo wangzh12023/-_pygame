@@ -5,19 +5,17 @@ import random
 from StatusBar import *
 
 class NPC(pygame.sprite.Sprite, Collidable):
-    def __init__(self,image_path,image_path_talk,x, y, name,dialog):
+    def __init__(self,imagePath,imagePathTalk,x, y, name,dialog):
         # Initialize father classes
         pygame.sprite.Sprite.__init__(self)
         Collidable.__init__(self)
-        self.image=pygame.transform.scale(pygame.image.load(image_path),
+        self.image=pygame.transform.scale(pygame.image.load(imagePath),
                                         (NpcSettings.npcWidth,NpcSettings.npcHeight))
-        self.image_talk=pygame.image.load(image_path_talk)
+        self.image_talk=pygame.image.load(imagePathTalk)
         #设置名字
         self.name=name
         #记录初始位置
         self.initialPosition=x
-        #设置方向
-        self.direction=DirectionType.RIGHT
         #设置速度
         self.speed=NpcSettings.npcSpeed
         #设置对话
@@ -43,8 +41,8 @@ class NPC(pygame.sprite.Sprite, Collidable):
         return pygame.transform.scale(self.image_talk,
                                         (DialogSettings.npcWidth,DialogSettings.npcHeight))
 class DialogNPC(NPC):
-    def __init__(self,imagePath,imagePath_talk, x, y, name,dialog):
-        super().__init__(imagePath,imagePath_talk,x, y, name,dialog)
+    def __init__(self,imagePath,imagePathTalk, x, y, name,dialog):
+        super().__init__(imagePath,imagePathTalk,x, y, name,dialog)
         
         #设置坐标
         self.rect=self.image.get_rect()
@@ -69,6 +67,24 @@ class DialogNPC(NPC):
         #更新冷却
         if not self.can_talk():
             self.talkcd -= 1
+class Chest(DialogNPC):
+    def __init__(self,imagePath,imagePathTalk, x, y, name,dialog):
+        super().__init__(imagePath,imagePathTalk,x,y,name,dialog)
+        self.index=random.randint(0,3)
+        self.hp=0
+        self.attack=0
+        self.defence=0
+        self.money=0
+        if self.index==0:
+            self.hp=3
+        if self.index==1:
+            self.attack=3
+        if self.index==2:
+            self.defence=1
+        if self.index==3:
+            self.money=40
+        self.dialog=NpcSettings.chestDialog[self.index]
+
 class ShopNPC(NPC):
     def __init__(self,image_path,imagePathTalk, x, y, name, dialog,items):
         super().__init__(image_path,imagePathTalk,x, y, name,dialog)
@@ -169,13 +185,14 @@ class Boss(pygame.sprite.Sprite):
         self.defence=Defence*(killedBossNum+1)
         self.scale=BossHpScale(self.maxHp,self.hp)
         self.dir=DirectionType.LEFT
-        self.speed=BossSettings.bossSpeed*(killedBossNum+1)
+        self.speed=BossSettings.bossSpeed
         self.width=BossSettings.bossWidth
         self.height=BossSettings.bossHeight
         
         self.attacks = pygame.sprite.Group()
+        self.lastAttackTime=0
         self.attackRange=BossSettings.bossAttackRange
-        self.attackSpeed=BossSettings.bossAttackSpeed
+        self.attackSpeed=BossSettings.bossAttackSpeed*(killedBossNum+1)
         self.attack2Time=BossSettings.bossAttack2Time
         self.stayDirection=False
     def boss_try_move(self, player_x, player_y):
@@ -218,40 +235,37 @@ class Boss(pygame.sprite.Sprite):
         self.index=(self.index+1) % 4
         self.image=self.images[self.imageIndex][self.index]
         
-    def boss_try_attack(self,time):
+    def boss_try_attack(self,time,bossType):
         temNum = random.randint(1, 60)
-        temNum2=random.randint(1, 2)
-        ifAttack = False
-        ifAttack2 = False
-        if temNum == 3:
-            if temNum2 == 1:
-                ifAttack = True
-            if temNum2 == 2:
-                ifAttack2 = True
-        if ifAttack:
-            for i in range(8):
-                self.attacks.add(BossAttack(self.rect.x+self.height//4, self.rect.y+self.width//4,1,i,self.bossMap,time,self.attack))
-        if ifAttack2:
-            for i in range(8):
-                self.attacks.add(BossAttack(self.rect.x+self.height//4, self.rect.y+self.width//4,2,i,self.bossMap,time,self.attack))
-
-
-
-        
+        if temNum <= 5:
+            if bossType == BossType.FIRE:
+                for i in range(8):
+                    self.attacks.add(BossAttack(self.rect.x+self.height//4, self.rect.y+self.width//4,1,i,self.bossMap,time,self.attack,self.attackSpeed))
+            if bossType == BossType.WATER:
+                for i in range(4):
+                    self.attacks.add(BossAttack(self.rect.x+self.height//4, self.rect.y+self.width//4,2,i,self.bossMap,time,self.attack,self.attackSpeed))
+            if bossType == BossType.GRASS:
+                if 7<=time-self.lastAttackTime:
+                    self.speed=BossSettings.bossSpeed*5
+                    self.lastAttackTime=time
+        if bossType == BossType.GRASS:
+                if 2<=time-self.lastAttackTime<=7:
+                    self.speed=BossSettings.bossSpeed
     def update(self,x,y,time):
         self.boss_try_move(x,y)
         self.scale.update(self.hp)
-        self.boss_try_attack(time)
+        self.boss_try_attack(time,self.bossMap)
     def draw(self, window, dx=0, dy=0):
         self.rect=self.rect.move(dx,dy)
         window.blit(self.image,self.rect)
-        self.scale.draw(window)
+        #渲染攻击
         for attack in self.attacks:
             attack.draw(window,dx,dy)
-        #渲染攻击
+        self.scale.draw(window)
+        
 
 class BossAttack(pygame.sprite.Sprite):
-    def __init__(self,x,y,attackNum,num,map,time,attack):
+    def __init__(self,x,y,attackNum,num,map,time,attack,attackSpeed):
         super().__init__()
         self.images=[pygame.transform.scale(pygame.image.load(img),(BossSettings.bossAttackRange,BossSettings.bossAttackRange)) for img in GamePath.bossAttack]
         self.num = num
@@ -259,63 +273,61 @@ class BossAttack(pygame.sprite.Sprite):
         self.blitTime = time
         self.attack = attack
         #设置子弹方向
-        if attackNum == 1:
-            if map == 'GRASS' :
-                self.image=self.images[0]
-            if map == 'FIRE':
-                self.image=self.images[1]
-            if map == 'WATER':
-                self.image=self.images[2]
-        if attackNum == 2:
-            if map == 'GRASS' :
-                self.image=self.images[3]
-            if map == 'FIRE':
-                self.image=self.images[4]
-            if map == 'WATER':
-                self.image=self.images[5]
+        if map==BossType.FIRE:
+            self.image=self.images[1]
+        if map==BossType.WATER:
+            self.image=self.images[2]
+        # if attackNum == 1:
+        #     if map == 'GRASS' :
+        #         self.image=self.images[0]
+        #     if map == 'FIRE':
+        #         self.image=self.images[1]
+        #     if map == 'WATER':
+        #         self.image=self.images[2]
+        # if attackNum == 2:
+        #     if map == 'GRASS' :
+        #         self.image=self.images[3]
+        #     if map == 'FIRE':
+        #         self.image=self.images[4]
+        #     if map == 'WATER':
+        #         self.image=self.images[5]
         #设置坐标
         self.rect=self.image.get_rect()
         self.rect.topleft=(x,y)
         #设置子弹速度
-        self.attack_speed=BossSettings.bossAttackSpeed
+        self.attackSpeed=attackSpeed
         if self.attackNum == 2:
             self.rect.x = random.randint(0,WindowSettings.width-BossSettings.bossAttackRange)
             self.rect.y = random.randint(0,WindowSettings.height-BossSettings.bossAttackRange)
 
-        #设置碰撞检测
-        self.collide=Collidable()
+
     def update1(self):
         #设置偏移量
         dx=dy=0
         if self.num == 0:
-            dx -= self.attack_speed
+            dx -= self.attackSpeed
         if self.num == 1:
-            dx -= self.attack_speed
-            dy -= self.attack_speed
+            dx -= self.attackSpeed
+            dy -= self.attackSpeed
         if self.num == 2:
-            dy -= self.attack_speed
+            dy -= self.attackSpeed
         if self.num == 3:
-            dx += self.attack_speed
-            dy -= self.attack_speed
+            dx += self.attackSpeed
+            dy -= self.attackSpeed
         if self.num == 4:
-            dx += self.attack_speed
+            dx += self.attackSpeed
         if self.num == 5:
-            dx += self.attack_speed
-            dy += self.attack_speed
+            dx += self.attackSpeed
+            dy += self.attackSpeed
         if self.num == 6:
-            dy += self.attack_speed
+            dy += self.attackSpeed
         if self.num == 7:
-            dy += self.attack_speed
-            dx -= self.attack_speed
+            dy += self.attackSpeed
+            dx -= self.attackSpeed
         self.rect=self.rect.move(dx,dy)
     def update2(self,time):
-        
-                
-                
         if time - self.blitTime > 6*BossSettings.bossAttack2Time:
-            self.rect.x = -WindowSettings.width*2
-            self.rect.y = -WindowSettings.height*2
-            
+            self.kill()
             
     def update(self,time):
         if self.attackNum == 2:

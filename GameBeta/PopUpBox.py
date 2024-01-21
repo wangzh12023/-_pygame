@@ -71,6 +71,7 @@ class ShoppingBox:
         self.bgTalk = pygame.image.load(GamePath.dialogBox)
         self.bgShop = pygame.transform.scale(pygame.image.load(GamePath.shopBox),
                                           (ShopSettings.boxWidth,ShopSettings.boxHeight))
+        self.shopCursor=pygame.image.load(GamePath.shopCursor)
         #设置状态
         self.state=ShopType.CLOSE
         #设置初始指向商品的ID
@@ -125,8 +126,8 @@ class ShoppingBox:
                 self.player.attr_update(addCoins = -15, addAttack = 1)
 
         elif self.selectedID == 1:
-            if self.player.money>=15:
-                self.player.attr_update(addCoins = -15, addDefence = 1)
+            if self.player.money>=45:
+                self.player.attr_update(addCoins = -45, addDefence = 1)
 
         elif self.selectedID == 2:
             if self.player.money>=15:
@@ -157,13 +158,15 @@ class ShoppingBox:
             (ShopSettings.boxStartX, ShopSettings.boxStartY))
             self.window.blit(self.npcImage,
                 (DialogSettings.npcCoordX, DialogSettings.npcCoordY))
-            
-            offset = 0
-            for id, item in enumerate(list(self.items.keys())):
-                if id == self.selectedID:
-                    text = '-->' + item + ' ' + self.items[item]
-                else:
-                    text = '      ' + item + ' ' + self.items[item]
-                self.window.blit(self.font.render(text, True, self.fontColor),
-                    (ShopSettings.textStartX, ShopSettings.textStartY + offset))
-                offset += DialogSettings.textVerticalDist
+            self.window.blit(self.shopCursor,
+            (ShopSettings.cursorStartX,ShopSettings.cursorStartY+
+                                        ShopSettings.cursorOffset*(self.selectedID)))
+            # offset = 0
+            # for id, item in enumerate(list(self.items.keys())):
+            #     if id == self.selectedID:
+            #         text = '-->' + item + ' ' + self.items[item]
+            #     else:
+            #         text = '      ' + item + ' ' + self.items[item]
+            #     self.window.blit(self.font.render(text, True, self.fontColor),
+            #         (ShopSettings.textStartX, ShopSettings.textStartY + offset))
+            #     offset += DialogSettings.textVerticalDist

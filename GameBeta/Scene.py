@@ -77,12 +77,13 @@ class Scene():
         #渲染怪物
         for monster in self.monsters.sprites():
             monster.draw(self.window,self.dx,self.dy)
+        player.draw(self.window,self.dx,self.dy)
         for boss in self.bosses.sprites():
             boss.draw(self.window,self.dx,self.dy)
         #渲染BOSS略缩图
         for boss in self.bossShow.sprites():
             boss.draw(self.window,self.dx,self.dy)
-        player.draw(self.window,self.dx,self.dy)
+        
     def render_map(self):
         self.window.blit(self.bg,(-self.cameraX,-self.cameraY))
 class StartCG():
@@ -123,9 +124,9 @@ class CityScene(Scene):
         super().__init__(window=window)
         self.cameraX=320
         self.cameraY=0
-        self.gen_CITY(isKilled)
+        self.gen_city(isKilled)
 
-    def gen_CITY(self,isKilled):
+    def gen_city(self,isKilled):
         self.bg=pygame.image.load(GamePath.cityBg)
 
         if not isKilled[0]:
@@ -146,7 +147,9 @@ class CityScene(Scene):
                                 NpcSettings.elfCoodY,"精灵游侠",NpcSettings.elfDialog))
         self.npcs.add(DialogNPC(GamePath.sister,GamePath.sister,NpcSettings.sisterCoodX,
                                 NpcSettings.sisterCoodY,"治疗师",NpcSettings.sisterDialog))
-        
+        self.npcs.add(Chest(GamePath.chest,GamePath.chest,NpcSettings.chestCoodX,
+                                NpcSettings.chestCoodY,"宝箱",NpcSettings.chestDialog))
+
         self.npcs.add(DialogNPC(GamePath.soldier,GamePath.soldier,NpcSettings.soldierOneCoodX,
                                 NpcSettings.soldierOneCoodY,"狱卒甲",NpcSettings.soldierOneDialog))
         self.npcs.add(DialogNPC(GamePath.soldierTwo,GamePath.soldier,NpcSettings.soldierTwoCoodX,
@@ -160,6 +163,7 @@ class CityScene(Scene):
 
         self.npcs.add(ShopNPC(GamePath.igor,GamePath.igorTalk,NpcSettings.igorCoodX,
                               NpcSettings.igorCoodY,"伊格尔",NpcSettings.igorDialog,NpcSettings.igorShop))
+        
 class WildScene(Scene):
     def __init__(self, window,killedBossNum):
         super().__init__(window=window)
@@ -167,7 +171,7 @@ class WildScene(Scene):
         self.cameraY=SceneSettings.wildCameraY
         self.killedBossNum=killedBossNum
         
-    def gen_WILD(self,
+    def gen_wild(self,
                  imagePathObstacle,imagePathBossDorr,imagePathCityPortal,
                  GOTO):
         
@@ -175,7 +179,22 @@ class WildScene(Scene):
         self.portals.add(Portal(imagePathBossDorr,PortalSettings.bossDoorCoodX,
                                 PortalSettings.bossDoorCoodY,GOTO))
         self.portals.add(Portal(imagePathCityPortal,PortalSettings.wildCoodX,PortalSettings.wildCoodY,SceneType.CITY))
-
+    def gen_chest(self,num = SceneSettings.chestNum):
+        i=0
+        while i<num:
+            x=randint(1,SceneSettings.tileXnum-2)
+            y=randint(1,SceneSettings.tileYnum-2)
+            if (x<=16 and y <=9) or (x>=41 and x>=20):
+                continue
+            flag=True
+            for obstacle in self.map:
+                if obstacle[0]==x and obstacle[1]==y: 
+                    flag=False
+            if flag:
+                self.map.append([x,y])
+                self.npcs.add(Chest(GamePath.chest,GamePath.chest,SceneSettings.tileWidth * x-self.cameraX, 
+                                        SceneSettings.tileHeight * y-self.cameraY,"宝箱",NpcSettings.chestDialog))
+                i+=1
     def gen_monsters(self,imagePath,imagePathBOSS,killedBossNum,num = NpcSettings.monsterNum):
         i=0
         while i<num:
@@ -200,21 +219,24 @@ class WildGrassScene(WildScene):
         super().__init__(window=window,killedBossNum=killedBossNum)
         self.bg=pygame.transform.scale(pygame.image.load(GamePath.grassWildBg),
                                        (SceneSettings.wildWidth,SceneSettings.wildHeight))
-        self.gen_WILD(GamePath.tree,GamePath.grassBossDoor,GamePath.portalGrass,SceneType.BOSS_GRASS)
+        self.gen_wild(GamePath.tree,GamePath.grassBossDoor,GamePath.portalGrass,SceneType.BOSS_GRASS)
+        self.gen_chest()
         self.gen_monsters(GamePath.grassMonster,GamePath.boss[0][0],killedBossNum)
 class WildWaterScene(WildScene):
     def __init__(self,window,killedBossNum):
         super().__init__(window=window,killedBossNum=killedBossNum)
         self.bg=pygame.transform.scale(pygame.image.load(GamePath.waterWildBg),
                                        (SceneSettings.wildWidth,SceneSettings.wildHeight))
-        self.gen_WILD(GamePath.ice,GamePath.waterBossDoor,GamePath.portalWater,SceneType.BOSS_WATER)
+        self.gen_wild(GamePath.ice,GamePath.waterBossDoor,GamePath.portalWater,SceneType.BOSS_WATER)
+        self.gen_chest()
         self.gen_monsters(GamePath.blueMonster,GamePath.boss[1][0],killedBossNum)
 class WildFireScene(WildScene):
     def __init__(self,window,killedBossNum):
         super().__init__(window=window,killedBossNum=killedBossNum)
         self.bg=pygame.transform.scale(pygame.image.load(GamePath.fireWildBg),
                                        (SceneSettings.wildWidth,SceneSettings.wildHeight))
-        self.gen_WILD(GamePath.fire,GamePath.fireBossDoor,GamePath.portalFire,SceneType.BOSS_FIRE)
+        self.gen_wild(GamePath.fire,GamePath.fireBossDoor,GamePath.portalFire,SceneType.BOSS_FIRE)
+        self.gen_chest()
         self.gen_monsters(GamePath.redMonster,GamePath.boss[2][0],killedBossNum)
 
 
@@ -236,19 +258,19 @@ class BossScene(Scene):
 class BossGrassScene(BossScene):
     def __init__(self,window,killedBossNum):
         super().__init__(window=window,killedBossNum=killedBossNum)
-        self.gen_boss(GamePath.boss[0],"GRASS",GamePath.portalGrass,GamePath.grassBossBg,killedBossNum)
+        self.gen_boss(GamePath.boss[0],BossType.GRASS,GamePath.portalGrass,GamePath.grassBossBg,killedBossNum)
         self.bossIndex=0
         
 class BossWaterScene(BossScene):
     def __init__(self,window,killedBossNum):
         super().__init__(window=window,killedBossNum=killedBossNum)
-        self.gen_boss(GamePath.boss[1],"WATER",GamePath.portalWater,GamePath.waterBossBg,killedBossNum)
+        self.gen_boss(GamePath.boss[1],BossType.WATER,GamePath.portalWater,GamePath.waterBossBg,killedBossNum)
         self.bossIndex=1
         
 class BossFireScene(BossScene):
     def __init__(self,window,killedBossNum):
         super().__init__(window=window,killedBossNum=killedBossNum)
-        self.gen_boss(GamePath.boss[2],"FIRE",GamePath.portalFire,GamePath.fireBossBg,killedBossNum)
+        self.gen_boss(GamePath.boss[2],BossType.FIRE,GamePath.portalFire,GamePath.fireBossBg,killedBossNum)
         self.bossIndex=2
         
 class GameOverScene():
@@ -264,14 +286,26 @@ class GameOverScene():
         self.text.set_alpha(int(255*abs(1-(time%2))))
         self.window.blit(self.text,(0,0))
 class GameClearScene():
-    def __init__(self, window):
+    def __init__(self, window,time):
         self.window=window
         #导入背景图
         self.bg=pygame.image.load(GamePath.gameClear)
         self.bg=pygame.transform.scale(self.bg,(WindowSettings.width,WindowSettings.height))
+        self.bgText=pygame.image.load(GamePath.gameClearText)
+        self.bgText2=pygame.image.load(GamePath.gameClearText2)
+        self.startTime=time
         # self.text=pygame.image.load(GamePath.gameover_text)
         # self.text=pygame.transform.scale(self.text,(WindowSettings.width,WindowSettings.height))
-    def render(self):
+    def render(self,time):
         self.window.blit(self.bg,(0,0))
-        # self.text.set_alpha(int(255*abs(1-(time%2))))
-        # self.window.blit(self.text,(0,0))
+        #从14-19秒透明度变低
+        if time-self.startTime<=10:
+            if 0<time-self.startTime<=5:
+                self.bgText.set_alpha(int(51*(time-self.startTime)))
+            #19-20秒透明度变高
+            if 5<time-self.startTime<=10:
+                self.bgText.set_alpha(int(51*(10-(time-self.startTime))))
+            self.window.blit(self.bgText,(0,0))
+        else:
+            self.bgText2.set_alpha(int(255*abs(1-(time%2))))
+            self.window.blit(self.bgText2,(0,0))

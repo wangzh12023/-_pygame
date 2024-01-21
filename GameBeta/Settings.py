@@ -10,7 +10,10 @@ class WindowSettings:
 class BgmSettings:
     startBgmLength=22
     test=15
-
+class BossType:
+    GRASS=1
+    WATER=2
+    FIRE=3
 class SceneSettings:
     tileXnum = 48 # 64
     tileYnum = 27 # 36
@@ -35,15 +38,17 @@ class SceneSettings:
     wildCameraX=640
     wildCameraY=360
 
+    chestNum = 3
+
 class PlayerSettings:
     playerSpeed = 7
     playerWidth = 33
     playerHeight = 33
-    playerHp = 50
-    playerAttack = 10
+    playerHp = 20
+    playerAttack = 5
     playerDefence = 1
     playerMoney = 100
-    playerAttackCooldown = 0.3
+    playerAttackCooldown = 0.4
     playerAttackSpeed = 15
     playerAttackRange = 20
     playerGunWidth = 25
@@ -75,7 +80,7 @@ class NpcSettings:
     igorCoodX=620
     igorCoodY=500
     igorDialog=[["呵呵，看起来你的“冤申”进行的很成功呢。"],["如果你从怪物身上的得到了金币,","可以来我这里换取力量。"]]
-    igorShop={"Attack +1": "Coin -15", "Defence +1": "Coin -15",
+    igorShop={"Attack +1": "Coin -15", "Defence +1": "Coin -45",
             "HP +1": "Coin -15", "Coin +50": "HP -5", "Exit": ""}
     
     chairCoodX=520
@@ -84,7 +89,7 @@ class NpcSettings:
 
     elfCoodX=1000
     elfCoodY=240
-    elfDialog=[["请看这块告示板，","那三只怪物都很危险"],["凤凰会喷吐火球，","而急冻鸟会召唤冰锥，"],["请多加小心。"]]
+    elfDialog=[["请看这块告示板，","那三只怪物都很危险"],["凤凰会喷吐火球，","而急冻鸟会在身边召唤冰旋，","而鹰身女妖会不定期发动俯冲。"],["请多加小心。"]]
 
     sisterCoodX=100
     sisterCoodY=120
@@ -97,6 +102,13 @@ class NpcSettings:
     soldierTwoCoodX=1400
     soldierTwoCoodY=900
     soldierTwoDialog=[["说起来，你的画风和我们不太一样呢。"]]
+
+    chestCoodX=1560
+    chestCoodY=0
+    chestDialog=[[["你从宝箱中获得了三点生命值！"]],
+                 [["你从宝箱中获得了三点攻击力！"]],
+                 [["你从宝箱中获得了一点护甲值！"]],
+                 [["你从宝箱中获得了四十枚杜卡特！"]]]
 
     diaryCoodX=720
     diaryCoodY=40
@@ -135,7 +147,7 @@ class DirectionType(Enum):
 class BossSettings:
     bossWidth = 250
     bossHeight = 250
-    bossSpeed = 3
+    bossSpeed = 4 
     bossHp = 100
     bossAttack = 10
     bossDefence = 1
@@ -146,6 +158,7 @@ class BossSettings:
     coordX = (SceneSettings.tileXnum / 2) * SceneSettings.tileWidth - width / 2
     coordY = (SceneSettings.tileYnum / 2) * SceneSettings.tileHeight - height / 2
     bossAttackRange = 80
+    bossAttackTime = 5
     bossAttack2Time = 0.3
     bossAttackSpeed = 15
 
@@ -182,13 +195,17 @@ class DialogSettings:
 
 class ShopSettings:
     boxWidth = 500
-    boxHeight = 220
+    boxHeight = 400
     boxStartX = WindowSettings.width // 4+100  # Coordinate X of the box
-    boxStartY = WindowSettings.height // 3 +20  # Coordinate Y of the box
+    boxStartY = WindowSettings.height // 3 -100 # Coordinate Y of the box
 
     textSize = 56 # Default font size
     textStartX = boxStartX + 10         # Coordinate X of the first line of dialog
     textStartY = boxStartY + 25    # Coordinate Y of the first line of dialog
+
+    cursorStartX=WindowSettings.width // 4+50
+    cursorStartY=WindowSettings.height // 3 -10
+    cursorOffset=65
 class GuideboardSettings:
     guideWidth=250
     guideHeight=125
@@ -247,12 +264,15 @@ class GamePath:
             r".\assets\background\GuideOpen.png"]
     dialogBox=r".\assets\background\dialogbox.png"
     shopBox=r".\assets\background\shopbox.png"
+    shopCursor=r".\assets\background\shopboxcursor.png"
 
 
     gameover = r".\assets\background\gameover.png"
     gameoverText = r".\assets\background\return_attention.png"
 
     gameClear = r".\assets\background\gameclear.png"
+    gameClearText = r".\assets\background\gameclear_text.png"
+    gameClearText2 = r".\assets\background\gameclear_text2.png"
 
     statusBar=r".\assets\background\StatusBar.png"
     hpScale=r".\assets\background\HealthScale.png"
@@ -273,6 +293,9 @@ class GamePath:
     sister=r".\assets\npc\sister.png"
     soldier=r".\assets\npc\soldier.png"
     soldierTwo=r".\assets\npc\soldier2.png"
+
+    chest=r".\assets\npc\chest.png"
+
     igor = r".\assets\npc\Igor.png"
     igorTalk = r".\assets\npc\Igor_talk.png"
     player = [
@@ -411,7 +434,12 @@ class GamePath:
                  r"assets\npc\boss\fire\15.png",r"assets\npc\boss\fire\15.png",r"assets\npc\boss\fire\16.png",r"assets\npc\boss\fire\16.png"],
             ]
         ]
-    bossAttack = [r"assets\bossAttack\grass.png",r"assets\bossAttack\fire.png",r"assets\bossAttack\water1.png",r"assets\bossAttack\grass2.png",r"assets\bossAttack\fire2.png",r"assets\bossAttack\water2.png"]
+    bossAttack = [r"assets\bossAttack\grass.png",
+                  r"assets\bossAttack\fire.png",
+                  r"assets\bossAttack\water1.png",
+                  r"assets\bossAttack\grass2.png",
+                  r"assets\bossAttack\fire2.png",
+                  r"assets\bossAttack\water2.png"]
 class PortalSettings:
     width = 300
     height = 360

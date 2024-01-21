@@ -59,7 +59,7 @@ class GameManager:
         if GOTO==SceneType.GAME_OVER:
             self.scene=GameOverScene(self.window)  
         if GOTO==SceneType.GAME_CLEAR:
-            self.scene=GameClearScene(self.window)  
+            self.scene=GameClearScene(self.window,self.get_time())  
         #将场景重置
         self.scene_reset()
     #重置场景的函数
@@ -129,6 +129,13 @@ class GameManager:
                 self.dialogBox.npc.talking=False
                 if self.dialogBox.npc.name=="治疗师":
                     self.player.reset_hp()
+                if self.dialogBox.npc.name=="宝箱":
+                    self.player.attr_update(addMaxHp=self.dialogBox.npc.hp,
+                                            addHp=self.dialogBox.npc.hp,
+                                            addAttack=self.dialogBox.npc.attack,
+                                            addDefence=self.dialogBox.npc.defence,
+                                            addCoins=self.dialogBox.npc.money)
+                    self.dialogBox.npc.kill()
 
             if event.type==GameEvent.EVENT_SHOP:#开始购物
                 self.player.shopping=True
@@ -199,6 +206,7 @@ class GameManager:
         self.manage_collide()
         #更新镜头
         self.scene.update_camera(self.player)
+        self.update_dialogbox()
 
         
     #更新BOSS房
@@ -249,9 +257,10 @@ class GameManager:
         if keys[pygame.K_RETURN]:
             pygame.event.post(pygame.event.Event(GameEvent.EVENT_SWITCH_CITY))
     def update_game_clear(self):
-        keys=pygame.key.get_pressed()
-        if keys[pygame.K_RETURN]:
-            pygame.event.post(pygame.event.Event(pygame.QUIT))
+        if self.get_time()-self.scene.startTime>10:
+            keys=pygame.key.get_pressed()
+            if keys[pygame.K_RETURN]:
+                pygame.event.post(pygame.event.Event(pygame.QUIT))
     #更新给定对象（包括主人公和子弹）的碰撞
     def update_collide(self,object):
         # object -> Obstacles
@@ -303,10 +312,12 @@ class GameManager:
                 if pygame.sprite.spritecollide(object,boss.attacks,False,pygame.sprite.collide_mask):
                     object.collide.collidingWith["bossAttack"]=True
                     for attack in boss.attacks:
-                        object.collide.collidingObject["bossAttack"]=attack
-                else:
-                    object.collide.collidingWith["bossAttack"]=False
-                    object.collide.collidingObject["bossAttack"]=None
+                        if pygame.sprite.collide_rect(object,attack):
+                            object.collide.collidingObject["bossAttack"]=attack
+                    break
+            else:
+                object.collide.collidingWith["bossAttack"]=False
+                object.collide.collidingObject["bossAttack"]=None
     #处理碰撞
     def manage_collide(self):
         self.update_collide(self.player)#更新主人公碰撞
@@ -340,24 +351,24 @@ class GameManager:
         
             if self.player.collide.collidingWith["monster"]:#与怪物碰撞
                 if self.player.can_collide():
-                    self.player.attr_update(addHp=self.player.defence
-                                            -self.player.collide.collidingObject["monster"].attack)
+                    self.player.attr_update(addHp=min(0,self.player.defence
+                                            -self.player.collide.collidingObject["monster"].attack))
                     if self.player.hp<=0:
                         self.player.hp=1
                         pygame.event.post(pygame.event.Event(GameEvent.EVENT_GAME_OVER))
                     self.player.reset_collide_cd()
             if self.player.collide.collidingWith["boss"]:
                 if self.player.can_collide():
-                    self.player.attr_update(addHp=self.player.defence
-                                            -self.player.collide.collidingObject["boss"].attack)
+                    self.player.attr_update(addHp=min(0,self.player.defence
+                                            -self.player.collide.collidingObject["boss"].attack))
                     if self.player.hp<=0:
                         self.player.hp=1
                         pygame.event.post(pygame.event.Event(GameEvent.EVENT_GAME_OVER))
                     self.player.reset_collide_cd()
             if self.player.collide.collidingWith["bossAttack"]:
                 if self.player.can_collide():
-                    self.player.attr_update(addHp=self.player.defence
-                                            -self.player.collide.collidingObject["bossAttack"].attack)
+                    self.player.attr_update(addHp=min(0,self.player.defence
+                                            -self.player.collide.collidingObject["bossAttack"].attack))
                     if self.player.hp<=0:
                         self.player.hp=1
                         pygame.event.post(pygame.event.Event(GameEvent.EVENT_GAME_OVER))
@@ -371,13 +382,13 @@ class GameManager:
             #如果越过边界或发生碰撞就删除子弹
             if attack.collide.collidingWith["monster"]:
                 monster=attack.collide.collidingObject["monster"]
-                monster.hp-=(self.player.attack-monster.defence)
+                monster.hp-=max(0,self.player.attack-monster.defence)
                 if monster.hp<=0:
                     self.player.attr_update(addCoins=monster.money)
                     monster.kill()
             if attack.collide.collidingWith["boss"]:
                 boss=attack.collide.collidingObject["boss"]
-                boss.hp-=(self.player.attack-boss.defence)
+                boss.hp-=max(0,self.player.attack-boss.defence)
                 if boss.hp<=0:
                     self.player.attr_update(addCoins=boss.money)
                     self.killedBossNum+=1
@@ -437,6 +448,8 @@ class GameManager:
     def render_wild(self):
         self.scene.render(self.player)#渲染场景
         self.render_guide()#渲染提示
+        if self.player.talking:
+            self.render_dialogbox()
     #渲染BOSS房
     def render_boss(self):
         self.scene.render(self.player)#渲染场景
@@ -445,7 +458,7 @@ class GameManager:
     def render_gameover(self):
         self.scene.render(self.get_time())
     def render_gameclear(self):
-        self.scene.render()
+        self.scene.render(self.get_time())
     #渲染提示   
     def render_guide(self):
         self.guideBoard.draw()
