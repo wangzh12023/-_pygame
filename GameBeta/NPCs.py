@@ -230,10 +230,10 @@ class Boss(pygame.sprite.Sprite):
                 ifAttack2 = True
         if ifAttack:
             for i in range(8):
-                self.attacks.add(BossAttack(self.rect.x+self.height//4, self.rect.y+self.width//4,1,i,self.bossMap,time))
+                self.attacks.add(BossAttack(self.rect.x+self.height//4, self.rect.y+self.width//4,1,i,self.bossMap,time,self.attack))
         if ifAttack2:
             for i in range(8):
-                self.attacks.add(BossAttack(self.rect.x+self.height//4, self.rect.y+self.width//4,2,i,self.bossMap,time))
+                self.attacks.add(BossAttack(self.rect.x+self.height//4, self.rect.y+self.width//4,2,i,self.bossMap,time,self.attack))
 
 
 
@@ -251,12 +251,13 @@ class Boss(pygame.sprite.Sprite):
         #渲染攻击
 
 class BossAttack(pygame.sprite.Sprite):
-    def __init__(self,x,y,attackNum,num,map,time):
+    def __init__(self,x,y,attackNum,num,map,time,attack):
         super().__init__()
         self.images=[pygame.transform.scale(pygame.image.load(img),(BossSettings.bossAttackRange,BossSettings.bossAttackRange)) for img in GamePath.bossAttack]
         self.num = num
         self.attackNum = attackNum
         self.blitTime = time
+        self.attack = attack
         #设置子弹方向
         if attackNum == 1:
             if map == 'GRASS' :

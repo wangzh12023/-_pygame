@@ -39,7 +39,7 @@ class PlayerSettings:
     playerSpeed = 7
     playerWidth = 33
     playerHeight = 33
-    playerHp = 10
+    playerHp = 50
     playerAttack = 10
     playerDefence = 1
     playerMoney = 100

@@ -69,4 +69,4 @@ class BossHpScale:
         self.scale=pygame.transform.scale(self.scale,
                                     (int(self.hp/self.maxHp*StatusBarSettings.bossScaleWidth)
                                         ,StatusBarSettings.bossScaleHeight))
-        window.blit(self.scale,(StatusBarSettings.bossHpScaleBgCoodX,StatusBarSettings.bossHpScaleBgCoody))
+        window.blit(self.scale,(StatusBarSettings.bossHpScaleCoodX,StatusBarSettings.bossHpScaleCoody))
