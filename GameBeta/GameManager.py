@@ -64,7 +64,7 @@ class GameManager:
         self.scene_reset()
     #重置场景的函数
     def scene_reset(self):
-        self.player.reset_pos(self.state)#主人公回到屏幕中央
+        self.player.reset_pos(self.state,self.scene.mapType)#主人公回到屏幕中央
         self.player.attacks.empty()#请空子弹
     #总更新函数
     def update(self):

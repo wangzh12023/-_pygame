@@ -62,13 +62,21 @@ class Player(pygame.sprite.Sprite, Collidable):
         self.attack+=addAttack
         self.defence+=addDefence
     #回到画面中心
-    def reset_pos(self,state):
+    def reset_pos(self,state,mapType):
         if state==GameState.GAME_PLAY_CITY:
-            self.rect.topleft=(PlayerSettings.cityCoodx,PlayerSettings.cityCoody)
+            self.rect.topleft=(PlayerSettings.cityCoodX,PlayerSettings.cityCoodY)
         if state==GameState.GAME_PLAY_WILD_GRASS or state==GameState.GAME_PLAY_WILD_WATER or state==GameState.GAME_PLAY_WILD_FIRE:
-            self.rect.topleft=(PlayerSettings.wildCoodx,PlayerSettings.wildCoody)
+            if mapType==MapType.BOTTOMRIGHT:
+                self.rect.topleft=(PlayerSettings.wildCoodX,PlayerSettings.wildCoodY)
+            if mapType==MapType.BOTTOMLEFT:
+                self.rect.topleft=(SceneSettings.wildWidth-(PlayerSettings.wildCoodX+SceneSettings.wildCameraX+PlayerSettings.playerWidth),PlayerSettings.wildCoodY)
+            if mapType==MapType.TOPRIGHT:
+                self.rect.topleft=(PlayerSettings.wildCoodX,SceneSettings.wildHeight-(PlayerSettings.wildCoodY+SceneSettings.wildCameraY+PlayerSettings.playerHeight))
+            if mapType==MapType.TOPLEFT:
+                self.rect.topleft=(SceneSettings.wildWidth-(PlayerSettings.wildCoodX+SceneSettings.wildCameraX+PlayerSettings.playerWidth),
+                                   SceneSettings.wildHeight-(PlayerSettings.wildCoodY+SceneSettings.wildCameraY+PlayerSettings.playerHeight))
         if state==GameState.GAME_PLAY_BOSS_GRASS or state==GameState.GAME_PLAY_BOSS_WATER or state==GameState.GAME_PLAY_BOSS_FIRE:
-            self.rect.topleft=(PlayerSettings.bossCoodx,PlayerSettings.bossCoody)
+            self.rect.topleft=(PlayerSettings.bossCoodX,PlayerSettings.bossCoodY)
     def update(self,time):
         #如果正在对话则则不尝试更新
         self.status.update(self.maxHp,self.hp,self.attack,self.defence,self.money)

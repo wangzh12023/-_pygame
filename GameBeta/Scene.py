@@ -28,7 +28,7 @@ class Scene():
         self.obstacles=pygame.sprite.Group()
         self.bossShow = pygame.sprite.Group()
         self.bosses = pygame.sprite.Group()
-
+        self.mapType = MapType.BOTTOMRIGHT
     def get_width(self):
         return int(WindowSettings.width * WindowSettings.outdoorScale)
     def get_height(self):
@@ -95,6 +95,7 @@ class StartCG():
         self.cg=pygame.image.load(GamePath.cg)
         self.cg=pygame.transform.scale(self.cg,(WindowSettings.width,WindowSettings.height))
         self.cg.set_alpha(0)
+        self.mapType = MapType.BOTTOMRIGHT
     def render(self, time):
         self.window.blit(self.bg,(0,0))
         #从14-19秒透明度变低
@@ -113,7 +114,7 @@ class StartMenu():
         self.bg=pygame.transform.scale(self.bg,(WindowSettings.width,WindowSettings.height))
         #设置按键提示
         self.text=pygame.image.load(GamePath.menuText)
-
+        self.mapType = MapType.BOTTOMRIGHT
     def render(self, time):
         self.window.blit(self.bg,(0,0))
         self.text.set_alpha(int(255*abs(1-(time%2))))
@@ -130,11 +131,11 @@ class CityScene(Scene):
         self.bg=pygame.image.load(GamePath.cityBg)
 
         if not isKilled[0]:
-            self.portals.add(Portal(GamePath.portalGrass,1140,200,SceneType.WILD_GRASS))
+            self.portals.add(Portal(GamePath.portalGrass,PortalSettings.cityGrassCoodX,PortalSettings.cityGrassCoodY,SceneType.WILD_GRASS))
         if not isKilled[1]:
-            self.portals.add(Portal(GamePath.portalWater,-160,200,SceneType.WILD_WATER))
+            self.portals.add(Portal(GamePath.portalWater,PortalSettings.cityWaterCoodX,PortalSettings.cityWaterCoodY,SceneType.WILD_WATER))
         if not isKilled[2]:
-            self.portals.add(Portal(GamePath.portalFire,480,600,SceneType.WILD_FIRE))
+            self.portals.add(Portal(GamePath.portalFire,PortalSettings.cityFireCoodX,PortalSettings.cityFireCoodY,SceneType.WILD_FIRE))
         
         self.obstacles =Maps.gen_city_obstacle()
 
@@ -167,18 +168,51 @@ class CityScene(Scene):
 class WildScene(Scene):
     def __init__(self, window,killedBossNum):
         super().__init__(window=window)
-        self.cameraX=SceneSettings.wildCameraX
-        self.cameraY=SceneSettings.wildCameraY
+        
         self.killedBossNum=killedBossNum
         
+        self.mapType=random.choice([MapType.TOPLEFT,MapType.TOPRIGHT,
+                                   MapType.BOTTOMLEFT,MapType.BOTTOMRIGHT])
+        
+        if self.mapType==MapType.BOTTOMRIGHT:
+            self.cameraX=SceneSettings.wildCameraX
+            self.cameraY=SceneSettings.wildCameraY
+        if self.mapType==MapType.BOTTOMLEFT:
+            self.cameraX=0
+            self.cameraY=SceneSettings.wildCameraY
+        if self.mapType==MapType.TOPRIGHT:
+            self.cameraX=SceneSettings.wildCameraX
+            self.cameraY=0
+        if self.mapType==MapType.TOPLEFT:
+            self.cameraX=0
+            self.cameraY=0
     def gen_wild(self,
                  imagePathObstacle,imagePathBossDorr,imagePathCityPortal,
                  GOTO):
-        
-        self.obstacles,self.map=Maps.gen_wild_obstacle(imagePathObstacle,self.cameraX,self.cameraY)
-        self.portals.add(Portal(imagePathBossDorr,PortalSettings.bossDoorCoodX,
-                                PortalSettings.bossDoorCoodY,GOTO))
-        self.portals.add(Portal(imagePathCityPortal,PortalSettings.wildCoodX,PortalSettings.wildCoodY,SceneType.CITY))
+        print(self.mapType)
+        self.obstacles,self.map=Maps.gen_wild_obstacle(imagePathObstacle,self.cameraX,self.cameraY,self.mapType)
+        if self.mapType==MapType.BOTTOMRIGHT:
+            self.portals.add(Portal(imagePathBossDorr,PortalSettings.bossDoorCoodX,
+                                    PortalSettings.bossDoorCoodY,GOTO))
+            self.portals.add(Portal(imagePathCityPortal,PortalSettings.wildCoodX,PortalSettings.wildCoodY,SceneType.CITY))
+        if self.mapType==MapType.BOTTOMLEFT:
+            self.portals.add(Portal(imagePathBossDorr,WindowSettings.width-(SceneSettings.tileWidth+
+                                                                            PortalSettings.bossDoorCoodX),
+                                    PortalSettings.bossDoorCoodY,GOTO))
+            self.portals.add(Portal(imagePathCityPortal,WindowSettings.width-(PortalSettings.cityWidth+
+                                                                              PortalSettings.wildCoodX),PortalSettings.wildCoodY,SceneType.CITY))
+        if self.mapType==MapType.TOPRIGHT:
+            self.portals.add(Portal(imagePathBossDorr,PortalSettings.bossDoorCoodX,
+                                    WindowSettings.height-(PortalSettings.bossDoorCoodY+SceneSettings.tileHeight),GOTO))
+            self.portals.add(Portal(imagePathCityPortal,PortalSettings.wildCoodX,WindowSettings.height-(PortalSettings.cityHeight
+                                                                                                        +PortalSettings.wildCoodY),SceneType.CITY))
+        if self.mapType==MapType.TOPLEFT:
+            self.portals.add(Portal(imagePathBossDorr,WindowSettings.width-(SceneSettings.tileWidth+
+                                                                            PortalSettings.bossDoorCoodX),
+                                    WindowSettings.height-(PortalSettings.bossDoorCoodY+SceneSettings.tileHeight),GOTO))
+            self.portals.add(Portal(imagePathCityPortal,WindowSettings.width-(PortalSettings.cityWidth+
+                                                                              PortalSettings.wildCoodX),
+                                    WindowSettings.height-(PortalSettings.cityHeight+PortalSettings.wildCoodY),SceneType.CITY))
     def gen_chest(self,num = SceneSettings.chestNum):
         i=0
         while i<num:
@@ -192,8 +226,18 @@ class WildScene(Scene):
                     flag=False
             if flag:
                 self.map.append([x,y])
-                self.npcs.add(Chest(GamePath.chest,GamePath.chest,SceneSettings.tileWidth * x-self.cameraX, 
-                                        SceneSettings.tileHeight * y-self.cameraY,"宝箱",NpcSettings.chestDialog))
+                if self.mapType==MapType.BOTTOMRIGHT:
+                    self.npcs.add(Chest(GamePath.chest,GamePath.chest,SceneSettings.tileWidth * x-self.cameraX, 
+                                            SceneSettings.tileHeight * y-self.cameraY,"宝箱",NpcSettings.chestDialog))
+                if self.mapType==MapType.BOTTOMLEFT:
+                    self.npcs.add(Chest(GamePath.chest,GamePath.chest,SceneSettings.tileWidth * (SceneSettings.tileXnum-x-1), 
+                                            SceneSettings.tileHeight * y-self.cameraY,"宝箱",NpcSettings.chestDialog))
+                if self.mapType==MapType.TOPRIGHT:
+                    self.npcs.add(Chest(GamePath.chest,GamePath.chest,SceneSettings.tileWidth * x-self.cameraX, 
+                                            SceneSettings.tileHeight * (SceneSettings.tileYnum-y-1)-self.cameraY,"宝箱",NpcSettings.chestDialog))
+                if self.mapType==MapType.TOPLEFT:
+                    self.npcs.add(Chest(GamePath.chest,GamePath.chest,SceneSettings.tileWidth * (SceneSettings.tileXnum-x-1), 
+                                            SceneSettings.tileHeight * (SceneSettings.tileYnum-y-1)-self.cameraY,"宝箱",NpcSettings.chestDialog))
                 i+=1
     def gen_monsters(self,imagePath,imagePathBOSS,killedBossNum,num = NpcSettings.monsterNum):
         i=0
@@ -208,12 +252,31 @@ class WildScene(Scene):
                     flag=False
             if flag:
                 self.map.append([x,y])
-                self.monsters.add(Monster(imagePath,SceneSettings.tileWidth * x-self.cameraX, 
-                                          SceneSettings.tileHeight * y-self.cameraY,killedBossNum))
+                if self.mapType==MapType.BOTTOMRIGHT:
+                    self.monsters.add(Monster(imagePath,SceneSettings.tileWidth * x-self.cameraX, 
+                                            SceneSettings.tileHeight * y-self.cameraY,killedBossNum))
+                if self.mapType==MapType.BOTTOMLEFT:
+                    self.monsters.add(Monster(imagePath,SceneSettings.tileWidth * (SceneSettings.tileXnum-x-1), 
+                                            SceneSettings.tileHeight * y-self.cameraY,killedBossNum))
+                if self.mapType==MapType.TOPRIGHT:
+                    self.monsters.add(Monster(imagePath,SceneSettings.tileWidth * x-self.cameraX, 
+                                            SceneSettings.tileHeight * (SceneSettings.tileYnum-y-1)-self.cameraY,killedBossNum))
+                if self.mapType==MapType.TOPLEFT:
+                    self.monsters.add(Monster(imagePath,SceneSettings.tileWidth * (SceneSettings.tileXnum-x-1), 
+                                            SceneSettings.tileHeight * (SceneSettings.tileYnum-y-1)-self.cameraY,killedBossNum))
                 i+=1
-                
-        self.monsters.add(BossShow(imagePathBOSS,SceneSettings.tileWidth * SceneSettings.tileXnum//6-self.cameraX, 
-                                    SceneSettings.tileHeight * SceneSettings.tileYnum//6-self.cameraY,killedBossNum))
+        if self.mapType==MapType.BOTTOMRIGHT:        
+            self.monsters.add(BossShow(imagePathBOSS,SceneSettings.tileWidth * SceneSettings.tileXnum//6-self.cameraX, 
+                                        SceneSettings.tileHeight * SceneSettings.tileYnum//6-self.cameraY,killedBossNum))
+        if self.mapType==MapType.BOTTOMLEFT:
+            self.monsters.add(BossShow(imagePathBOSS,SceneSettings.tileWidth * (SceneSettings.tileXnum-SceneSettings.tileXnum//6-1), 
+                                        SceneSettings.tileHeight * SceneSettings.tileYnum//6-self.cameraY,killedBossNum))    
+        if self.mapType==MapType.TOPRIGHT:
+            self.monsters.add(BossShow(imagePathBOSS,SceneSettings.tileWidth * SceneSettings.tileXnum//6-self.cameraX, 
+                                        SceneSettings.tileHeight * (SceneSettings.tileYnum-SceneSettings.tileYnum//6-1),self.cameraY,killedBossNum))   
+        if self.mapType==MapType.TOPLEFT:
+            self.monsters.add(BossShow(imagePathBOSS,SceneSettings.tileWidth * (SceneSettings.tileXnum-SceneSettings.tileXnum//6-1), 
+                                        SceneSettings.tileHeight * (SceneSettings.tileYnum-SceneSettings.tileYnum//6-1),self.cameraY,killedBossNum))
 class WildGrassScene(WildScene):
     def __init__(self,window,killedBossNum):
         super().__init__(window=window,killedBossNum=killedBossNum)
@@ -281,6 +344,7 @@ class GameOverScene():
         self.bg=pygame.transform.scale(self.bg,(WindowSettings.width,WindowSettings.height))
         self.text=pygame.image.load(GamePath.gameoverText)
         self.text=pygame.transform.scale(self.text,(WindowSettings.width,WindowSettings.height))
+        self.mapType = MapType.BOTTOMRIGHT
     def render(self, time):
         self.window.blit(self.bg,(0,0))
         self.text.set_alpha(int(255*abs(1-(time%2))))
@@ -294,6 +358,7 @@ class GameClearScene():
         self.bgText=pygame.image.load(GamePath.gameClearText)
         self.bgText2=pygame.image.load(GamePath.gameClearText2)
         self.startTime=time
+        self.mapType = MapType.BOTTOMRIGHT
         # self.text=pygame.image.load(GamePath.gameover_text)
         # self.text=pygame.transform.scale(self.text,(WindowSettings.width,WindowSettings.height))
     def render(self,time):

@@ -18,7 +18,7 @@ class SceneSettings:
     tileXnum = 48 # 64
     tileYnum = 27 # 36
     tileWidth = tileHeight = 40
-    obstacleDensity=0.1
+    obstacleDensity=0.07
     
     wildWidth=1920
     wildHeight=1080
@@ -55,12 +55,12 @@ class PlayerSettings:
     playerGunHeight = 25
     mazeStartX= 44
     mazeStartY= 23
-    wildCoodx= 1120
-    wildCoody= 560
-    cityCoodx= 620
-    cityCoody= 80
-    bossCoodx= 640
-    bossCoody= 360
+    wildCoodX= 1120
+    wildCoodY= 560
+    cityCoodX= 620
+    cityCoodY= 80
+    bossCoodX= 640
+    bossCoodY= 360
     collideCd= 30
 
 class NpcSettings:
@@ -70,7 +70,7 @@ class NpcSettings:
     talkCD = 30
     selectCD = 4
     shopCD = 15
-    monsterNum = 7
+    monsterNum = 5
     carolineCoodX=680
     carolineCoodY=280
     carolineDialog=[["喂，犯人，","休息得够久了吧？","快去干活!"]]
@@ -162,6 +162,11 @@ class BossSettings:
     bossAttack2Time = 0.3
     bossAttackSpeed = 15
 
+class MapType(Enum):
+    TOPLEFT = 1
+    TOPRIGHT = 2
+    BOTTOMLEFT = 3
+    BOTTOMRIGHT = 4
 class SceneType(Enum):
     CITY = 1
     WILD_GRASS = 2
@@ -449,6 +454,12 @@ class PortalSettings:
     bossDoorCoodY=SceneSettings.tileYnum//3*SceneSettings.tileHeight-SceneSettings.wildCameraY
     wildCoodX=1200
     wildCoodY=600
+    cityGrassCoodX=1140
+    cityGrassCoodY=200
+    cityWaterCoodX=-160
+    cityWaterCoodY=200
+    cityFireCoodX=480
+    cityFireCoodY=600
 
 class GameState(Enum):
     START_CG = 1

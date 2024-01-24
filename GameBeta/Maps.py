@@ -46,7 +46,7 @@ def gen_city_obstacle():
                             SceneSettings.cityObstacleBoardCoodX,SceneSettings.cityObstacleBoardCoodY))
     return obstacles
 
-def gen_wild_obstacle(imagePath,cameraX,cameraY):#生成障碍物
+def gen_wild_obstacle(imagePath,cameraX,cameraY,mapType):#生成障碍物
     #障碍物包括：隔离boss区的障碍围栏和构成迷宫的随机生成障碍。
     #障碍围栏中有一个特殊的door对象，负责检测碰撞并进行传送
     image=pygame.image.load(imagePath)
@@ -60,17 +60,38 @@ def gen_wild_obstacle(imagePath,cameraX,cameraY):#生成障碍物
         if i==xx//2:
             #obstacles.add(Block(image,i*SceneSettings.tileWidth-cameraX,(yy-1)*SceneSettings.tileHeight-cameraY))
             continue#这行是留个空给door
-        obstacles.add(Block(image,i*SceneSettings.tileWidth-cameraX,yy*SceneSettings.tileHeight-cameraY))
+        if mapType==MapType.BOTTOMRIGHT:
+            obstacles.add(Block(image,i*SceneSettings.tileWidth-cameraX,yy*SceneSettings.tileHeight-cameraY))
+        if mapType==MapType.BOTTOMLEFT:
+            obstacles.add(Block(image,(SceneSettings.tileXnum-i-1)*SceneSettings.tileWidth,yy*SceneSettings.tileHeight-cameraY))
+        if mapType==MapType.TOPRIGHT:
+            obstacles.add(Block(image,i*SceneSettings.tileWidth-cameraX,(SceneSettings.tileYnum-yy-1)*SceneSettings.tileHeight))
+        if mapType==MapType.TOPLEFT:
+            obstacles.add(Block(image,(SceneSettings.tileXnum-i-1)*SceneSettings.tileWidth,(SceneSettings.tileYnum-yy-1)*SceneSettings.tileHeight))
     for j in range(yy):
-        obstacles.add(Block(image,xx*SceneSettings.tileWidth-cameraX,j*SceneSettings.tileHeight-cameraY))
-    #以上两个for循环，生成了除door之外的boss区障碍围栏并加入精灵组obstacles
+        if mapType==MapType.BOTTOMRIGHT:
+            obstacles.add(Block(image,xx*SceneSettings.tileWidth-cameraX,j*SceneSettings.tileHeight-cameraY))
+        if mapType==MapType.BOTTOMLEFT:
+            obstacles.add(Block(image,(SceneSettings.tileXnum-xx-1)*SceneSettings.tileWidth,j*SceneSettings.tileHeight-cameraY))
+        if mapType==MapType.TOPRIGHT:
+            obstacles.add(Block(image,xx*SceneSettings.tileWidth-cameraX,(SceneSettings.tileYnum-j-1)*SceneSettings.tileHeight))
+        if mapType==MapType.TOPLEFT:
+            obstacles.add(Block(image,(SceneSettings.tileXnum-xx-1)*SceneSettings.tileWidth,(SceneSettings.tileYnum-j-1)*SceneSettings.tileHeight))
+     #以上两个for循环，生成了除door之外的boss区障碍围栏并加入精灵组obstacles
 
     #随机生成非boss区障碍物
     randomObstacle=gen_random_obstacle(xx,yy)#先 生成一个坐标组。
     for i in range(len(randomObstacle)):#再导入精灵组obstacles
-        obstacle_x=randomObstacle[i][0]
-        obstacle_y=randomObstacle[i][1]
-        obstacles.add(Block(image,obstacle_x*SceneSettings.tileWidth-cameraX,obstacle_y*SceneSettings.tileHeight-cameraY))
+        obstacleX=randomObstacle[i][0]
+        obstacleY=randomObstacle[i][1]
+        if mapType==MapType.BOTTOMRIGHT:
+            obstacles.add(Block(image,obstacleX*SceneSettings.tileWidth-cameraX,obstacleY*SceneSettings.tileHeight-cameraY))
+        if mapType==MapType.BOTTOMLEFT:
+            obstacles.add(Block(image,(SceneSettings.tileXnum-obstacleX-1)*SceneSettings.tileWidth,obstacleY*SceneSettings.tileHeight-cameraY))
+        if mapType==MapType.TOPRIGHT:
+            obstacles.add(Block(image,obstacleX*SceneSettings.tileWidth-cameraX,(SceneSettings.tileYnum-obstacleY-1)*SceneSettings.tileHeight))
+        if mapType==MapType.TOPLEFT:
+            obstacles.add(Block(image,(SceneSettings.tileXnum-obstacleX-1)*SceneSettings.tileWidth,(SceneSettings.tileYnum-obstacleY-1)*SceneSettings.tileHeight))
     return obstacles,randomObstacle
 
 #下面是用于随机生成迷宫的函数
