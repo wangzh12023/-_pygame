@@ -15,29 +15,22 @@ class BossType:
     WATER=2
     FIRE=3
 class SceneSettings:
-    tileXnum = 48 # 64
-    tileYnum = 27 # 36
+    tileXnum = 48 
+    tileYnum = 27 
     tileWidth = tileHeight = 40
     obstacleDensity=0.07
-    
     wildWidth=1920
     wildHeight=1080
-    
     bossWidth=1920
     bossHeight=1080
-
     cityWallCoodX=480
     cityWallCoodY=0
-
     cityObstacleDoorCoodX=-200
     cityObstacleDoorCoodY=800
-
     cityObstacleBoardCoodX=800
     cityObstacleBoardCoodY=100
-    
     wildCameraX=640
     wildCameraY=360
-
     chestNum = 3
 
 class PlayerSettings:
@@ -48,7 +41,7 @@ class PlayerSettings:
     playerAttack = 5
     playerDefence = 1
     playerMoney = 100
-    playerAttackCooldown = 0.4
+    playerAttackCooldown = 0.25
     playerAttackSpeed = 15
     playerAttackRange = 20
     playerGunWidth = 25
@@ -82,34 +75,27 @@ class NpcSettings:
     igorDialog=[["呵呵，看起来你的“冤申”进行的很成功呢。"],["如果你从怪物身上的得到了金币,","可以来我这里换取力量。"]]
     igorShop={"Attack +1": "Coin -15", "Defence +1": "Coin -45",
             "HP +1": "Coin -15", "Coin +50": "HP -5", "Exit": ""}
-    
     chairCoodX=520
     chairCoodY=40
     chairDialog=[["（这是一只板凳）"],["(你坐了上去)"],["(你站了起来)"]]
-
     elfCoodX=1000
     elfCoodY=240
     elfDialog=[["请看这块告示板，","那三只怪物都很危险"],["凤凰会喷吐火球，","而急冻鸟会在身边召唤冰旋，","而鹰身女妖会不定期发动俯冲。"],["请多加小心。"]]
-
     sisterCoodX=100
     sisterCoodY=120
     sisterDialog=[["如果受伤了的话，可以来我这里治疗哦。"]]
-
     soldierOneCoodX=1300
     soldierOneCoodY=900
     soldierOneDialog=[["好想摸鱼，不想上班~"],["嗯？你在找我?","可你为什么要找我这个连专属立绘","都没有的小卡拉米呢?"]]
-
     soldierTwoCoodX=1400
     soldierTwoCoodY=900
     soldierTwoDialog=[["说起来，你的画风和我们不太一样呢。"]]
-
     chestCoodX=1560
     chestCoodY=0
     chestDialog=[[["你从宝箱中获得了三点生命值！"]],
                  [["你从宝箱中获得了三点攻击力！"]],
                  [["你从宝箱中获得了一点护甲值！"]],
                  [["你从宝箱中获得了四十枚杜卡特！"]]]
-
     diaryCoodX=720
     diaryCoodY=40
     diaryDialog=[["(这是一本日记，记录了你所扮演的角色","“周可儿”————一名铁科学生的故事)"],
@@ -149,18 +135,18 @@ class BossSettings:
     bossHeight = 250
     bossSpeed = 4 
     bossHp = 100
-    bossAttack = 10
+    bossAttack = 3
     bossDefence = 1
     bossAttackSpeed = 10
-    bossAttackRange = 20
+    bossAttackRange = 16
     width = 300
     height = 300
     coordX = (SceneSettings.tileXnum / 2) * SceneSettings.tileWidth - width / 2
     coordY = (SceneSettings.tileYnum / 2) * SceneSettings.tileHeight - height / 2
     bossAttackRange = 80
     bossAttackTime = 5
-    bossAttack2Time = 0.3
-    bossAttackSpeed = 15
+    bossAttack2Time = 1
+    bossAttackSpeed = 10
 
 class MapType(Enum):
     TOPLEFT = 1
@@ -214,7 +200,7 @@ class ShopSettings:
 class GuideboardSettings:
     guideWidth=250
     guideHeight=125
-    changeCd=0.15
+    changeCd=0.1
     startCoorX=300
     startCoorY=0
 

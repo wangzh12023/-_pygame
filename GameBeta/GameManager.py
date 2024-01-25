@@ -92,12 +92,10 @@ class GameManager:
                 self.update_bgmplayer(SceneType.WILD_GRASS)
                 self.state=GameState.GAME_PLAY_WILD_GRASS
                 self.flush_scene(SceneType.WILD_GRASS) 
-
             if event.type==GameEvent.EVENT_SWITCH_WILD_WATER:
                 self.update_bgmplayer(SceneType.WILD_WATER)
                 self.state=GameState.GAME_PLAY_WILD_WATER
                 self.flush_scene(SceneType.WILD_WATER) 
-
             if event.type==GameEvent.EVENT_SWITCH_WILD_FIRE:
                 self.update_bgmplayer(SceneType.WILD_FIRE)
                 self.state=GameState.GAME_PLAY_WILD_FIRE
@@ -108,23 +106,21 @@ class GameManager:
                 self.update_bgmplayer(SceneType.BOSS_GRASS)
                 self.state=GameState.GAME_PLAY_BOSS_GRASS
                 self.flush_scene(SceneType.BOSS_GRASS) 
-
             if event.type==GameEvent.EVENT_SWITCH_BOSS_WATER:
                 self.update_bgmplayer(SceneType.BOSS_WATER)
                 self.state=GameState.GAME_PLAY_BOSS_WATER
                 self.flush_scene(SceneType.BOSS_WATER) 
-
             if event.type==GameEvent.EVENT_SWITCH_BOSS_FIRE:
                 self.update_bgmplayer(SceneType.BOSS_FIRE)
                 self.state=GameState.GAME_PLAY_BOSS_FIRE
                 self.flush_scene(SceneType.BOSS_FIRE) 
-
-            if event.type==GameEvent.EVENT_DIALOG:#开始对话
+            #开始对话
+            if event.type==GameEvent.EVENT_DIALOG:
                 self.player.talking=True
                 self.dialogBox.set_npc(self.player.collide.collidingObject["npc"])
                 self.dialogBox.npc.talking=True
-
-            if event.type==GameEvent.EVENT_END_DIALOG:#结束对话
+            #结束对话
+            if event.type==GameEvent.EVENT_END_DIALOG:
                 self.player.talking=False
                 self.dialogBox.npc.talking=False
                 if self.dialogBox.npc.name=="治疗师":
@@ -136,16 +132,15 @@ class GameManager:
                                             addDefence=self.dialogBox.npc.defence,
                                             addCoins=self.dialogBox.npc.money)
                     self.dialogBox.npc.kill()
-
-            if event.type==GameEvent.EVENT_SHOP:#开始购物
+            #开始购物
+            if event.type==GameEvent.EVENT_SHOP:
                 self.player.shopping=True
                 self.shopBox.set_npc(self.player.collide.collidingObject["npc"],self.player)
                 self.shopBox.npc.shopping=True
-
-            if event.type==GameEvent.EVENT_END_SHOP:#结束购物
+            #结束购物
+            if event.type==GameEvent.EVENT_END_SHOP:
                 self.player.shopping=False
                 self.shopBox.npc.shopping=False
-            
             if event.type==GameEvent.EVENT_GAME_OVER:
                 self.state=GameState.GAME_OVER
                 self.flush_scene(SceneType.GAME_OVER) 
@@ -426,9 +421,7 @@ class GameManager:
             self.render_gameover()
         if self.state==GameState.GAME_CLEAR:
             self.render_gameclear()
-        
-
-         
+  
     #渲染开场CG
     def render_start(self):
         self.scene.render(self.get_time())

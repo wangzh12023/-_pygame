@@ -3,7 +3,6 @@ from GameManager import GameManager
 def main():
     pygame.init()
     manager = GameManager()
-    
     while True:
         manager.update()
         manager.render()

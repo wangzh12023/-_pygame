@@ -10,14 +10,10 @@ class StatusBar:
         #设置字体参数
         self.fontPath=GamePath.font
         self.fontColor = fontColor
-        
         self.fontSizeHp= fontSizeHp
         self.fontHp= pygame.font.Font(self.fontPath, self.fontSizeHp)
-
-
         self.fontSizeResource= fontSizeResource
         self.fontResource= pygame.font.Font(self.fontPath, self.fontSizeResource)
-        
         #设置图像
         self.image=pygame.transform.scale(pygame.image.load(GamePath.statusBar),
                                        (StatusBarSettings.barWidth,StatusBarSettings.barHeight))
@@ -27,7 +23,7 @@ class StatusBar:
         self.attack=attack
         self.defence=defence
         self.money=money
-        #设置状态40,13
+        
     #根据所给信息更新
     def update(self,maxHp,hp,attack,defence,money):
         self.maxHp=maxHp
@@ -38,7 +34,6 @@ class StatusBar:
         self.scale=pygame.transform.scale(self.scale,
                             (int(self.hp/self.maxHp*StatusBarSettings.scaleWidth)
                                 ,StatusBarSettings.scaleHeight))
-
     def draw(self,window):
         window.blit(self.image, (0,0))
         window.blit(self.fontHp.render(str(self.hp),

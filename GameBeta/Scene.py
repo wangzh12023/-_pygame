@@ -302,8 +302,6 @@ class WildFireScene(WildScene):
         self.gen_chest()
         self.gen_monsters(GamePath.redMonster,GamePath.boss[2][0],killedBossNum)
 
-
-
 class BossScene(Scene):
     def __init__(self,window,killedBossNum):
         super().__init__(window=window)
