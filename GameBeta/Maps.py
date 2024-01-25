@@ -44,6 +44,14 @@ def gen_city_obstacle():
                             SceneSettings.cityObstacleDoorCoodX,SceneSettings.cityObstacleDoorCoodY))
     obstacles.add(Obsatacle(pygame.image.load(GamePath.cityObstacleBoard),
                             SceneSettings.cityObstacleBoardCoodX,SceneSettings.cityObstacleBoardCoodY))
+    obstacles.add(Obsatacle(pygame.image.load(GamePath.bost),
+                            SceneSettings.cityBostCoodX,SceneSettings.cityBostCoodY))
+    obstacles.add(Obsatacle(pygame.image.load(GamePath.bost),
+                            SceneSettings.cityBost2CoodX,SceneSettings.cityBost2CoodY))
+    obstacles.add(Obsatacle(pygame.image.load(GamePath.skelon),
+                            SceneSettings.cityskelonCoodX,SceneSettings.cityskelonCoodY))
+    obstacles.add(Obsatacle(pygame.image.load(GamePath.skelon),
+                            SceneSettings.cityskelon2CoodX,SceneSettings.cityskelon2CoodY))
     return obstacles
 
 def gen_wild_obstacle(imagePath,cameraX,cameraY,mapType):#生成障碍物

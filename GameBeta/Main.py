@@ -6,7 +6,7 @@ def main():
     while True:
         manager.update()
         manager.render()
-        pygame.display.flip()
+        pygame.display.flip()   
         
 if __name__ == "__main__":
     main()

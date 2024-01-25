@@ -26,9 +26,27 @@ class SceneSettings:
     cityWallCoodX=480
     cityWallCoodY=0
     cityObstacleDoorCoodX=-200
-    cityObstacleDoorCoodY=800
+    cityObstacleDoorCoodY=600
     cityObstacleBoardCoodX=800
     cityObstacleBoardCoodY=100
+    cityHouseCoodX=-80
+    cityHouseCoodY=0
+    cityBostCoodX = 150
+    cityBostCoodY = 400
+    cityBost2CoodX = 380
+    cityBost2CoodY = 400
+    
+    cityObstacleTreeCoodX = -300
+    cityObstacleTreeCoodY = 620
+    cityObstacleTree2CoodX = -50
+    cityObstacleTree2CoodY = 620
+    cityskelonCoodX = -190
+    cityskelonCoodY = 750
+    cityskelon2CoodX = -90
+    cityskelon2CoodY = 800
+    cityHouse2CoodX = 800
+    cityHouse2CoodY = 550
+    
     wildCameraX=640
     wildCameraY=360
     chestNum = 3
@@ -85,10 +103,10 @@ class NpcSettings:
     sisterCoodY=120
     sisterDialog=[["如果受伤了的话，可以来我这里治疗哦。"]]
     soldierOneCoodX=1300
-    soldierOneCoodY=900
+    soldierOneCoodY=600
     soldierOneDialog=[["好想摸鱼，不想上班~"],["嗯？你在找我?","可你为什么要找我这个连专属立绘","都没有的小卡拉米呢?"]]
-    soldierTwoCoodX=1400
-    soldierTwoCoodY=900
+    soldierTwoCoodX=1450
+    soldierTwoCoodY=600
     soldierTwoDialog=[["说起来，你的画风和我们不太一样呢。"]]
     chestCoodX=1560
     chestCoodY=0
@@ -279,6 +297,7 @@ class GamePath:
     justine = r".\assets\npc\Justine.png"
     justineTalk = r".\assets\npc\Justine_talk.png"
     chair = r".\assets\npc\chair.png"
+
     diary = r".\assets\npc\diary.png"
     elf=r".\assets\npc\elf.png"
     sister=r".\assets\npc\sister.png"
@@ -353,7 +372,12 @@ class GamePath:
 
     cityObstacleDoor=r".\assets\background\city_obstacle1.png"
     cityObstacleBoard=r".\assets\background\city_obstacle2.png"
-
+    house = r".\assets\background\house.png"
+    bost = r".\assets\background\bost.png"
+    ObstacleTree = r".\assets\background\ObstacleTree.png"
+    skelon= r".\assets\background\skelon.png"
+    stone= r".\assets\background\stone.png"
+    house2 = r".\assets\background\house2.png"
     grassWildBg= r".\assets\background\grass_wild.png"
     fireWildBg= r".\assets\background\fire_wild.png"
     waterWildBg= r".\assets\background\water_wild.png"
