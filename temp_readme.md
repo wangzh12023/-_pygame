@@ -75,6 +75,9 @@ Here are the contributors :clap::arrow_down:
 - Move: "W","A","S","D" (Represents respectely up,left,down,right)
 - Attack: "⬆️","⬇️","⬅️","➡️" (Represents respectely up,left,down,right)
 - Help: "Q"
+- In dialogbox, you can use "ENTER" to go next
+- In shop, you can use "W","S" to choose what you want
+
 ### Project File Arrangement
 - Attributes.py
     - It is aimed to determine whether the event `collide` occurs
