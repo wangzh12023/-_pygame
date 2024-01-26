@@ -61,6 +61,12 @@ Here are the contributors :clap::arrow_down:
   - 触碰到障碍物墙壁无法穿越。
   - BOSS可以移动并且可以向四面八方攻击，小怪是在小范围移动的并且不具备攻击能力。
   - 含有宝箱
+  - ❗请尽可能多的击杀小怪以获得更多的金币提高防御、血量或者攻击值，否则在下一关的boss对战中可能会很困难。
+##### c) Boss Map
+  - 不同的地图Boss不同，并且会有不同的攻击方式：
+    - 碰撞攻击：与Boss接触后会损失血量值
+    - 技能攻击：被Boss发出的攻击波击中会损失血量值
+    - Boss技能：移速增快，发出攻击波，在地图中随机生成旋涡波。
 #### 5、 Character Moving Settings :man: ：
   - 当主人公远离地图边界时，主人公坐标始终位于镜头中央，镜头移动；靠近地图边界时镜头保持固定，主人公坐标移动。
 #### 6、 Battle Settings：
@@ -70,7 +76,7 @@ Here are the contributors :clap::arrow_down:
     主人公的属性为血量值和攻击力。
   - 敌人设置：
     每个敌人拥有固定的血量值和攻击力，在生成所属地图的同时生成。
-#### 7.Game Operation :dart:
+#### 7、Game Operation :dart:
 ##### :o: You can click "Q" in game to check some basic game operation rules
 - Move: "W","A","S","D" (Represents respectely up,left,down,right)
 - Attack: "⬆️","⬇️","⬅️","➡️" (Represents respectely up,left,down,right)
