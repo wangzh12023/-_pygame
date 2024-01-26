@@ -4,7 +4,7 @@
 ![GitHub contributors](https://img.shields.io/github/contributors-anon/wangzh12023/RuYou_Game)
 ![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/wangzh12023/RuYou_Game)
 
-####  :tada::dizzy: _This project is a game developed by the `"RuYou"` team using the `pygame` library with the `python` language. It is a simple game that combines various game elements and game art design.Hope you can have fun in our Game!_ :kissing_heart::kissing_heart::kissing_heart:
+####  :tada: :dizzy:  _This project is a game developed by the `"RuYou"` team using the `pygame` library with the `python` language. It is a simple game that combines various game elements and game art design.Hope you can have fun in our Game!_ :kissing_heart::kissing_heart::kissing_heart:
 
 ## Content 📑：
 > - [Team Introduction](## "Our Team Members")
