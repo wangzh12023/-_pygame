@@ -1,6 +1,6 @@
 # Team RuYou's Game  
 
-
+❗❗❗ Our Fianl Report is in the pdf, this readme is just a outline.
 ![Static Badge](https://img.shields.io/badge/RuYou-purple)
 ![GitHub commit activity (branch)](https://img.shields.io/github/commit-activity/t/wangzh12023/RuYou_Game)
 ![GitHub contributors](https://img.shields.io/github/contributors-anon/wangzh12023/RuYou_Game)
