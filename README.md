@@ -21,14 +21,20 @@ Here are the contributors :clap::arrow_down:
 > ![Static Badge](https://img.shields.io/badge/1-blue) :bust_in_silhouette: **王子涵**
 > 
 > &nbsp;&nbsp;&nbsp;&nbsp; :email: wangzh12023@shanghaitech.edu.cn
+> 
+> &nbsp;&nbsp;&nbsp;&nbsp;对Boss模型，技能特效，Boss map，人物模型动画、枪械攻击特效等的编写，主地图元素增添，音频，使用素材等的修改，游戏规划建议，README编写
 >
 > ![Static Badge](https://img.shields.io/badge/2-blue) :bust_in_silhouette: **匡鹏昊**
 > 
 > &nbsp;&nbsp;&nbsp;&nbsp; :email: kuangph2023@shanghaitech.edu.cn
 > 
+> &nbsp;&nbsp;&nbsp;&nbsp; maze map中tiles，obstacles生成，monster移动设置，攻击设置的主要编写，会议内容总结，Files介绍。
+> 
 > ![Static Badge](https://img.shields.io/badge/3-blue) :bust_in_silhouette: **陈亦乐**
 >
 > &nbsp;&nbsp;&nbsp;&nbsp; :email: chenyl2023@shanghaitech.edu.cn
+>
+> &nbsp;&nbsp;&nbsp;&nbsp; 代码框架搭建，monster，npc等的编写，maze map辅助，主地图，Portal，PopUpBox等的编写，代码整体调试修改，代码文件管理，素材调整。
 
 
 
